@@ -1,4 +1,13 @@
+---
+description: "CAD project workspaces, geometry references and embedded engineering tools alongside the native DSH conversation."
+kind: "package-reference"
+---
+
 # CAD workspace in the native DSH conversation
+
+English | [中文](README.zh.md)
+
+## Summary
 
 The desktop opens DSH's original conversation and contributes a CAD tab to its right sidebar. There is no separate CAStudio chat or top-level sidebar entry. DSH owns model credentials, requests, tool execution, approvals, cancellation and history through its existing harness. This package only uses public UI extension services and does not modify the agent loop.
 

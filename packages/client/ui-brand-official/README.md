@@ -1,7 +1,3 @@
-# CoServe AI brand adaptation
-
-The local fork fills sidebar and home brand slots with the original company artwork in every build profile. The compact mark shows the C from that wordmark; the whale animation is not mounted.
-
 ---
 description: "Official sidebar branding and the default click-triggered pixel whale on the home page."
 kind: "package-reference"
@@ -10,6 +6,10 @@ kind: "package-reference"
 # @deepseek-ai/dsh-client-ui-brand-official
 
 English | [中文](README.zh.md)
+
+## CoServe AI brand adaptation
+
+The local fork fills sidebar and home brand slots with the original company artwork in every build profile. The compact mark shows the C from that wordmark; the whale animation is not mounted.
 
 ## Summary
 

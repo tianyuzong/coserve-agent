@@ -7,6 +7,10 @@ kind: "package-reference"
 
 [English](README.md) | 中文
 
+## CoServe AI 品牌适配
+
+本地 fork 在每个构建 profile 中使用公司原有图形填充侧栏和首页的品牌插槽。紧凑标志显示字标中的 C，不挂载鲸鱼动画。
+
 ## 概述
 
 本包在空白首页提供点击浮出的像素鲸鱼，并让以 `official` profile 构建的客户端显示 DeepSeek Harness 侧栏品牌图形。随产品提供的 Web 与 Desktop 组合默认加载本包。其他构建 profile 保留原有品牌。首屏标志仍使用动画鱼回退。背景只持有临时 Canvas 资源，不增加模型请求。
