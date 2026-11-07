@@ -1,3 +1,7 @@
+# CoServe AI desktop local account
+
+On Desktop, this fork registers a local identity and Settings launcher, without cloud account subscriptions, profile or balance reads, remote sign-in, or payment onboarding. Plain Web retains the existing cloud account integration. Local entry does not grant model-provider access; model credentials must be configured separately.
+
 ---
 description: "Account settings display DeepSeek login state and offer browser authorization and cancellation; the sidebar account menu provides Platform sign-out."
 kind: "package-reference"

@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
-/** Account operations in the shipped client composition, in Desktop and in a plain browser. */
+/** Retained cloud account operations and native carrier in the client composition. Local Desktop routing is tested separately. */
 import { afterEach, beforeEach, expect, vi } from 'vitest'
+import * as cloudAccount from '../src/client/cloud-account.ts'
 import { ok } from '@deepseek-ai/dsh-remote-mock'
 import { RemoteError } from '@deepseek-ai/dsh-typert-protocol'
 import { createClientTest, type TestClient, webApp } from '@deepseek-ai/dsh-client-test-runtime/src/assembly/index.ts'
@@ -22,8 +23,9 @@ import type { AccountPlatformHostInjected } from '../src/client/AccountPlatformH
 import { AccountQuotaNotice } from '../src/client/AccountQuotaNotice.tsx'
 import type { AccountQuotaNoticeInjected } from '../src/client/AccountQuotaNotice.tsx'
 
-const it = createClientTest({ roster: webApp })
-const withoutAccountAccess = createClientTest({ roster: webApp }, { access: action => action !== 'account/watch' })
+const cloudPlan = { roster: webApp, provide: { '@deepseek-ai/dsh-client-ui-settings-account': cloudAccount } }
+const it = createClientTest(cloudPlan)
+const withoutAccountAccess = createClientTest(cloudPlan, { access: action => action !== 'account/watch' })
 const SELF = '@deepseek-ai/dsh-client-ui-settings-account'
 const view: AccountView = {
   status: 'signed-out', attempt: null,

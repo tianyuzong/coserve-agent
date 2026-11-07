@@ -1,7 +1,7 @@
-DeepSeek Harness
-DeepSeek Harness
+CoServe AI
+CoServe AI
 Add an API key to get started
-Configure official DeepSeek models to start using Harness
+Configure a model API key to start using CoServe AI
 Enter API key [password]
 Save and continue [disabled]
 Set up later

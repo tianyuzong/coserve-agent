@@ -264,28 +264,28 @@ describe('product icon set', () => {
   })
 })
 
-describe('FishLogo', () => {
-  it('renders the fish path in currentColor at the native ratio', () => {
-    const { container } = render(<primitives.FishLogo />)
-    const svg = container.querySelector('svg')!
-    expect(svg.getAttribute('width')).toBe('24')
-    expect(Number(svg.getAttribute('height'))).toBeCloseTo(17.66, 1)
-    expect(svg.getAttribute('viewBox')).toBe('0 0 23.16 17.04')
-    expect(container.querySelectorAll('path')).toHaveLength(1)
-    expect(container.innerHTML).toContain('currentColor')
-    expect(container.innerHTML).not.toContain('M0 0L23.16')
+describe('CoServe AI artwork', () => {
+  it('keeps each mounted mark linked to its own stable background filter', () => {
+    const view = render(<><primitives.FishLogo /><primitives.FishLogo /><primitives.BrandWordmark /></>)
+    const filters = [...view.container.querySelectorAll('filter')].map(filter => filter.id)
+    expect(new Set(filters).size).toBe(3)
+    expect([...view.container.querySelectorAll('image')].map(image => image.getAttribute('filter')))
+      .toEqual(filters.map(id => `url(#${id})`))
+    view.rerender(<><primitives.FishLogo size={32} /><primitives.FishLogo /><primitives.BrandWordmark /></>)
+    expect([...view.container.querySelectorAll('filter')].map(filter => filter.id)).toEqual(filters)
   })
-})
-
-describe('BrandWordmark', () => {
-  it('can render the name artwork with or without its leading mark', () => {
-    const view = render(<primitives.BrandWordmark />)
+  it('renders the original company mark at the requested size', () => {
+    const view = render(<primitives.FishLogo size={24} />)
     const svg = view.container.querySelector('svg')!
-    expect(svg.getAttribute('width')).toBe('182')
-    expect(svg.getAttribute('viewBox')).toBe('0 0 182 24')
-
+    expect(svg.getAttribute('width')).toBe('24')
+    expect(svg.getAttribute('height')).toBe('24')
+    expect(svg.getAttribute('viewBox')).toBe('70 70 125 140')
+    expect(view.container.querySelector('image')?.getAttribute('href')?.startsWith('data:image/png;base64,')).toBe(true)
+  })
+  it('renders the complete company wordmark for both existing call forms', () => {
+    const view = render(<primitives.BrandWordmark />)
+    expect(view.container.querySelector('svg')?.getAttribute('viewBox')).toBe('60 65 900 150')
     view.rerender(<primitives.BrandWordmark includeMark={false} />)
-    expect(svg.getAttribute('width')).toBe('156')
-    expect(svg.getAttribute('viewBox')).toBe('26 0 156 24')
+    expect(view.container.querySelector('svg')?.getAttribute('width')).toBe('144')
   })
 })

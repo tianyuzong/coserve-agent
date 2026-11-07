@@ -12,6 +12,7 @@ import { syncWindowsAppearance } from './preload-windows.ts'
 import { installMandatoryUpdateOverlay } from './preload-mandatory-overlay.ts'
 import { createDesktopBrowserBridge } from './preload-browser.ts'
 import type { FileDragHandle } from '@deepseek-ai/dsh-util-file-drag'
+import { CASTUDIO_IPC, type CAStudioEventMessage } from './castudio-protocol.ts'
 
 function createProductApi(): DshDesktopProductApi {
   return {
@@ -87,6 +88,18 @@ function createProductApi(): DshDesktopProductApi {
 }
 
 if (location.protocol === `${SCHEME}:` && location.hostname === 'app') {
+  if (process.isMainFrame) contextBridge.exposeInMainWorld('dshCAStudio', {
+    request: (path: string, method?: string, body?: unknown) => ipcRenderer.invoke(CASTUDIO_IPC.request, path, method, body),
+    subscribe: (projectId: string, subscriptionId: string, afterEventId?: number) =>
+      ipcRenderer.invoke(CASTUDIO_IPC.subscribe, projectId, subscriptionId, afterEventId),
+    unsubscribe: (subscriptionId: string) => ipcRenderer.invoke(CASTUDIO_IPC.unsubscribe, subscriptionId),
+    workspaceUrl: (projectId: string) => ipcRenderer.invoke(CASTUDIO_IPC.workspace, projectId),
+    onEvent: (listener: (message: CAStudioEventMessage) => void) => {
+      const receive = (_event: Electron.IpcRendererEvent, message: CAStudioEventMessage): void => { listener(message) }
+      ipcRenderer.on(CASTUDIO_IPC.event, receive)
+      return () => { ipcRenderer.off(CASTUDIO_IPC.event, receive) }
+    },
+  })
   contextBridge.exposeInMainWorld('dshOnboarding', {
     hasApiKey: () => ipcRenderer.invoke(DESKTOP_IPC.onboardingApiKey) as Promise<boolean>,
     setActive: (active: boolean) => { ipcRenderer.send(DESKTOP_IPC.onboardingActive, active) },

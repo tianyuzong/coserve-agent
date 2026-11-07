@@ -1,6 +1,6 @@
-DeepSeek Harness
-DeepSeek Harness
-Welcome to DeepSeek Harness
+CoServe AI
+CoServe AI
+Welcome to CoServe AI
 Build potential. Explore intelligence.
 Sign in
 Add API Key

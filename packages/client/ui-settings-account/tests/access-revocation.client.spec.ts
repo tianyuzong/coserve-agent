@@ -2,7 +2,7 @@
 /** Account surfaces follow `account/watch` access: a revocation withdraws them and a later grant restores them. */
 import { afterEach, expect, it, vi } from 'vitest'
 import type { AccountView } from '@deepseek-ai/dsh-deepseek-account/types'
-import { apply, type AccountSectionInjected } from '../src/client/index.ts'
+import { apply, type AccountSectionInjected } from '../src/client/cloud-account.ts'
 
 afterEach(() => { vi.unstubAllEnvs() })
 

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "DeepSeek セッションログ送信",
-    "description": "有効にすると、公式モデル API のリクエストと共にセッションログを DeepSeek に送信します。"
+    "title": "CoServe AI セッションログ送信",
+    "description": "有効にすると、公式モデル API のリクエストと共にセッションログを CoServe AI に送信します。"
   }
 }

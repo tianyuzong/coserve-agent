@@ -161,10 +161,10 @@ describe('ModelSelect catalog badges', () => {
     current: { provider: 'deepseek-official', model: 'deepseek-flash' },
     groups: [{
       id: 'deepseek-official',
-      name: 'DeepSeek',
+      name: 'CoServe AI',
       models: [
-        { id: 'deepseek-flash', name: 'DeepSeek-V4.1-Flash', badge: BADGE },
-        { id: 'deepseek-v4-pro', name: 'DeepSeek-V4-Pro' },
+        { id: 'deepseek-flash', name: 'CoServe AI-V4.1-Flash', badge: BADGE },
+        { id: 'deepseek-v4-pro', name: 'CoServe AI-V4-Pro' },
       ],
     }],
   })
@@ -173,14 +173,14 @@ describe('ModelSelect catalog badges', () => {
   it('places the badge before the trigger name and after names in the menus', () => {
     render(<ModelSelect renderSlot={renderLabel} locked={false} available directory={createSnapshotStore(badged())}
       load={vi.fn()} resolveText={chinese} select={vi.fn()} t={t} />)
-    const trigger = screen.getByRole('button', { name: '选择模型，当前 DeepSeek-V4.1-Flash' })
-    expect(trigger.textContent).toBe('新 DeepSeek-V4.1-Flash')
+    const trigger = screen.getByRole('button', { name: '选择模型，当前 CoServe AI-V4.1-Flash' })
+    expect(trigger.textContent).toBe('新 CoServe AI-V4.1-Flash')
     expect(screen.getByText('新').getAttribute('data-tone')).toBe('info')
     fireEvent.click(trigger)
     const current = screen.getByRole('menuitem', { name: /^模型/ })
-    expect(current.textContent).toContain('DeepSeek-V4.1-Flash 新')
+    expect(current.textContent).toContain('CoServe AI-V4.1-Flash 新')
     fireEvent.click(current)
-    expect(screen.getAllByRole('menuitemradio').map(row => row.textContent)).toEqual(['DeepSeek-V4.1-Flash 新', 'DeepSeek-V4-Pro'])
+    expect(screen.getAllByRole('menuitemradio').map(row => row.textContent)).toEqual(['CoServe AI-V4.1-Flash 新', 'CoServe AI-V4-Pro'])
   })
 
   it('hands the badge to a label contribution, which replaces the default rendering', async () => {
@@ -201,7 +201,7 @@ describe('ModelSelect catalog badges', () => {
         name: 'conversation.input.model.label',
       }, ({ model }) => <span>{model.name} [{model.badge?.tone ?? 'none'}]</span>))
     } })
-    expect(screen.getByRole('button', { name: '选择模型，当前 DeepSeek-V4.1-Flash' }).textContent).toBe('DeepSeek-V4.1-Flash [info]')
+    expect(screen.getByRole('button', { name: '选择模型，当前 CoServe AI-V4.1-Flash' }).textContent).toBe('CoServe AI-V4.1-Flash [info]')
     expect(screen.queryByText('新')).toBeNull()
   })
 })
@@ -223,7 +223,7 @@ describe('ModelSelect reasoning effort', () => {
     />)
 
     const trigger = screen.getByRole('button', {
-      name: '选择模型，当前 DeepSeek-V4-Flash，推理等级 High',
+      name: '选择模型，当前 CoServe AI-V4-Flash，推理等级 High',
     })
     fireEvent.click(trigger)
     fireEvent.click(screen.getByRole('menuitem', { name: /推理等级/ }))
@@ -238,7 +238,7 @@ describe('ModelSelect reasoning effort', () => {
         model: 'deepseek-v4-flash',
         reasoningEffort: 'max',
       })
-      expect(trigger.getAttribute('aria-label')).toBe('选择模型，当前 DeepSeek-V4-Flash，推理等级 Max')
+      expect(trigger.getAttribute('aria-label')).toBe('选择模型，当前 CoServe AI-V4-Flash，推理等级 Max')
       expect(document.activeElement).toBe(trigger)
     })
   })
@@ -293,11 +293,11 @@ describe('ModelSelect reasoning effort', () => {
     expect(screen.queryByRole('menuitem', { name: /推理等级/ })).toBeNull()
     expect(screen.queryByRole('menuitem', { name: /模型/ })).toBeNull()
     expect(screen.queryByRole('menuitemradio', { name: 'removed-model' })).toBeNull()
-    expect(screen.getByRole('menuitemradio', { name: 'DeepSeek-V4-Flash' })).toBeTruthy()
+    expect(screen.getByRole('menuitemradio', { name: 'CoServe AI-V4-Flash' })).toBeTruthy()
     expect(screen.queryByText('Fast catalog description')).toBeNull()
     expect(select).not.toHaveBeenCalled()
     expect(directory.getSnapshot().current).toEqual({ provider: 'deepseek-official', model: 'removed-model' })
-    fireEvent.keyDown(screen.getByRole('menuitemradio', { name: 'DeepSeek-V4-Flash' }), { key: 'Escape' })
+    fireEvent.keyDown(screen.getByRole('menuitemradio', { name: 'CoServe AI-V4-Flash' }), { key: 'Escape' })
     expect(screen.queryByRole('group', { name: '模型与推理等级' })).toBeNull()
   })
 
@@ -305,7 +305,7 @@ describe('ModelSelect reasoning effort', () => {
     const directory = createSnapshotStore(state({ retainedEffort: 'High' }))
     render(<ModelSelect renderSlot={renderLabel} locked={false} available directory={directory} load={vi.fn()}
       resolveText={resolveText} select={vi.fn()} t={t} />)
-    expect(screen.getByRole('button', { name: /选择模型，当前/ }).textContent).toContain('DeepSeek-V4-Flash')
+    expect(screen.getByRole('button', { name: /选择模型，当前/ }).textContent).toContain('CoServe AI-V4-Flash')
     act(() => { directory.update((snapshot) => {
       snapshot.groups = removed === 'provider' ? [] : snapshot.groups.map(group => ({ ...group, models: [] }))
       snapshot.routable = false
@@ -340,7 +340,7 @@ describe('ModelSelect reasoning effort', () => {
     directory.set(state())
     await waitFor(() => {
       expect(screen.getByRole('button', {
-        name: '选择模型，当前 DeepSeek-V4-Flash，推理等级 High',
+        name: '选择模型，当前 CoServe AI-V4-Flash，推理等级 High',
       })).toBeTruthy()
     })
   })
@@ -348,10 +348,10 @@ describe('ModelSelect reasoning effort', () => {
   it.each([false, true])('announces rejected selections with ownership guidance only for held writers (%s)', async (sessionInUse) => {
     const groups = [{
       id: 'deepseek-official',
-      name: 'DeepSeek',
+      name: 'CoServe AI',
       models: [
-        { id: 'deepseek-v4-flash', name: 'DeepSeek-V4-Flash', reasoning },
-        { id: 'deepseek-v4-pro', name: 'DeepSeek-V4-Pro' },
+        { id: 'deepseek-v4-flash', name: 'CoServe AI-V4-Flash', reasoning },
+        { id: 'deepseek-v4-pro', name: 'CoServe AI-V4-Pro' },
       ],
     }]
     const directory = createSnapshotStore<ModelDirectoryState>(state({ groups }))
@@ -374,7 +374,7 @@ describe('ModelSelect reasoning effort', () => {
     const trigger = screen.getByRole('button', { name: /选择模型|当前/ })
     fireEvent.click(trigger)
     fireEvent.click(screen.getByRole('menuitem', { name: /模型/ }))
-    const rejected = screen.getByRole('menuitemradio', { name: /DeepSeek-V4-Pro/ })
+    const rejected = screen.getByRole('menuitemradio', { name: /CoServe AI-V4-Pro/ })
     fireEvent.mouseMove(rejected)
     fireEvent.click(rejected)
     const toast = await screen.findByRole('alert')
@@ -386,16 +386,16 @@ describe('ModelSelect reasoning effort', () => {
     expect(screen.queryByRole('button', { name: '重试' })).toBeNull()
     fireEvent.keyDown(trigger, { key: 'Tab' })
     expect(screen.queryByRole('searchbox')).toBeNull()
-    expect(document.activeElement).toBe(screen.getByRole('menuitemradio', { name: 'DeepSeek-V4-Flash' }))
+    expect(document.activeElement).toBe(screen.getByRole('menuitemradio', { name: 'CoServe AI-V4-Flash' }))
   })
 
   it('spins on the trigger and the chosen model row until the selection settles, across pane changes', async () => {
     const groups = [{
       id: 'deepseek-official',
-      name: 'DeepSeek',
+      name: 'CoServe AI',
       models: [
-        { id: 'deepseek-v4-flash', name: 'DeepSeek-V4-Flash', reasoning },
-        { id: 'deepseek-v4-pro', name: 'DeepSeek-V4-Pro' },
+        { id: 'deepseek-v4-flash', name: 'CoServe AI-V4-Flash', reasoning },
+        { id: 'deepseek-v4-pro', name: 'CoServe AI-V4-Pro' },
       ],
     }]
     const directory = createSnapshotStore<ModelDirectoryState>(state({ groups }))
@@ -416,9 +416,9 @@ describe('ModelSelect reasoning effort', () => {
     const trigger = screen.getByRole('button', { name: /选择模型|当前/ })
     fireEvent.click(trigger)
     fireEvent.click(screen.getByRole('menuitem', { name: /模型/ }))
-    fireEvent.click(screen.getByRole('menuitemradio', { name: /DeepSeek-V4-Pro/ }))
+    fireEvent.click(screen.getByRole('menuitemradio', { name: /CoServe AI-V4-Pro/ }))
     expect(spinners()).toHaveLength(2)
-    expect(screen.getByRole('menuitemradio', { name: /DeepSeek-V4-Pro/ }).querySelector('[data-state="ongoing"]')).not.toBeNull()
+    expect(screen.getByRole('menuitemradio', { name: /CoServe AI-V4-Pro/ }).querySelector('[data-state="ongoing"]')).not.toBeNull()
     expect(trigger.querySelector('[data-state="ongoing"]')).not.toBeNull()
     expect(trigger.getAttribute('aria-busy')).toBe('true')
 
@@ -559,7 +559,7 @@ describe('ModelSelect keyboard walk', () => {
       const restoredModelCell = screen.getByRole('menuitem', { name: /^模型/ })
       expect(document.activeElement).toBe(restoredModelCell)
       fireEvent.keyDown(restoredModelCell, { key: 'Tab' })
-      const model = screen.getByRole('menuitemradio', { name: 'DeepSeek-V4-Flash' })
+      const model = screen.getByRole('menuitemradio', { name: 'CoServe AI-V4-Flash' })
       expect(document.activeElement).toBe(model)
       if (modelCount > 4) {
         const search = screen.getByRole('searchbox')
@@ -947,7 +947,7 @@ describe('ModelSelect search', () => {
     const directory = createSnapshotStore(state({
       current: { provider: 'deepseek-official', model: 'beta' },
       groups: [
-        { id: 'deepseek-official', name: 'DeepSeek', models: [{ id: 'alpha', name: 'Alpha' }, { id: 'beta', name: 'Beta' }] },
+        { id: 'deepseek-official', name: 'CoServe AI', models: [{ id: 'alpha', name: 'Alpha' }, { id: 'beta', name: 'Beta' }] },
         { id: 'other', name: 'Other', models: [
           { id: 'delta', name: 'Delta' }, { id: 'epsilon', name: 'Epsilon' }, { id: 'gamma', name: 'Gamma' },
         ] },
@@ -1020,8 +1020,8 @@ describe('ModelSelect search', () => {
     expect(screen.getAllByRole('menuitemradio').map(row => row.textContent)).toEqual(['Gemini Flash'])
     expect(screen.getByRole('searchbox')).toBe(search)
     expect(document.activeElement).toBe(search)
-    expect(screen.queryByRole('group', { name: 'DeepSeek' })).toBeNull()
-    expect(trigger.textContent).toContain('DeepSeek-V4-Flash')
+    expect(screen.queryByRole('group', { name: 'CoServe AI' })).toBeNull()
+    expect(trigger.textContent).toContain('CoServe AI-V4-Flash')
     fireEvent.change(search, { target: { value: 'zzzz' } })
     const status = screen.getByRole('status')
     expect(status.textContent).toBe('没有匹配的模型。')
@@ -1061,15 +1061,15 @@ it('hides the inherited effort until a listed model is selected', async () => {
   expect(trigger.textContent).not.toContain('High')
   fireEvent.click(trigger)
   expect(screen.queryByRole('menuitem', { name: /模型/ })).toBeNull()
-  expect(screen.getByRole('menuitemradio', { name: 'DeepSeek-V4-Flash' })).toBeTruthy()
+  expect(screen.getByRole('menuitemradio', { name: 'CoServe AI-V4-Flash' })).toBeTruthy()
   expect(screen.queryByRole('searchbox')).toBeNull()
-  const row = screen.getByRole('menuitemradio', { name: 'DeepSeek-V4-Flash' })
+  const row = screen.getByRole('menuitemradio', { name: 'CoServe AI-V4-Flash' })
   expect(document.activeElement).toBe(row)
   fireEvent.keyDown(row, { key: 'Escape' })
   expect(screen.queryByRole('group', { name: '模型与推理等级' })).toBeNull()
   fireEvent.click(trigger)
   expect(screen.queryByRole('searchbox')).toBeNull()
-  expect(document.activeElement).toBe(screen.getByRole('menuitemradio', { name: 'DeepSeek-V4-Flash' }))
+  expect(document.activeElement).toBe(screen.getByRole('menuitemradio', { name: 'CoServe AI-V4-Flash' }))
 })
 
 
@@ -1083,7 +1083,7 @@ it('places account and official models before third-party models', async () => {
   fireEvent.click(screen.getByRole('button', { name: '请选择模型' }))
   const names = screen.getAllByRole('menuitemradio').map(row => row.textContent)
   expect(names).toEqual([
-    'deepseek-account-1', 'deepseek-account-2', 'deepseek-official-1', 'deepseek-official-2',
+    'CoServe AI-account-1', 'CoServe AI-account-2', 'CoServe AI-official-1', 'CoServe AI-official-2',
     'custom-1', 'custom-2', 'another-1', 'another-2',
   ])
   expect(groups.map(group => group.id)).toEqual(['custom', 'deepseek-official', 'deepseek-account', 'another'])
@@ -1092,7 +1092,7 @@ it('places account and official models before third-party models', async () => {
 
 it.each([en, zh])('localizes the account group while preserving external names', (copy) => {
   const groups = ['deepseek-account', 'custom'].map(id => ({
-    id, name: id === 'deepseek-account' ? 'DeepSeek Account' : 'My Gateway',
+    id, name: id === 'deepseek-account' ? 'CoServe AI Account' : 'My Gateway',
     models: [{ id: 'model', name: 'Model' }],
   }))
   render(<ModelSelect renderSlot={renderLabel} locked={false} available
@@ -1104,18 +1104,18 @@ it.each([en, zh])('localizes the account group while preserving external names',
 })
 
 it('restores the account model name after login without changing the saved route', () => {
-  const groups = [{ id: 'deepseek-account', name: 'DeepSeek Account', models: [
-    { id: 'deepseek-flash', name: 'DeepSeek Flash', reasoning },
+  const groups = [{ id: 'deepseek-account', name: 'CoServe AI Account', models: [
+    { id: 'deepseek-flash', name: 'CoServe AI Flash', reasoning },
   ] }]
   const selected = { provider: 'deepseek-account', model: 'deepseek-flash', reasoningEffort: 'high' }
   const directory = createSnapshotStore(state({ current: selected, groups, retainedEffort: 'High' }))
   render(<ModelSelect renderSlot={renderLabel} locked={false} available directory={directory} load={vi.fn()}
     resolveText={resolveText} select={vi.fn()} t={t} />)
-  expect(screen.getByRole('button', { name: /选择模型，当前/ }).textContent).toBe('DeepSeek FlashHigh')
+  expect(screen.getByRole('button', { name: /选择模型，当前/ }).textContent).toBe('CoServe AI FlashHigh')
   act(() => { directory.update((snapshot) => { snapshot.groups = []; snapshot.routable = false }) })
   expect(screen.getByRole('button', { name: '请选择模型' }).textContent).toBe('请选择模型')
   act(() => { directory.update((snapshot) => { snapshot.groups = groups; snapshot.routable = true }) })
-  expect(screen.getByRole('button', { name: /选择模型，当前/ }).textContent).toBe('DeepSeek FlashHigh')
+  expect(screen.getByRole('button', { name: /选择模型，当前/ }).textContent).toBe('CoServe AI FlashHigh')
   expect(directory.getSnapshot().current).toEqual(selected)
 })
 

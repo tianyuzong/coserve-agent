@@ -1,6 +1,6 @@
 {
-  "name": "DeepSeek Harness",
-  "short_name": "DSH",
+  "name": "CoServe AI",
+  "short_name": "CoServe AI",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

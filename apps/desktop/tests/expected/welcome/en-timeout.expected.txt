@@ -1,5 +1,5 @@
-DeepSeek Harness
-DeepSeek Harness
+CoServe AI
+CoServe AI
 Sign in timed out
 Sign in again
 Add API Key

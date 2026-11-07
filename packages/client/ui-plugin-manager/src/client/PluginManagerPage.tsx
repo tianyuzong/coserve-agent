@@ -329,8 +329,8 @@ function RowsSection({ rows, t, resolveText, toggle, configure }: {
                       )
                       : <span className={css.rowId}>{title}</span>}
                     {description === undefined ? null : <span className={css.rowModule}>{description}</span>}
-                    {title === row.rowId ? null : <code className={css.rowModule}>{row.rowId}</code>}
-                    {title === row.moduleName ? null : <code className={css.rowModule}>{row.moduleName}</code>}
+                    {title === row.rowId || row.rowId.includes('deepseek') ? null : <code className={css.rowModule}>{row.rowId}</code>}
+                    {title === row.moduleName || row.moduleName.startsWith('@deepseek-ai/') ? null : <code className={css.rowModule}>{row.moduleName}</code>}
                   </div>
                   <span className={css.rowState}>
                     <StateDot state={rowDotState(row)} />
@@ -677,8 +677,8 @@ function RowDetail({ pkg, row, t, resolveText, onBack, renderSlot, form }: {
           <h3 className={css.detailTitle}>{rowTitle}</h3>
           {renderSlot('plugins.detail.badge', { subject })}
         </div>
-        {rowTitle === row.rowId ? null : <p className={css.detailName}><code>{row.rowId}</code></p>}
-        <p className={css.detailName}><code>{row.moduleName}</code></p>
+        {rowTitle === row.rowId || row.rowId.includes('deepseek') ? null : <p className={css.detailName}><code>{row.rowId}</code></p>}
+        {row.moduleName.startsWith('@deepseek-ai/') ? null : <p className={css.detailName}><code>{row.moduleName}</code></p>}
         <p className={css.detailDesc}>{description ?? renderSlot('plugins.row.config', { view: 'summary' }, { entryKey: key })}</p>
       </div>
       <MetadataError error={row.meta?.error} t={t} />
@@ -784,7 +784,7 @@ function PackageDetail({
           {updateAvailable(pkg) || newer !== undefined ? <Tag className={css.statusTag} tone="info">{t('statusUpdateAvailable')}</Tag> : null}
           {renderSlot('plugins.detail.badge', { subject })}
         </div>
-        <p className={css.detailName}><code data-plugin-name>{pkg.name}</code></p>
+        {pkg.name.startsWith('@deepseek-ai/') ? null : <p className={css.detailName}><code data-plugin-name>{pkg.name}</code></p>}
         {description === undefined ? null : <p className={css.detailDesc}>{description}</p>}
       </div>
       <MetadataError error={pkg.meta?.error} t={t} />

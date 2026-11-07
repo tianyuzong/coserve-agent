@@ -947,7 +947,7 @@ describe('PluginManagerPage', () => {
       setLanguage(dict)
       expect(screen.getByRole('heading', { level: 3 }).textContent).toBe(title(dict))
       expect(screen.getByText(description(dict))).toBeTruthy()
-      expect(document.querySelector('[data-plugin-name]')?.textContent).toBe(name)
+      expect(document.querySelector('[data-plugin-name]')?.textContent).toBe(name.startsWith('@deepseek-ai/') ? undefined : name)
       expect(screen.queryByText(dict.statusBeta) !== null).toBe(experimental)
       expect(screen.getByRole('switch', { name: dict.enableToggle.replace('{name}', title(dict)) })).toBeTruthy()
       expect(screen.getByRole('button', { name: dict.uninstallLabel.replace('{name}', title(dict)) })).toBeTruthy()

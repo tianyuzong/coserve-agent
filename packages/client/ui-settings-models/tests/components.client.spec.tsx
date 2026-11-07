@@ -33,7 +33,7 @@ afterEach(cleanup)
 const t: ModelsSectionInjected['t'] = key => en[key]
 const OPENAI_TARGET = { provider: 'openai', displayName: 'openai' }
 const openaiCopy = (template: string): string => providerCopy(template, OPENAI_TARGET)
-const DEEPSEEK_TARGET = { provider: 'deepseek-official', displayName: 'DeepSeek' }
+const DEEPSEEK_TARGET = { provider: 'deepseek-official', displayName: 'CoServe AI' }
 const deepSeekCopy = (template: string): string => providerCopy(template, DEEPSEEK_TARGET)
 
 /** Open one row's capacity disclosure (1-based, as the labels read). */
@@ -71,13 +71,13 @@ const DeepSeekConfig = Schema.object({
   })).default([
     {
       id: 'deepseek-v4-flash',
-      name: 'DeepSeek-V4-Flash',
+      name: 'CoServe AI-V4-Flash',
       description: '',
       contextWindow: 1_000_000,
     },
     {
       id: 'deepseek-v4-pro',
-      name: 'DeepSeek-V4-Pro',
+      name: 'CoServe AI-V4-Pro',
       description: '',
       contextWindow: 1_000_000,
     },
@@ -87,11 +87,11 @@ const DeepSeekConfig = Schema.object({
 const DEFAULT_DEEPSEEK_MODELS = [
   {
     id: 'deepseek-v4-flash',
-    name: 'DeepSeek-V4-Flash',
+    name: 'CoServe AI-V4-Flash',
     description: 'Preserved hidden detail',
     contextWindow: 1_000_000,
   },
-  { id: 'deepseek-v4-pro', name: 'DeepSeek-V4-Pro', contextWindow: 1_000_000 },
+  { id: 'deepseek-v4-pro', name: 'CoServe AI-V4-Pro', contextWindow: 1_000_000 },
 ]
 
 function wireNamespaces(): SettingsNamespaceView[] {
@@ -190,11 +190,11 @@ function scriptedFace(overrides: {
   const face = {
     llm: {
       listProviders: vi.fn((): ReturnType<PageContext['remote']['llm']['listProviders']> => Promise.resolve(remoteOk([
-        { id: 'deepseek-official', name: 'DeepSeek' },
+        { id: 'deepseek-official', name: 'CoServe AI' },
         { id: 'openai', name: 'openai' },
       ]))),
       listConfigurableProviders: vi.fn(() => Promise.resolve(remoteOk([
-        { provider: 'deepseek-official', displayName: 'DeepSeek', settingsNs: 'llm-deepseek', settingsPath: [], active: true },
+        { provider: 'deepseek-official', displayName: 'CoServe AI', settingsNs: 'llm-deepseek', settingsPath: [], active: true },
         {
           provider: 'openai', displayName: 'openai', settingsNs: 'llm-pi-ai', settingsPath: ['providers', 'openai'], active: true,
           defaultBaseURL: 'https://api.openai.com/v1', baseURLEnv: ['FIXTURE_ENDPOINT'], nativeAuth: { env: ['OPENAI_API_KEY'], oauth: false },
@@ -338,7 +338,7 @@ async function mountSection(overrides: Parameters<typeof scriptedFace>[0] = {}) 
 
 /**
  * Mount for a user who cannot reach any provider yet: no credential is stored
- * anywhere, so the whole-section DeepSeek route owns the first-run setup card.
+ * anywhere, so the whole-section CoServe AI route owns the first-run setup card.
  */
 async function mountFirstRun(overrides: Parameters<typeof scriptedFace>[0] = {}) {
   const scripted = scriptedFace(overrides)
@@ -350,8 +350,8 @@ async function mountFirstRun(overrides: Parameters<typeof scriptedFace>[0] = {})
 }
 
 /**
- * Mount and open the DeepSeek editor. The shared fixture already has a usable
- * openai route, so DeepSeek is an ordinary row whose card opens through Edit
+ * Mount and open the CoServe AI editor. The shared fixture already has a usable
+ * openai route, so CoServe AI is an ordinary row whose card opens through Edit
  * rather than by itself.
  */
 async function mountDeepSeekCard(overrides: Parameters<typeof scriptedFace>[0] = {}) {
@@ -646,10 +646,10 @@ describe('ModelsSection', () => {
     const scripted = scriptedFace()
     const failure = 'The provider configuration needs repair'
     scripted.face.llm.listProviders.mockResolvedValue(remoteOk([
-      { id: 'deepseek-official', name: 'DeepSeek' },
+      { id: 'deepseek-official', name: 'CoServe AI' },
     ]))
     scripted.face.llm.listConfigurableProviders.mockResolvedValue(remoteOk([
-      { provider: 'deepseek-official', displayName: 'DeepSeek', settingsNs: 'llm-deepseek', settingsPath: [], error: failure },
+      { provider: 'deepseek-official', displayName: 'CoServe AI', settingsNs: 'llm-deepseek', settingsPath: [], error: failure },
     ]))
     scripted.face.credentials.describe.mockResolvedValue(remoteOk({
       DEEPSEEK_API_KEY: { configured: false, writable: true },
@@ -705,7 +705,7 @@ describe('ModelsSection', () => {
     const { renderSlot, face, controller } = await mountSection()
     fireEvent.click(screen.getByRole('button', { name: en.add }))
     const directory = [
-      { provider: 'deepseek-official', displayName: 'DeepSeek', settingsNs: 'llm-deepseek', settingsPath: [], active: true },
+      { provider: 'deepseek-official', displayName: 'CoServe AI', settingsNs: 'llm-deepseek', settingsPath: [], active: true },
       { provider: 'openai', displayName: 'openai', settingsNs: 'llm-pi-ai', settingsPath: ['providers', 'openai'], active: true },
     ].map(({ active: _active, ...entry }) => entry)
     face.llm.listConfigurableProviders.mockImplementation(() => Promise.resolve(remoteOk(directory)))
@@ -717,9 +717,9 @@ describe('ModelsSection', () => {
   })
   it('renders the unkeyed whole-section provider as an open setup card in the first-run posture', async () => {
     await mountFirstRun()
-    // Nothing is reachable yet, and DeepSeek has no configured credential and
+    // Nothing is reachable yet, and CoServe AI has no configured credential and
     // no stored apiKey → setup card.
-    expect(screen.getByText('DeepSeek')).toBeTruthy()
+    expect(screen.getByText('CoServe AI')).toBeTruthy()
     expect(screen.getByLabelText(en.keyInput)).toBeTruthy()
     expect(screen.getByText('openai')).toBeTruthy()
     expect(screen.queryByText('Active')).toBeNull()
@@ -737,7 +737,7 @@ describe('ModelsSection', () => {
     expect(configured.className).toContain('credentialDotConfigured')
     expect(configured.closest('li')?.textContent).toContain('openai')
     const missing = screen.getByRole('img', { name: en.credentialMissing })
-    expect(missing.closest('li')?.textContent).toContain('DeepSeek')
+    expect(missing.closest('li')?.textContent).toContain('CoServe AI')
     // The card is still one click away.
     fireEvent.click(screen.getByRole('button', { name: deepSeekCopy(en.editProvider) }))
     expect(screen.getByLabelText(en.keyInput)).toBeTruthy()
@@ -812,9 +812,9 @@ describe('ModelsSection', () => {
   })
 
   it('uses one stable provider identity in action copy', () => {
-    const target = { provider: 'deepseek-official', displayName: 'DeepSeek' }
-    expect(providerTargetLabel(target)).toBe('DeepSeek (deepseek-official)')
-    expect(providerCopy(en.deleteTitle, target)).toBe('Delete DeepSeek (deepseek-official)?')
+    const target = { provider: 'deepseek-official', displayName: 'CoServe AI' }
+    expect(providerTargetLabel(target)).toBe('CoServe AI')
+    expect(providerCopy(en.deleteTitle, target)).toBe('Delete CoServe AI?')
     expect(providerTargetLabel(OPENAI_TARGET)).toBe('openai')
   })
 
@@ -838,10 +838,10 @@ describe('ModelsSection', () => {
     // mirror, so the reload shows as a directory read rather than a describe.
     await waitFor(() => { expect(face.llm.listProviders.mock.calls.length).toBeGreaterThan(1) })
     expect((await screen.findByRole('status')).textContent).toBe(
-      providerCopy(en.savedProvider, { provider: 'deepseek-official', displayName: 'DeepSeek' }),
+      providerCopy(en.savedProvider, { provider: 'deepseek-official', displayName: 'CoServe AI' }),
     )
     fireEvent.click(screen.getByText(en.add))
-    expect(screen.queryByText(providerCopy(en.savedProvider, { provider: 'deepseek-official', displayName: 'DeepSeek' }))).toBeNull()
+    expect(screen.queryByText(providerCopy(en.savedProvider, { provider: 'deepseek-official', displayName: 'CoServe AI' }))).toBeNull()
   })
 
   it('reuses the provider editor as a required credential-only onboarding form', async () => {
@@ -855,7 +855,7 @@ describe('ModelsSection', () => {
 
     render(<ProviderEditor
       provider="deepseek-official"
-      displayName="DeepSeek"
+      displayName="CoServe AI"
       hideTitle
       namespace={wireNamespaces()[0]!}
       schema={settingsSchema}
@@ -910,9 +910,7 @@ describe('ModelsSection', () => {
     })
     fireEvent.click(screen.getByText(en.customized))
     const baseURL = screen.getByLabelText<HTMLInputElement>(en.baseUrl)
-    // The deepseek placeholder is pinned to the public endpoint, not the
-    // effective value (which may reflect a launch-environment override).
-    expect(baseURL.placeholder).toBe('https://api.deepseek.com/anthropic (Default to use DEEPSEEK_BASE_URL)')
+    expect(baseURL.placeholder).toBe(en.deepSeekBaseUrl)
     fireEvent.change(baseURL, { target: { value: 'https://next2' } })
     fireEvent.click(screen.getByText(en.apply))
     await waitFor(() => { expect(mutate).toHaveBeenCalledTimes(1) })
@@ -925,7 +923,7 @@ describe('ModelsSection', () => {
     ])
   })
 
-  it('materializes inherited models and adds an arbitrary DeepSeek id', async () => {
+  it('materializes inherited models and adds an arbitrary CoServe AI id', async () => {
     const { mutate } = await mountDeepSeekCard({
       mutate: vi.fn(() => Promise.resolve(remoteOk(wireNamespaces()[0]))),
     })
@@ -960,7 +958,7 @@ describe('ModelsSection', () => {
     ])
   })
 
-  it('edits the DeepSeek endpoint and credential without a protocol selection', async () => {
+  it('edits the CoServe AI endpoint and credential without a protocol selection', async () => {
     const namespace: SettingsNamespaceView = {
       ...wireNamespaces()[0]!,
       ns: 'llm-deepseek',
@@ -973,7 +971,7 @@ describe('ModelsSection', () => {
     const { ProviderEditor } = await import('../src/client/ProviderEditor.tsx')
     render(<ProviderEditor
       provider="deepseek-official"
-      displayName="DeepSeek"
+      displayName="CoServe AI"
       namespace={namespace}
       schema={settingsSchema}
       settingsPath={[]}
@@ -984,7 +982,7 @@ describe('ModelsSection', () => {
     />)
     fireEvent.click(screen.getByText(en.customized))
     expect(screen.getByLabelText<HTMLInputElement>(en.baseUrl).placeholder)
-      .toBe('https://api.deepseek.com/anthropic (Default to use DEEPSEEK_BASE_URL)')
+      .toBe(en.deepSeekBaseUrl)
     expect(screen.queryByLabelText(en.customApi)).toBeNull()
     expect(screen.getByText(en.deepSeekEndpointHint)).toBeTruthy()
     fireEvent.change(screen.getByLabelText(en.keyInput), { target: { value: 'sk-messages-test' } })
@@ -1005,7 +1003,7 @@ describe('ModelsSection', () => {
     ]])
   })
 
-  it('rejects duplicate DeepSeek model ids before writing', async () => {
+  it('rejects duplicate CoServe AI model ids before writing', async () => {
     const { mutate } = await mountDeepSeekCard()
     fireEvent.click(screen.getByText(en.customized))
     fireEvent.click(screen.getByText(en.addModel))
@@ -1155,7 +1153,7 @@ describe('ModelsSection', () => {
     const { ProviderEditor } = await import('../src/client/ProviderEditor.tsx')
     render(<ProviderEditor
       provider="deepseek-official"
-      displayName="DeepSeek"
+      displayName="CoServe AI"
       namespace={overridden}
       schema={settingsSchema}
       settingsPath={[]}
@@ -1385,7 +1383,7 @@ describe('ModelsSection', () => {
     const { ProviderEditor } = await import('../src/client/ProviderEditor.tsx')
     render(<ProviderEditor
       provider="deepseek-official"
-      displayName="DeepSeek"
+      displayName="CoServe AI"
       namespace={bare}
       schema={settingsSchema}
       settingsPath={[]}
@@ -1396,7 +1394,7 @@ describe('ModelsSection', () => {
     />)
     fireEvent.click(screen.getByText(en.customized))
     const baseURL = screen.getByLabelText<HTMLInputElement>(en.baseUrl)
-    expect(baseURL.placeholder).toBe('https://api.deepseek.com/anthropic (Default to use DEEPSEEK_BASE_URL)')
+    expect(baseURL.placeholder).toBe(en.deepSeekBaseUrl)
     fireEvent.change(baseURL, { target: { value: 'https://x' } })
     expect(baseURL.value).toBe('https://x')
     fireEvent.change(baseURL, { target: { value: '' } })
@@ -1591,7 +1589,7 @@ describe('ModelsSection', () => {
       renderSlot={() => null}
     />)
     const key = await screen.findByLabelText<HTMLInputElement>(en.keyInput)
-    expect(key.placeholder).toBe(en.keyPlaceholderFallback.replace('{hint}', 'DEEPSEEK_API_KEY'))
+    expect(key.placeholder).toBe(en.keyPlaceholder)
   })
 
   it('tells the user to reopen when another writer moved the namespace first', async () => {
@@ -1804,7 +1802,7 @@ describe('ModelsSection', () => {
   it('opens on the custom mode when every catalog provider is already configured', async () => {
     const scripted = scriptedFace()
     scripted.face.llm.listConfigurableProviders.mockResolvedValue(remoteOk([
-      { provider: 'deepseek-official', displayName: 'DeepSeek', settingsNs: 'llm-deepseek', settingsPath: [] },
+      { provider: 'deepseek-official', displayName: 'CoServe AI', settingsNs: 'llm-deepseek', settingsPath: [] },
       { provider: 'openai', displayName: 'openai', settingsNs: 'llm-pi-ai', settingsPath: ['providers', 'openai'] },
     ]))
     await mountFace(scripted)
@@ -1857,7 +1855,7 @@ describe('ModelsSection', () => {
   it('picks a catalog target when the catalog becomes addable after the card opened', async () => {
     const scripted = scriptedFace()
     const exhausted = [
-      { provider: 'deepseek-official', displayName: 'DeepSeek', settingsNs: 'llm-deepseek', settingsPath: [] },
+      { provider: 'deepseek-official', displayName: 'CoServe AI', settingsNs: 'llm-deepseek', settingsPath: [] },
       { provider: 'openai', displayName: 'openai', settingsNs: 'llm-pi-ai', settingsPath: ['providers', 'openai'] },
     ]
     scripted.face.llm.listConfigurableProviders.mockResolvedValue(remoteOk(exhausted))
@@ -2038,10 +2036,10 @@ describe('ModelsSection', () => {
     fireEvent.click(screen.getAllByText(en.cancel)[0] as HTMLElement)
     // The add card kept its draft…
     expect(screen.getByLabelText(en.provider)).toBeTruthy()
-    // …and DeepSeek collapsed to an ordinary row carrying the missing-key dot.
+    // …and CoServe AI collapsed to an ordinary row carrying the missing-key dot.
     expect(screen.getAllByLabelText(en.keyInput)).toHaveLength(1)
     expect(screen.getAllByRole('img', { name: en.credentialMissing })
-      .some(dot => dot.closest('li')?.textContent?.includes('DeepSeek') === true)).toBe(true)
+      .some(dot => dot.closest('li')?.textContent?.includes('CoServe AI') === true)).toBe(true)
     // Its card reopens through Edit, which closes the add card as any row does.
     fireEvent.click(screen.getByRole('button', { name: deepSeekCopy(en.editProvider) }))
     expect(screen.getAllByLabelText(en.keyInput)).toHaveLength(1)
@@ -2059,7 +2057,7 @@ describe('ModelsSection', () => {
       t={t}
       renderSlot={() => null}
     />)
-    await screen.findByText('DeepSeek')
+    await screen.findByText('CoServe AI')
   })
 
   it('removes by unsetting the profile path, never by rebuilding the section', async () => {
@@ -2373,19 +2371,16 @@ it('shows endpoint configuration variables without presenting them as credential
     .toBe(en.baseUrlEnvironment.replace('{env}', baseURLEnv.join(', ')))
 })
 
-it.each([true, false, undefined])('shows the confirmed fallback state without assuming a connection works: %s', (configured) => {
+it.each([true, false, undefined])('keeps legacy authentication references out of the key editor: %s', (configured) => {
   renderPiAiEditor('deepseek', wireNamespaces().find(view => view.ns === 'llm-pi-ai')!, {
     nativeAuth: { env: ['DEEPSEEK_API_KEY'], oauth: false },
     ...configured === undefined ? {} : { credentialChecks: { DEEPSEEK_API_KEY: { configured, writable: true } } },
   })
   const input = screen.getByLabelText<HTMLInputElement>(en.keyInput)
-  expect(input.placeholder).toBe(en.keyPlaceholderFallback.replace('{hint}', 'DEEPSEEK_API_KEY'))
-  const hint = configured === true ? en.keyFallbackDetected.replace('{hint}', 'DEEPSEEK_API_KEY')
-    : configured === false ? en.keyFallbackMissing.replace('{hint}', 'DEEPSEEK_API_KEY') : en.keyFallbackUnchecked
-  expect(screen.getByText(hint).getAttribute('role')).toBeNull()
-  expect(document.getElementById(input.getAttribute('aria-describedby')!)?.textContent).toBe(hint)
+  expect(input.placeholder).toBe(en.keyPlaceholder)
+  expect(document.body.textContent).not.toContain('DEEPSEEK_API_KEY')
+  expect(authHelpText()).toBeNull()
   fireEvent.change(input, { target: { value: 'new-key' } })
-  expect(screen.queryByText(hint)).toBeNull()
   expect(input.getAttribute('aria-describedby')).toBeNull()
 })
 

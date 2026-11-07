@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "DeepSeek API 拡張",
-    "description": "他のプラグインが DeepSeek モデルのリクエストに拡張フィールドを追加できます。"
+    "title": "CoServe AI API 拡張",
+    "description": "他のプラグインが CoServe AI モデルのリクエストに拡張フィールドを追加できます。"
   }
 }

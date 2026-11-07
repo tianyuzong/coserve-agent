@@ -1,0 +1,18 @@
+/* The native editor retains ownership; this source alone gets an attachment-like surface. */
+.reference,
+:global([data-composer-chip="castudio-selection"]) {
+  display: inline-flex;
+  align-items: center;
+  max-width: 240px;
+  padding: 1px 4px;
+  margin: 0 2px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: var(--dsw-radius-sm);
+  background: var(--dsw-alias-bg-module-platform);
+  vertical-align: baseline;
+}
+
+:global([data-composer-chip="castudio-selection"]) > span {
+  min-width: 0;
+  color: var(--dsw-alias-label-primary);
+}

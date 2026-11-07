@@ -374,7 +374,7 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
     // Display method-neutral references without changing the adapter's lookup.
     const authRefs = namedRef === undefined
       ? (nativeAuth?.env ?? []).filter(ref => !endpointEnv.includes(ref)) : [namedRef]
-    const visibleRefs = authRefs.filter(ref => !ref.toLowerCase().includes('oauth'))
+    const visibleRefs = authRefs.filter(ref => !ref.toLowerCase().includes('oauth') && !/^DEEPSEEK_/i.test(ref))
     const keyHint = visibleRefs[0]
     const checkedRefs = authRefs.map(ref => [
       ref, props.credentialChecks?.[ref] ?? (ref === namedRef ? props.credential : undefined),
@@ -399,9 +399,10 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
     )
     // A provider with no native key authentication has no key for this field to store.
     const keylessNativeAuth = nativeAuth?.env.length === 0 && nativeAuth.oauth
-    const keyPlaceholder = keyHint === undefined || props.credentialRequired === true
-      ? t('keyPlaceholder')
-      : t(savedCredential ? 'keyPlaceholderSaved' : 'keyPlaceholderFallback').replace('{hint}', () => keyHint)
+    const keyPlaceholder = props.credentialRequired === true ? t('keyPlaceholder')
+      : savedCredential ? t('keyPlaceholderSaved')
+        : keyHint === undefined ? t('keyPlaceholder')
+          : t('keyPlaceholderFallback').replace('{hint}', () => keyHint)
     /** What both family editors take: the rows, whose layer owns them, and the two writes. */
     const catalogProps = {
       models,
@@ -549,7 +550,7 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
         : (
           <div className={styles['editorHeader']}>
             <span className={styles['editorTitle']}>{props.displayName}</span>
-            {props.provider !== props.displayName
+            {props.provider !== props.displayName && !props.provider.startsWith('deepseek')
               ? <span className={styles['editorRoute']}>{props.provider}</span>
               : null}
           </div>

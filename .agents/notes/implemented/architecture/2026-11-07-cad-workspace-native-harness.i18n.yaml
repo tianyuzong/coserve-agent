@@ -1,0 +1,19 @@
+# Bilingual-pair consistency record for 2026-11-07-cad-workspace-native-harness.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-11-07-cad-workspace-native-harness.md
+/agent-note-cad-workspace-with-the-native-harness:
+  en: bc2af085b50451e3
+  zh: d340ea893c361109
+/agent-note-cad-workspace-with-the-native-harness/problem:
+  en: 217cbc5d3582ab3a
+  zh: 4cbdb74e242a9428
+/agent-note-cad-workspace-with-the-native-harness/decision:
+  en: add561a3e2fee5c1
+  zh: 21904b10064ee2f2
+/agent-note-cad-workspace-with-the-native-harness/alternatives-considered:
+  en: b7449030b27f59d7
+  zh: e9a891f28cc2aafa
+/agent-note-cad-workspace-with-the-native-harness/consequences:
+  en: dc830461b372d907
+  zh: 16de2fae16cb2382

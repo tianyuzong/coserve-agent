@@ -93,13 +93,15 @@ export function ModelSelect(
   }
 
   const accountProviderName = t('provider.account')
+  const officialProviderName = t('provider.official')
   const groups = useMemo(() => orderModelProviders(state.groups).map(group => ({
     ...group,
+    models: group.models.map(model => ({ ...model, name: model.name.replace(/^DeepSeek\b/i, officialProviderName) })),
     provider: {
       id: group.id,
-      name: group.id === 'deepseek-account' ? accountProviderName : group.name,
+      name: group.id === 'deepseek-account' ? accountProviderName : group.name.replace(/^DeepSeek\b/i, officialProviderName),
     },
-  })), [state.groups, accountProviderName])
+  })), [state.groups, accountProviderName, officialProviderName])
   const choices = useMemo(() => groups.flatMap(group =>
     group.models.map(model => ({
       group,
@@ -555,7 +557,7 @@ export function ModelSelect(
               )}
               {state.failures.map(failure => (
                 <div className={css.warning} key={failure.id}>
-                  <span>{t('warning.groupLoad', { name: failure.id === 'deepseek-account' ? t('provider.account') : failure.name, message: failure.message })}</span>
+                  <span>{t('warning.groupLoad', { name: failure.id === 'deepseek-account' ? t('provider.account') : failure.name.replace(/^DeepSeek\b/i, officialProviderName), message: failure.message })}</span>
                   <button type="button" className={css.retry} onClick={reload}>{t('retry')}</button>
                 </div>
               ))}

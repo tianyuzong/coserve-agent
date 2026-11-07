@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "DeepSeek API extensión",
-    "description": "Permita que otros complementos agreguen campos de extensión a DeepSeek solicitudes de modelo."
+    "title": "CoServe AI API extensión",
+    "description": "Permita que otros complementos agreguen campos de extensión a CoServe AI solicitudes de modelo."
   }
 }

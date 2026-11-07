@@ -1,3 +1,9 @@
+# CoServe AI local desktop
+
+This local fork reuses the original CoServe AI company logo. The welcome Sign in button opens the workspace without account authentication, token creation, credential writes, or login analytics. Desktop account settings show local identity and do not mount cloud account subscriptions, balances, or onboarding. Model connections remain configured separately with their original provider identifiers and endpoint protocols.
+
+The CAStudio panel uses its original Pi harness, project history, model configuration, and CAD tools. The desktop main process proxies JSON API requests and project SSE streams to `COSERVE_CASTUDIO_URL` (default `http://127.0.0.1:4317`); only the primary application frame may call this bridge. The CAD workspace uses CAStudio's `embedded=1` view. The launcher starts the existing local CAStudio service before the desktop. Failed requests remain visible and mutations are not automatically retried; closing or navigating the desktop releases its event subscriptions without deleting projects or stopping work in another CAStudio client. Cloud session-log upload is disabled in this local build.
+
 ---
 description: "Desktop runs the Harness workspace in a native application. This reference covers application behavior, development and integration; the packaging, Windows signing and publication guides own build and release operations."
 ---

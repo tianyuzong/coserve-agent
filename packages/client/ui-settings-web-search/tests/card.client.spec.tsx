@@ -110,8 +110,8 @@ const paragraphs = (name: string) => [...screen.getByRole('region', { name }).qu
 describe('WebSearchCard', () => {
   it('offers legacy search in both locales and renders its own settings', () => {
     const { actions } = renderPage(legacy())
-    expect(searchMenu().textContent).toBe('DeepSeek (legacy)')
-    expect(zh.providerLegacy).toBe('DeepSeek（旧版）')
+    expect(searchMenu().textContent).toBe('CoServe AI (legacy)')
+    expect(zh.providerLegacy).toBe('CoServe AI（旧版）')
     expect(screen.queryByLabelText(en.count)).toBeNull()
     fireEvent.change(screen.getByLabelText(en.credential), { target: { value: 'new-key' } })
     fireEvent.change(screen.getByLabelText(en.baseUrl), { target: { value: 'https://messages.test/v1' } })

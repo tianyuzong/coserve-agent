@@ -1,0 +1,8 @@
+.artwork {
+  flex-shrink: 0;
+}
+
+/* Preserve the supplied artwork's contours and blue accents on dark surfaces. */
+:global(body[data-ds-dark-theme]) .artwork {
+  filter: invert(1) hue-rotate(180deg);
+}

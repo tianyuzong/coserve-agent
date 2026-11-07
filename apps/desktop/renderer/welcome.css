@@ -23,6 +23,10 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
+  body .brand {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
   body {
     --dsw-alias-label-primary: #f9fafb;
     --dsw-alias-label-secondary: #cfd3d6;

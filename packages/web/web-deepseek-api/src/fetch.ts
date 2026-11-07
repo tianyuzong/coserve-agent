@@ -31,14 +31,14 @@ export class DeepSeekFetchApiProvider implements WebFetchProvider {
   readonly id = DEEPSEEK_FETCH_API_PROVIDER_ID
   /** Picker description: what this provider suits and what it costs or cannot do. */
   readonly description: NonNullable<WebFetchProvider['description']> = {
-    en: 'Fetches public URLs on DeepSeek servers and returns Markdown. Uses the DeepSeek account of the current conversation, or a DeepSeek API key, may incur API charges, and cannot reach intranet or loopback addresses.',
-    zh: '由 DeepSeek 服务端抓取公网页面并返回 Markdown。使用当前会话的 DeepSeek 账号或 DeepSeek API Key，可能产生计费，且无法访问内网和本机',
-    ja: 'DeepSeek のサーバーで公開 URL を取得し、Markdown を返します。現在の会話の DeepSeek アカウント、または DeepSeek API キーを使用し、API 料金が発生する場合があり、イントラネットやループバックのアドレスにはアクセスできません。',
-    es: 'Obtiene URL públicas en los servidores de DeepSeek y devuelve Markdown. Usa la cuenta de DeepSeek de la conversación actual o una clave de API de DeepSeek, puede generar cargos de API y no puede acceder a direcciones de la intranet ni de bucle invertido.',
-    fr: "Récupère les URL publiques sur les serveurs DeepSeek et renvoie du Markdown. Utilise le compte DeepSeek de la conversation en cours ou une clé API DeepSeek, peut entraîner des frais d'API et ne peut pas atteindre les adresses intranet ou de bouclage.",
-    de: 'Ruft öffentliche URLs auf DeepSeek-Servern ab und gibt Markdown zurück. Verwendet das DeepSeek-Konto der aktuellen Unterhaltung oder einen DeepSeek-API-Schlüssel, kann API-Kosten verursachen und erreicht keine Intranet- oder Loopback-Adressen.',
-    ru: 'Загружает публичные URL на серверах DeepSeek и возвращает Markdown. Использует учётную запись DeepSeek текущего разговора или ключ API DeepSeek, возможна оплата API; адреса интрасети и loopback недоступны.',
-    pt: 'Obtém URLs públicas nos servidores da DeepSeek e retorna Markdown. Usa a conta DeepSeek da conversa atual ou uma chave de API da DeepSeek, pode gerar cobranças de API e não alcança endereços da intranet nem de loopback.',
+    en: 'Fetches public URLs on servers and returns Markdown. Uses the account of the current conversation, or a API key, may incur API charges, and cannot reach intranet or loopback addresses.',
+    zh: '由 服务端抓取公网页面并返回 Markdown。使用当前会话的 账号或 API Key，可能产生计费，且无法访问内网和本机',
+    ja: 'サービス側のサーバーで公開 URL を取得し、Markdown を返します。現在の会話の アカウント、または API キーを使用し、API 料金が発生する場合があり、イントラネットやループバックのアドレスにはアクセスできません。',
+    es: 'Obtiene URL públicas en los servidores del proveedor y devuelve Markdown. Usa la cuenta del proveedor de la conversación actual o una clave de API del proveedor, puede generar cargos de API y no puede acceder a direcciones de la intranet ni de bucle invertido.',
+    fr: "Récupère les URL publiques sur les serveurs et renvoie du Markdown. Utilise le compte de la conversation en cours ou une clé API, peut entraîner des frais d'API et ne peut pas atteindre les adresses intranet ou de bouclage.",
+    de: 'Ruft öffentliche URLs auf Servern des Anbieters ab und gibt Markdown zurück. Verwendet das Konto der aktuellen Unterhaltung oder einen API-Schlüssel, kann API-Kosten verursachen und erreicht keine Intranet- oder Loopback-Adressen.',
+    ru: 'Загружает публичные URL на серверах провайдера и возвращает Markdown. Использует учётную запись текущего разговора или ключ API, возможна оплата API; адреса интрасети и loopback недоступны.',
+    pt: 'Obtém URLs públicas nos servidores do provedor e retorna Markdown. Usa a conta da conversa atual ou uma chave de API do provedor, pode gerar cobranças de API e não alcança endereços da intranet nem de loopback.',
   }
 
   /** @param resolveOptions - the options for the NEXT fetch, read once at each fetch's entry. */

@@ -220,6 +220,7 @@ function targetOf(row: ProviderRow): EditorTarget {
 
 /** Stable visible and accessible identity for one provider target. */
 export function providerTargetLabel(target: ProviderIdentity): string {
+  if (target.provider.startsWith('deepseek')) return target.displayName
   return target.provider === target.displayName
     ? target.provider
     : `${target.displayName} (${target.provider})`
@@ -247,8 +248,11 @@ export function ModelsSection(props: ModelsSectionProps): ReactNode {
 function Loaded({ injected, renderSlot }: { injected: ModelsSectionFace; renderSlot: ModelsRenderSlot }): ReactNode {
   const { controller, operations, schema, t } = injected
   const snapshot = injected.useSnapshot(value => value)
-  const state = { ...snapshot, rows: snapshot.rows.map(row => row.entry.provider === 'deepseek-account'
-    ? { ...row, entry: { ...row.entry, displayName: t('deepSeekAccount') } } : row) }
+  const state = { ...snapshot, rows: snapshot.rows.map(row => ({ ...row, entry: {
+    ...row.entry,
+    displayName: row.entry.provider === 'deepseek-account'
+      ? t('deepSeekAccount') : row.entry.displayName.replace(/^DeepSeek\b/i, t('coserveAi')),
+  } })) }
   /** A new or failed surface waits for a current snapshot; background refreshes preserve its drafts. */
   const [hasReadySnapshot, setHasReadySnapshot] = useState(state.status === 'ready')
   if (state.status === 'ready' && !hasReadySnapshot) setHasReadySnapshot(true)

@@ -2,7 +2,7 @@
 /** Account state updates continue after default-model initialization refuses. */
 import { expect, it, vi, afterEach } from 'vitest'
 import type { AccountView, SignInAttemptId } from '@deepseek-ai/dsh-deepseek-account/types'
-import { apply, type AccountSectionInjected } from '../src/client/index.ts'
+import { apply, type AccountSectionInjected } from '../src/client/cloud-account.ts'
 
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs() })
 
