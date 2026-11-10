@@ -1,0 +1,31 @@
+# Bilingual-pair consistency record for quickstart.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/quickstart.md
+/quickstart:
+  en: 8454e0542470617e
+  zh: bb433fc9a6ac6a0b
+/quickstart/what-you-need:
+  en: 26ba03a398bf59f0
+  zh: b55485ca03022cea
+/quickstart/1-clone-and-install:
+  en: 83ac37b0c29d5be8
+  zh: 6f92303b6ce227ab
+/quickstart/2-build-and-launch-the-desktop-app:
+  en: 8b2d33c75733f718
+  zh: 35cf5a0806091dea
+/quickstart/3-start-the-castudio-service:
+  en: 4cb67acf7e9322a6
+  zh: 9943822d9b0d3da6
+/quickstart/4-install-the-parametric-cad-environment:
+  en: dfacae0bcfd6cb53
+  zh: b915c01a23be5633
+/quickstart/5-package-a-windows-installer:
+  en: 86eca1d5b38cc62b
+  zh: 4d38fd8a1a53bfe3
+/quickstart/troubleshooting:
+  en: 730b5c6b12d887d4
+  zh: 817d66eb71cb3a70
+/quickstart/next-steps:
+  en: 0dcf83da363332f1
+  zh: 623987f0e1b86b0c

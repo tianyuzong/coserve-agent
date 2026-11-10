@@ -1,83 +1,101 @@
-# DeepSeek Harness
+# CoServe AI
 
 English | [中文](README.zh.md)
 
-DeepSeek Harness (`dsh`) is an open-source agent harness developed by [DeepSeek AI](https://deepseek.com).
+CoServe AI is an engineering agent workspace built on the native DeepSeek Harness. It pairs the harness conversation, tools and session runtime with CAStudio, a local CAD/CAE service for parametric models, project workspaces, scene inspection, builds, measurements and structural or thermal analysis.
 
-It is built on an **everything-is-a-plugin** architecture and powered by [Cordis](https://github.com/cordiverse/cordis), whose design is described in [_A Programming Paradigm for Spatiotemporal Composability_](https://arxiv.org/abs/2608.25512).
+This repository is a developer preview: interfaces, packaging and data formats change between versions, and no prebuilt installer is published yet. Build the product from source, or package it yourself.
 
-Documentation: [https://deepseek-harness.github.io/deepseek-harness/](https://deepseek-harness.github.io/deepseek-harness/)
+## What is inside
 
-## Developer preview
+- **Desktop app** (`apps/desktop`): the Electron shell that bundles the harness runtime and the CAStudio service, and manages the service lifecycle.
+- **Harness** (`packages/**`): the plugin architecture behind conversation, tools, sessions, skills and the web UI.
+- **CAStudio service** (`castudio`): a self-contained npm project with the CAD server, parametric editor, scene viewer and simulation routes.
+- **CAD workspace UI** (`packages/client/ui-castudio`): the right-hand CAD pane and its controller.
+- **Agent tools** (`packages/context/tool-castudio`): the model-facing `cad_workbench` tool and the per-step CAStudio project context.
 
-DeepSeek Harness is in _developer preview_ and iterating rapidly. **THERE WILL BE COMPATIBILITY-BREAKING CHANGES.**
+## Repository layout
 
-Review the [safety notice](SAFETY.md) before running the project.
-
-## Run
-
-### Run from `npm`
-
-Install `Node.js`, then run:
-
-```sh
-npx @deepseek-ai/dsh web
+```text
+apps/desktop
+apps/cli
+apps/web
+packages/
+castudio/
+docs/
 ```
 
-The command starts the Web UI at `http://127.0.0.1:3080` by default and opens it in the default browser for a local launch. An SSH launch only prints the host URL because the SSH client or editor owns the local forwarded address. Pass `--no-open` to run the server without opening a browser. See [Web UI guide](docs/user/guide/index.md).
+## Requirements
 
-### Run from source
+- Windows 10/11 x64 for the desktop app and the CAD service; the harness itself also runs on macOS and Linux.
+- Node.js 24.9 or newer (24.x LTS) and pnpm 11, enabled with `corepack enable pnpm`.
+- Python 3.12, only when you want the optional parametric CAD environment.
+- Network access to the npm registry, about 10 GB of free disk, and time for the first build.
 
-To run from a repository checkout:
+## Run the desktop app from source
 
-```sh
-git clone https://github.com/deepseek-ai/deepseek-harness.git
-cd deepseek-harness
+The desktop app is the complete product: one window with the conversation, the CAD workspace and the bundled service. From a clean checkout:
+
+```powershell
+git clone https://github.com/yhz5613813/coserve-agent.git
+cd coserve-agent
+corepack enable pnpm
+pnpm install
+pnpm run dev:desktop
+```
+
+The first `dev:desktop` builds the desktop bundles, prepares the runtime payload and launches Electron, which takes several minutes and downloads a few hundred megabytes. Later launches use the prepared artifacts:
+
+```powershell
+pnpm run start:desktop
+```
+
+## Run the web UI
+
+The harness also ships a browser UI without the Electron shell:
+
+```powershell
 pnpm install
 pnpm run build
 pnpm dsh web
 ```
 
-`pnpm run build` prepares the repository artifacts. `pnpm dsh web` uses those built artifacts without rebuilding.
+`pnpm dsh web` serves the web UI on `http://127.0.0.1:3080`. This mode has no CAD pane service of its own.
 
-## CAD workspace (CAStudio)
+## Public deployments
 
-Desktop builds bundle the CAStudio CAD service from the in-repo [`castudio/`](castudio/README.md) tree: `apps/desktop/scripts/prepare-castudio.ts` installs and builds that npm project, then stages it under `resources/castudio` inside the packaged app. The service owns the CAD projects, parametric editor, builds, measurements and simulations; Desktop probes, spawns and stops it (see [apps/desktop/README.md](apps/desktop/README.md)).
+`dsh web` binds a loopback interface for a local session. Exposing the harness beyond the local machine is your own deployment decision: put it behind an authenticated reverse proxy, and review the configuration catalog before changing authentication or storage settings.
 
-`castudio/` is a self-contained npm project (its own `package-lock.json`, toolchain and third-party notices), so it is deliberately not part of the pnpm workspace. Third-party notices for the components vendored with it live in [castudio/THIRD_PARTY_NOTICES.md](castudio/THIRD_PARTY_NOTICES.md).
+## CAD workspace
 
-## Community and support
+- The packaged desktop app starts the bundled CAStudio service on `http://127.0.0.1:4317` unless another process already answers there.
+- From source, the desktop app expects that service to be running already; start it in a second terminal.
+- Parametric modelling, structural analysis and thermal analysis need the optional Python environment, installed once with the bundled script.
+- The vendored CadFlow wheel targets Windows x64 with Python 3.12.
 
-- Submit feedback or bug reports through [GitHub Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions).
-- Add the [`dsh-plugin`](https://github.com/topics/dsh-plugin) topic to your plugin repository for discoverability.
-- Join <a href="https://discord.gg/4MrtZUhpxg">DeepSeek Harness Discord community</a>.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Development
-
-Start with the [development guide](docs/development.md) and [architecture documentation](docs/architecture.md).
-
-`pnpm run dev:web` builds, serves, and rebuilds client bundles on source edits in one terminal, and `make help` lists the matching Make targets for Web and Desktop; the guide's application commands section owns the full table.
-
-For agents, follow [AGENTS.md](AGENTS.md).
-
-## Citation
-
-```bibtex
-@misc{deepseek-harness2026,
-  title={DeepSeek Harness: Everything is a Plugin},
-  author={DeepSeek-AI},
-  year={2026},
-  publisher={GitHub},
-  howpublished={\url{https://github.com/deepseek-ai/deepseek-harness}},
-}
+```powershell
+cd castudio
+npm ci
+npm run dev
 ```
+
+## Package a Windows build
+
+Produce an unsigned NSIS installer and an unpacked app directory:
+
+```powershell
+pnpm run package:desktop:win:x64:unsigned
+```
+
+Artifacts land in `apps/desktop/.desktop-build/targets/win-x64/unsigned-artifacts`. Packaging needs the same toolchain as the source build plus roughly 4 GB of free working space; a full run takes about ten to fifteen minutes.
+
+## Documentation
+
+- [Quickstart](docs/quickstart.md): the step-by-step path from a clean Windows machine to a running desktop app.
+- [Desktop service and packaging](apps/desktop/README.md): service lifecycle, environment variables and packaging details.
+- [CAStudio](castudio/README.md): the CAD service, its projects and its HTTP API.
+- [Bilingual documentation contract](docs/i18n/README.md): how English and Chinese documents stay paired.
 
 ## License
 
-[MIT](LICENSE)
-
-Third-party dependencies and their licenses are disclosed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+CoServe AI is released under the [MIT license](LICENSE). Third-party components and their notices are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and [castudio/THIRD_PARTY_NOTICES.md](castudio/THIRD_PARTY_NOTICES.md).

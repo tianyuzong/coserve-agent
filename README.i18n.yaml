@@ -2,33 +2,36 @@
 # section, a hash of its English and Chinese blocks outside code blocks and generated regions.
 # After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write README.md
-/deepseek-harness:
-  en: f68c4f080ce55ff2
-  zh: 88a76d7f7f0b260e
-/deepseek-harness/developer-preview:
-  en: 4ef4d8a71ac143f0
-  zh: 1bfc3149ba8e5543
-/deepseek-harness/run:
-  en: 4e0248e4c6474fc6
-  zh: eb2fb8d78c7d6bc0
-/deepseek-harness/run/run-from-npm:
-  en: e22005cd42e6cbad
-  zh: 0f536f4208df1d60
-/deepseek-harness/run/run-from-source:
-  en: 819e3f7c144d0d64
-  zh: de815f040975dba7
-/deepseek-harness/community-and-support:
-  en: 20acf6451fdc869b
-  zh: d06246dd019ecef7
-/deepseek-harness/contributing:
-  en: cabc2d3e9f8898bd
-  zh: 83b6d238bae29ce3
-/deepseek-harness/development:
-  en: 803ca2b11b497bed
-  zh: 8b4071eb0e7783ef
-/deepseek-harness/citation:
-  en: 6704e9e5a8d49a91
-  zh: 85c9cdd8d56f8e9d
-/deepseek-harness/license:
-  en: 926995344fc1c72b
-  zh: c92fab5abf85932f
+/coserve-ai:
+  en: 5bed6d4d42383933
+  zh: 79371f961fe58a37
+/coserve-ai/what-is-inside:
+  en: c7d551ba6f8b81db
+  zh: faf6ede0f0598937
+/coserve-ai/repository-layout:
+  en: e0b878e218330b9f
+  zh: f1bc240d5c7423f2
+/coserve-ai/requirements:
+  en: 67b3a49c20a1b123
+  zh: 841044c56eda7ebd
+/coserve-ai/run-the-desktop-app-from-source:
+  en: d73e7fe4f58aaa7e
+  zh: 5b7b5faa24eb0d9f
+/coserve-ai/run-the-web-ui:
+  en: fccc65a529523737
+  zh: f6870392e47cc277
+/coserve-ai/public-deployments:
+  en: 1142a779a3d9eddb
+  zh: fa32d7afa16d8270
+/coserve-ai/cad-workspace:
+  en: d05259c0ce0f415e
+  zh: 66fb24d87296befb
+/coserve-ai/package-a-windows-build:
+  en: c5ad34b23eb857ff
+  zh: 179c5592fb5c2093
+/coserve-ai/documentation:
+  en: c76ed584ef57aeae
+  zh: f1d12a8aea499aad
+/coserve-ai/license:
+  en: 555a0f7e31e14b6f
+  zh: 9984edab78eefe28

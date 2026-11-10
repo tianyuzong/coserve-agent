@@ -1,96 +1,103 @@
-# DeepSeek Harness
+# CoServe AI
 
 [English](README.md) | 中文
 
-DeepSeek Harness（`dsh`）是由 [DeepSeek AI](https://deepseek.com) 开发的开源 agent harness（智能体框架）。
+CoServe AI 是基于原生 DeepSeek Harness 的工程智能体工作台。它把 harness 的对话、工具与会话运行时，和 CAStudio——一个本地 CAD/CAE 服务——组合在一起，支持参数化建模、项目工作区、场景检视、构建、测量以及结构分析与热分析。
 
-它构建于**一切皆插件**的架构之上，由 [Cordis](https://github.com/cordiverse/cordis) 驱动，其设计参见论文 [_A Programming Paradigm for Spatiotemporal Composability_](https://arxiv.org/abs/2608.25512)。
+本仓库是开发者预览版：接口、打包方式和数据格式会随版本变化，目前还没有发布预编译安装包。请从源码构建，或自行打包。
 
-文档：[https://deepseek-harness.github.io/deepseek-harness/](https://deepseek-harness.github.io/deepseek-harness/)
+## 仓库包含什么
 
-## 开发者预览
+- **桌面应用**（`apps/desktop`）：Electron 外壳，内置 harness 运行时与 CAStudio 服务，并负责管理服务的生命周期。
+- **Harness**（`packages/**`）：支撑对话、工具、会话、技能与 Web UI 的插件体系。
+- **CAStudio 服务**（`castudio`）：独立 npm 项目，包含 CAD 服务端、参数化编辑器、场景查看器与仿真路由。
+- **CAD 工作区 UI**（`packages/client/ui-castudio`）：右侧 CAD 面板及其控制器。
+- **智能体工具**（`packages/context/tool-castudio`）：面向模型的 `cad_workbench` 工具与逐步骤的 CAStudio 项目上下文。
 
-DeepSeek Harness 处于 _开发者预览_ 阶段，正在快速迭代。**未来将出现破坏兼容性的变更。**
+## 仓库结构
 
-运行本项目前，请阅读[安全说明](SAFETY.zh.md)。
-
-<a id="run"></a>
-
-## 运行
-
-### 通过 `npm` 运行
-
-安装 `Node.js`，然后运行：
-
-```sh
-npx @deepseek-ai/dsh web
+```text
+apps/desktop
+apps/cli
+apps/web
+packages/
+castudio/
+docs/
 ```
 
-该命令默认会在 `http://127.0.0.1:3080` 启动 Web UI，本机启动时还会用默认浏览器打开页面。通过 SSH 启动时只打印宿主机 URL，因为本地转发地址由 SSH 客户端或编辑器持有。传入 `--no-open` 可仅运行服务器而不打开浏览器。详见 [Web UI 指南](docs/user/guide/index.zh.md)。
+## 环境要求
 
-<a id="run-from-source"></a>
+- 桌面应用与 CAD 服务需要 Windows 10/11 x64；harness 本身也支持 macOS 与 Linux。
+- Node.js 24.9 或更高版本（24.x LTS），以及 pnpm 11，用 `corepack enable pnpm` 启用。
+- Python 3.12，仅在需要可选的参数化 CAD 环境时安装。
+- 能访问 npm registry 的网络、约 10 GB 可用磁盘，以及首次构建所需的时间。
 
-### 从源码运行
+## 从源码运行桌面版
 
-如需从仓库源码运行：
+桌面版就是完整产品：一个窗口里同时有对话、CAD 工作区和内置服务。从干净的检出开始：
 
-```sh
-git clone https://github.com/deepseek-ai/deepseek-harness.git
-cd deepseek-harness
+```powershell
+git clone https://github.com/yhz5613813/coserve-agent.git
+cd coserve-agent
+corepack enable pnpm
+pnpm install
+pnpm run dev:desktop
+```
+
+第一次 `dev:desktop` 会构建桌面端产物、准备运行时负载并启动 Electron，需要几分钟并下载几百兆内容。之后的启动直接复用已准备好的产物：
+
+```powershell
+pnpm run start:desktop
+```
+
+<a id="run-the-web-ui"></a>
+## 运行 Web UI
+
+harness 也提供不带 Electron 外壳的浏览器界面：
+
+```powershell
 pnpm install
 pnpm run build
 pnpm dsh web
 ```
 
-`pnpm run build` 会准备仓库产物。`pnpm dsh web` 会直接使用这些已构建产物，不会重新构建。
+`pnpm dsh web` 会在 `http://127.0.0.1:3080` 提供 Web UI。该模式没有自己的 CAD 面板服务。
 
-## 社区与支持
+<a id="public-deployments"></a>
+## 公开部署
 
-- 通过 [GitHub Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions) 提交反馈或 bug 报告。
-- 为你的插件仓库添加 [`dsh-plugin`](https://github.com/topics/dsh-plugin) 话题，便于被发现。
-- 欢迎加入 DeepSeek Harness 企微群！扫描下方二维码填写入群问卷，小助手会定期发送入群邀请。
+`dsh web` 为本地会话绑定回环接口。把 harness 暴露到本机之外属于你自己的部署决策：请放在带认证的反向代理之后，并在改动认证或存储配置前先查阅配置目录。
 
-<table>
-  <thead>
-    <tr>
-      <th align="center">入群问卷</th>
-      <th align="center">微信公众号</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><a href="https://trtgsjkv6r.feishu.cn/share/base/form/shrcnIt5twSVdLGD52KJBckGCgg"><img src="https://cdn.deepseek.com/harness/readme/community-wecom-survey.png" alt="DeepSeek Harness 入群问卷二维码" width="180" height="180"></a></td>
-      <td align="center"><img src="https://cdn.deepseek.com/harness/readme/community-wechat-official-account.png" alt="DeepSeek Harness 团队微信公众号二维码" width="180" height="180"></td>
-    </tr>
-  </tbody>
-</table>
+## CAD 工作区
 
-## 参与贡献
+- 打包后的桌面应用会在 `http://127.0.0.1:4317` 启动内置的 CAStudio 服务，除非该地址已有进程在应答。
+- 从源码运行时，桌面应用会直接使用该地址上已在运行的服务，需要在另一个终端里先启动它。
+- 参数化建模、结构分析与热分析需要可选的 Python 环境，用内置脚本安装一次即可。
+- 随仓库提供的 CadFlow wheel 面向 Windows x64 与 Python 3.12。
 
-参见 [CONTRIBUTING.md](CONTRIBUTING.zh.md)。
-
-## 开发
-
-请先阅读[开发指南](docs/development.zh.md)与[架构文档](docs/architecture.zh.md)。
-
-`pnpm run dev:web` 会在一个终端里完成构建、启动，并在源码修改时重建 client bundle；`make help` 列出 Web 与 Desktop 对应的 Make target。完整表格见开发指南的「应用命令」一节。
-
-面向 agent：请遵循 [AGENTS.md](AGENTS.md)。
-
-## 引用
-
-```bibtex
-@misc{deepseek-harness2026,
-  title={DeepSeek Harness: Everything is a Plugin},
-  author={DeepSeek-AI},
-  year={2026},
-  publisher={GitHub},
-  howpublished={\url{https://github.com/deepseek-ai/deepseek-harness}},
-}
+```powershell
+cd castudio
+npm ci
+npm run dev
 ```
+
+## 打包 Windows 版本
+
+生成未签名的 NSIS 安装包和解包后的应用目录：
+
+```powershell
+pnpm run package:desktop:win:x64:unsigned
+```
+
+产物位于 `apps/desktop/.desktop-build/targets/win-x64/unsigned-artifacts`。打包需要与源码构建相同的工具链，外加约 4 GB 可用工作空间；完整跑一次约需十到十五分钟。
+
+## 文档
+
+- [快速开始](docs/quickstart.zh.md)：从干净的 Windows 机器到运行桌面版的完整步骤。
+- [桌面服务与打包](apps/desktop/README.zh.md)：服务生命周期、环境变量与打包细节。
+- [CAStudio](castudio/README.md)：CAD 服务、项目与 HTTP API。
+- [双语文档约定](docs/i18n/README.zh.md)：英文与中文文档如何保持配对。
 
 ## 许可证
 
-[MIT](LICENSE)
-
-第三方依赖及其许可证见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+CoServe AI 以 [MIT 许可证](LICENSE)发布。第三方组件及其声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 与 [castudio/THIRD_PARTY_NOTICES.md](castudio/THIRD_PARTY_NOTICES.md)。
