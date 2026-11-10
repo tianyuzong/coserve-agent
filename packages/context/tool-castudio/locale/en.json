@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "CAD workbench tool",
+    "description": "Let the AI inspect and operate the live CAD workbench the user has open in CAStudio."
+  }
+}

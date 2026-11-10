@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "CAD ワークベンチツール",
+    "description": "ユーザーが CAStudio で開いているライブ CAD ワークベンチを AI が確認・操作できるようにします。"
+  }
+}

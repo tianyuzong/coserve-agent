@@ -14,6 +14,7 @@ export interface DesktopTargetBuildPaths {
   readonly packedDsh: string
   readonly packedVendor: string
   readonly packedLandlock: string
+  readonly castudio: string
   readonly downloads: string
   readonly pnpmStore: string
 }

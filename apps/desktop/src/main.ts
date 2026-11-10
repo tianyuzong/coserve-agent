@@ -2,6 +2,7 @@
 
 import { installFileActions } from './file-actions.ts'
 import { installCAStudio } from './castudio.ts'
+import { startCAStudioService } from './castudio-service.ts'
 import { configurationFailure, channelSaveFailure, configurationMessage } from './update-configuration.ts'
 import type { DesktopChannelState, DesktopChannelChangeResult } from '@deepseek-ai/dsh-client-ui-settings-general/types'
 import { DesktopUpdateSettings } from './update-settings.ts'
@@ -855,8 +856,15 @@ async function main(): Promise<void> {
     return owner
   }
   installFileActions(assertMainApplication, () => hostUrl)
-  const disposeCAStudio = installCAStudio(assertMainApplication, process.env.COSERVE_CASTUDIO_URL ?? 'http://127.0.0.1:4317')
+  const castudioOrigin = process.env.COSERVE_CASTUDIO_URL ?? 'http://127.0.0.1:4317'
+  const disposeCAStudio = installCAStudio(assertMainApplication, castudioOrigin)
   app.on('will-quit', disposeCAStudio)
+  const caStudioService = startCAStudioService({
+    origin: castudioOrigin,
+    executable: resources.node,
+    resourcesPath: process.resourcesPath,
+  })
+  app.on('will-quit', () => { void caStudioService.stop() })
   ipcMain.on(PLATFORM_IPC.bootstrap, (event) => {
     try { event.returnValue = platformView.bootstrap(event) }
     catch { event.returnValue = null }
@@ -1492,6 +1500,7 @@ async function main(): Promise<void> {
       }),
       platformView.dispose(),
       disposeFileDrag(),
+      caStudioService.stop(),
     ].map(cleanup => cleanup.catch((error: unknown) => { console.error(error) })))
       .then(() => { app.quit() })
   }

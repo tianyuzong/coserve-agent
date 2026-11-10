@@ -1,0 +1,33 @@
+# Test-only patch over the shipped headless profile. The production bundle
+# layers own the agent services, tools, persistence plugin, and defaults.
+- id: headless-startup
+  disabled: true
+
+- id: headless-runner
+  disabled: true
+
+- id: agent-loop
+  config:
+    agents:
+      - id: main
+        provider: castudio-context-mock
+        model: castudio-context-mock
+        cwd: !!js process.cwd()
+
+- id: session-persistence-jsonl
+  config:
+    root: './.sessions'
+    compression: none
+
+- insert:
+    - id: castudio-context-mock-llm
+      name: './mock-llm.ts'
+
+    - id: castudio-context
+      name: '@deepseek-ai/dsh-castudio-context'
+
+- id: sandbox-policy
+  inject: []
+  config:
+    mode: !!js process.env.DSH_PERMISSION_MODE ?? 'workspace-write'
+    workspaceRoot: !!js process.cwd()

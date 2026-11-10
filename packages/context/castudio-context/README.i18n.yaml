@@ -1,0 +1,67 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/context/castudio-context/README.md
+/:
+  en: 2aef77b34694e3d8
+  zh: 0858b83ba5af1619
+/deepseek-ai-dsh-castudio-context:
+  en: 306e59e5ab70443c
+  zh: ede50803721787b9
+/deepseek-ai-dsh-castudio-context/summary:
+  en: dc520b8f298a8fc7
+  zh: 8f97e3b384e2d418
+/deepseek-ai-dsh-castudio-context/table-of-contents:
+  en: d152484eb41ac6b4
+  zh: 09388d293f9be9cb
+/deepseek-ai-dsh-castudio-context/use-this-package:
+  en: 093c4a7c0c4b760c
+  zh: f908deac9392b320
+/deepseek-ai-dsh-castudio-context/use-this-package/what-the-model-gets:
+  en: 7b92d744cf9e5069
+  zh: e92ec3e9d57d3957
+/deepseek-ai-dsh-castudio-context/use-this-package/configuration:
+  en: cd8feaf67746010a
+  zh: 56a0e05404d0ca44
+/deepseek-ai-dsh-castudio-context/use-this-package/when-the-service-is-known:
+  en: d84e46a270d8010d
+  zh: 19145c80856a0d93
+/deepseek-ai-dsh-castudio-context/understand-the-implementation:
+  en: 2d21fa2aad5a729d
+  zh: 98d9dc5341fbfe76
+/deepseek-ai-dsh-castudio-context/understand-the-implementation/design-concept:
+  en: 74e98498a56cb853
+  zh: 36602effff28ef35
+/deepseek-ai-dsh-castudio-context/understand-the-implementation/source-map:
+  en: 1d70c11362f4da53
+  zh: e708ddd80c0c933d
+/deepseek-ai-dsh-castudio-context/understand-the-implementation/main-flow:
+  en: ff1783982df887e7
+  zh: 31bdc41f435f2781
+/deepseek-ai-dsh-castudio-context/further-exploration:
+  en: 0900eb03defb13a8
+  zh: 2885a14d8e95e8db
+/deepseek-ai-dsh-castudio-context/model-experience:
+  en: 215e7ba838619b7b
+  zh: a311da3843709f90
+/deepseek-ai-dsh-castudio-context/model-experience/preparation-time-castudio-context:
+  en: 320c3032e06de006
+  zh: b1ef6578c666d383
+/deepseek-ai-dsh-castudio-context/model-experience/preparation-time-castudio-context/what-the-model-sees:
+  en: a6f6df082478176f
+  zh: c6a0493b72ca9c13
+/deepseek-ai-dsh-castudio-context/model-experience/preparation-time-castudio-context/what-the-model-sees/changed-turn-reading:
+  en: efdd843a7c1aa9d7
+  zh: cab12eb75a6cc856
+/deepseek-ai-dsh-castudio-context/model-experience/preparation-time-castudio-context/token-effect:
+  en: 6aedba56e83b68b5
+  zh: b8a0aebac5ecc76d
+/deepseek-ai-dsh-castudio-context/model-experience/preparation-time-castudio-context/kv-cache-effect:
+  en: 2fbf2175168e8244
+  zh: 418ae47b4a225ce1
+/deepseek-ai-dsh-castudio-context/known-limitations-and-deferred-work:
+  en: d9fd1c62a15bfd9d
+  zh: 33f64832b0fc83cd
+/deepseek-ai-dsh-castudio-context/known-limitations-and-deferred-work/dev-note:
+  en: e67f633dc6fe7773
+  zh: e88aeb617ffb74ea

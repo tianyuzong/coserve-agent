@@ -1,7 +1,7 @@
 import { readInstallerLocales, renderInstallerStrings } from './installer-locales.mjs'
 import { officePackageDirectories } from '../../../scripts/libreoffice-packages.mjs'
 import { X509Certificate } from 'node:crypto'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { readFile, writeFile } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -34,6 +34,9 @@ import {
   verifyMacOSAppUpdateConfig,
   writeMacOSAppUpdateConfig,
 } from './macos-app-update-config.mjs'
+
+/** Product name shared by the packaged application, its protocol registration, and packaged-runtime smoke checks. */
+export const DESKTOP_PRODUCT_NAME = 'CoServe AI'
 
 /**
  * Create electron-builder configuration from one release environment.
@@ -108,7 +111,7 @@ export function createElectronBuilderConfig(
   const packaged = resolveDesktopBuildCommit(env)
   return {
     appId,
-    protocols: [{ name: 'CoServe AI', schemes: ['dsh'] }],
+    protocols: [{ name: DESKTOP_PRODUCT_NAME, schemes: ['dsh'] }],
     extraMetadata: {
       dshDesktopAppId: appId,
       dshDesktopUpdateChannel: update?.channel ?? 'nightly',
@@ -116,7 +119,7 @@ export function createElectronBuilderConfig(
       ...buildVersion === productVersion ? {} : { version: buildVersion },
       ...packaged === undefined ? {} : { dshBuildCommit: packaged.commit, dshBuildDirty: packaged.dirty },
     },
-    productName: 'CoServe AI',
+    productName: DESKTOP_PRODUCT_NAME,
     // The default copyright uses author.name; this line names the product instead.
     copyright: `Copyright © ${new Date().getFullYear()} \${productName}`,
     // Unsigned builds carry their own suffix so a shared file can never pass for a release artifact.
@@ -159,6 +162,14 @@ export function createElectronBuilderConfig(
     asarUnpack: unpack,
     extraResources: [
       { from: buildPaths.runtime, to: 'runtime' },
+      // Included whenever prepare:castudio staged the service; builder configs
+      // evaluated without a staged tree (installed-update qualification) skip it.
+      // electron-builder excludes a source directory's root node_modules, so the
+      // service dependencies need their own entry like the dsh tree above.
+      ...(existsSync(buildPaths.castudio) ? [
+        { from: buildPaths.castudio, to: 'castudio' },
+        { from: join(buildPaths.castudio, 'node_modules'), to: 'castudio/node_modules', filter: ['**/*'] },
+      ] : []),
       { from: fileURLToPath(new URL('../resources/icon-windows.png', import.meta.url)), to: 'icon.png' },
       // Windows tray bitmaps; macOS keeps the Dock and ships no menu bar icon.
       ...(packagesWindows ? [{ from: fileURLToPath(new URL('../resources/tray-windows.ico', import.meta.url)), to: 'tray.ico' }] : []),

@@ -28,9 +28,12 @@ export async function smokePreparedRuntime(
   try {
     const archive = runtimeArchivePath(root)
     if (archive !== undefined) await verifyRuntimeArchive(archive, descriptor)
+    // Electron's Node launcher can take tens of seconds to tear down on Windows, and the checks
+    // themselves spawn several such children (CAStudio service, packaged pnpm). The payload budget
+    // must cover those teardowns plus the bounded drain grace, not just the checks' own work.
     const { stdout } = await promisify(execFile)(node, [
       '--expose-internals', resolve(import.meta.dirname, '../tests/fixtures/runtime-payload-smoke.mjs'), root, resourcesRuntime,
-    ], { timeout: 120_000, windowsHide: true,
+    ], { timeout: 300_000, windowsHide: true,
       env: desktopNodeEnvironment(node, join(resourcesRuntime, 'bin'), environment) }).catch((error: unknown) => {
       if (error instanceof Error) {
         if ('stdout' in error && typeof error.stdout === 'string') process.stdout.write(error.stdout)

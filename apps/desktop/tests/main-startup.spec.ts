@@ -27,6 +27,10 @@ vi.mock('../src/web-document.ts', () => ({
   removeLegacyHostCookies: harness.removeLegacyHostCookies,
 }))
 vi.mock('../src/operation-report-job.ts', () => ({ runOperationReportJob: vi.fn(async () => ({ appended: false, timedOut: false, cancelled: false })) }))
+// The bundled-service lifecycle has its own spec; startup tests must not probe a real port.
+vi.mock('../src/castudio-service.ts', () => ({
+  startCAStudioService: () => ({ outcome: Promise.resolve('external'), stop: vi.fn(async () => {}) }),
+}))
 // Report persistence has its own unit tests; here it resolves within microtasks so the fatal
 // dialog never outlives the test that triggered it.
 vi.mock('../src/crash-report.ts', async importOriginal => ({

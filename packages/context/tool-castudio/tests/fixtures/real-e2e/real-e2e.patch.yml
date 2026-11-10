@@ -1,0 +1,38 @@
+# Test-only patch over the shipped headless profile for the real-service
+# workbench fixture. The production bundle layers own the agent services,
+# tools, persistence plugin, and defaults; the fake-service e2e sibling uses
+# the same topology against an in-process CAStudio stub.
+- id: headless-startup
+  disabled: true
+
+- id: headless-runner
+  disabled: true
+
+- id: agent-loop
+  config:
+    agents:
+      - id: main
+        provider: real-e2e-mock
+        model: real-e2e-mock
+        cwd: !!js process.cwd()
+
+- id: session-persistence-jsonl
+  config:
+    root: './.sessions'
+    compression: none
+
+- insert:
+    - id: real-e2e-mock-llm
+      name: './mock-llm.ts'
+
+    - id: castudio-context
+      name: '@deepseek-ai/dsh-castudio-context'
+
+    - id: tool-castudio
+      name: '@deepseek-ai/dsh-tool-castudio'
+
+- id: sandbox-policy
+  inject: []
+  config:
+    mode: !!js process.env.DSH_PERMISSION_MODE ?? 'workspace-write'
+    workspaceRoot: !!js process.cwd()

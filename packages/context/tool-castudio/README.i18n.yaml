@@ -1,0 +1,85 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/context/tool-castudio/README.md
+/:
+  en: 7b2128c298bf1ccb
+  zh: 989a2398edc79a8c
+/deepseek-ai-dsh-tool-castudio:
+  en: 355d2af9d5898064
+  zh: 01d708ddcd733d79
+/deepseek-ai-dsh-tool-castudio/summary:
+  en: 86afd9d89f2a6d1e
+  zh: 76678cbe9e6892de
+/deepseek-ai-dsh-tool-castudio/table-of-contents:
+  en: d152484eb41ac6b4
+  zh: 09388d293f9be9cb
+/deepseek-ai-dsh-tool-castudio/use-this-package:
+  en: bfeb650fdeec52bf
+  zh: 45c7912b821104e8
+/deepseek-ai-dsh-tool-castudio/use-this-package/when-to-choose-it:
+  en: 2d088b5ab3223de7
+  zh: 148eff584cfb96f6
+/deepseek-ai-dsh-tool-castudio/use-this-package/minimal-configuration:
+  en: 86c21d9de106fcb1
+  zh: 09f760e3dba2dbe6
+/deepseek-ai-dsh-tool-castudio/use-this-package/what-each-call-does:
+  en: 0394426f2def8362
+  zh: 6f9d978f5e3ed3a1
+/deepseek-ai-dsh-tool-castudio/use-this-package/errors-the-model-sees:
+  en: c8ef547de1007bfb
+  zh: d1dad2ac3618d02a
+/deepseek-ai-dsh-tool-castudio/understand-the-implementation:
+  en: 8d94a7381bca3fa9
+  zh: 320d140c93c39978
+/deepseek-ai-dsh-tool-castudio/understand-the-implementation/design-philosophy:
+  en: d55142ad91ea7952
+  zh: 92e26d1d1cef9c2b
+/deepseek-ai-dsh-tool-castudio/understand-the-implementation/source-map:
+  en: 96191a714eae6c6c
+  zh: 14b177547874ccd1
+/deepseek-ai-dsh-tool-castudio/understand-the-implementation/export-shape:
+  en: 50432ff90c974616
+  zh: 7f8779b00813982a
+/deepseek-ai-dsh-tool-castudio/understand-the-implementation/call-mechanics:
+  en: f4785becfdc19dda
+  zh: 16966a57816578c5
+/deepseek-ai-dsh-tool-castudio/further-exploration:
+  en: dd7597861ba90f6b
+  zh: 6f2166c369d12e60
+/deepseek-ai-dsh-tool-castudio/model-experience:
+  en: 215e7ba838619b7b
+  zh: a311da3843709f90
+/deepseek-ai-dsh-tool-castudio/model-experience/tool-schema:
+  en: e4c7376d4f29dbd5
+  zh: 6b7a9eaf69c9ea53
+/deepseek-ai-dsh-tool-castudio/model-experience/tool-schema/what-the-model-sees:
+  en: 58ba6562d3cde3df
+  zh: 66525813ac059683
+/deepseek-ai-dsh-tool-castudio/model-experience/tool-schema/token-effect:
+  en: c132dd95704d633e
+  zh: de232eb16a68ab96
+/deepseek-ai-dsh-tool-castudio/model-experience/tool-schema/kv-cache-effect:
+  en: b385b04c94496e5b
+  zh: 8001f2966e588ecd
+/deepseek-ai-dsh-tool-castudio/model-experience/tool-call-history-and-result:
+  en: 9717b983b6a857e3
+  zh: 611a2dadf7c0c706
+/deepseek-ai-dsh-tool-castudio/model-experience/tool-call-history-and-result/what-the-model-sees:
+  en: 3e0e1e879612109d
+  zh: a2dd14bbc17b6751
+/deepseek-ai-dsh-tool-castudio/model-experience/tool-call-history-and-result/token-effect:
+  en: 7a871085b69ee909
+  zh: df4aaeb1d559ab2b
+/deepseek-ai-dsh-tool-castudio/model-experience/tool-call-history-and-result/kv-cache-effect:
+  en: f5d5f97a153f7c70
+  zh: bfdbc9bf0ede558b
+/deepseek-ai-dsh-tool-castudio/known-limitations-and-deferred-work:
+  en: 4ae3e2c18a00e9d1
+  zh: 7021011f99b887f5
+/deepseek-ai-dsh-tool-castudio/known-limitations-and-deferred-work/dev-note:
+  en: ac1d08360a93382b
+  zh: 2674a5bf614d9b83
+/deepseek-ai-dsh-tool-castudio/known-limitations-and-deferred-work/dev-note/future-richer-workbench-actions:
+  en: 9d64127891f9ba9a
+  zh: 0ac086a9803fb577

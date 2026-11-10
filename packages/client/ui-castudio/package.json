@@ -2,7 +2,6 @@
   "name": "@deepseek-ai/dsh-client-ui-castudio",
   "version": "0.2.2-rc.1",
   "description": "CAD workspace alongside the native DSH conversation and harness",
-  "private": true,
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
