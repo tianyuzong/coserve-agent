@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "castudio-runtime"
+version = "0.1.0"
+description = "CAStudio parametric notebook runtime and editor (cadflow-backed)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10,<3.14"
+keywords = ["cad", "cadflow", "marimo", "notebook", "editor"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apache Software License",
+]
+dependencies = [
+    "cadflow",
+    "marimo>=0.25.0",
+    "numpy>=1.21.0",
+]
+
+[project.optional-dependencies]
+editor = [
+    "starlette>=1.7.0",
+    "uvicorn>=0.54.0",
+    "websockets>=16.1.1",
+]
+
+[project.scripts]
+castudio = "castudio_runtime.editor.cli:main"
+
+# The marimo editor runs CAStudio notebooks' cells with this executor.
+[project.entry-points."marimo.cell.executor"]
+castudio = "castudio_runtime.runtime.executor:executor_factory"
+
+[tool.setuptools.packages.find]
+include = ["castudio_runtime*"]
+
+[tool.setuptools.package-data]
+castudio_runtime = ["editor/webui/**/*"]

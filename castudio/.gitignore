@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.studio/
+.env
+*.log
+test-results/
+
+# Local Python environments, caches and solver state
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+__marimo__/
+.sca-editor/
+resources/structural-sim/data/
+.env.*
+!.env.example

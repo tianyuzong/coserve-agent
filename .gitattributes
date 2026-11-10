@@ -6,6 +6,11 @@
 * text=auto eol=lf
 *.cmd text eol=crlf
 
+# CAStudio ships a prebuilt CAD wheel and binary preview assets; never normalize them.
+castudio/resources/cadflow-wheel/*.whl binary
+castudio/resources/**/*.png binary
+castudio/resources/**/*.glb binary
+
 *.pdf binary
 
 # The persistence catalog is the readable projection of these generated schemas.
@@ -16,3 +21,5 @@ docs/persistence-changes/historical-formats/*.schema.json linguist-generated=tru
 
 # Unified patch blank context lines require their leading space.
 patches/*.patch whitespace=-blank-at-eol
+*.whl binary
+*.wasm binary

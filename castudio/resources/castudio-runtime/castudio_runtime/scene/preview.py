@@ -1,0 +1,520 @@
+"""SCAPREV1 product preview for the CAStudio editor (cadflow-backed).
+
+A preview is the lightweight, in-memory form of a product a viewer needs while
+a model is being edited: tessellated triangles per part, assembly instance
+placements, and on-demand ``entity_info`` for a picked face/edge/vertex/solid.
+
+Stage-1 port notes
+------------------
+* Geometry comes straight from cadflow ``Solid`` objects (the renamed
+  SimpleCADAPI engine classes): ``get_faces()`` / ``get_edges()`` /
+  ``get_solids()`` plus ``Face``/``Edge``/``Vertex`` geometry accessors.
+* Tessellation uses OCP ``BRepMesh_IncrementalMesh``; coordinates are converted
+  to glTF space (metres, +Y up: ``x, z, -y`` / 1000) as in the scene package.
+* Triangle->face highlight ranges are coarse in this port (the whole solid is
+  one draw group); per-face picking still resolves through ``entity_info``.
+"""
+
+from __future__ import annotations
+
+import json
+import struct
+from dataclasses import dataclass, field
+from typing import Any
+
+import numpy as np
+
+from cadflow._engine.geometry.core import Solid
+from cadflow._engine.geometry.kernel.ocp_topology import faces_of
+from cadflow._engine.assembly.product import Assembly, Part
+from cadflow._engine.assembly.product import Placement, identity_placement
+
+try:  # OCP is a hard runtime dep; import lazily-friendly names for meshing.
+    from OCP.BRepMesh import BRepMesh_IncrementalMesh
+    from OCP.BRepTools import BRepTools
+    from OCP.BRep import BRep_Tool
+    from OCP.TopAbs import TopAbs_FACE, TopAbs_REVERSED
+    from OCP.TopLoc import TopLoc_Location
+    from OCP.TopoDS import TopoDS
+    from OCP.gp import gp_Trsf, gp_Vec
+except Exception:  # pragma: no cover - OCP always present in the runtime env
+    BRepMesh_IncrementalMesh = None  # type: ignore[assignment]
+
+PREVIEW_SCHEMA = "sca-preview-1"
+MAGIC = b"SCAPREV1"
+
+_LINEAR_DEFLECTION = 0.35
+_ANGULAR_DEFLECTION = 0.5
+
+
+class PreviewError(ValueError):
+    """The product cannot be previewed (it has no solid to draw)."""
+
+
+@dataclass(frozen=True)
+class PartPreview:
+    key: str
+    positions: np.ndarray
+    normals: np.ndarray
+    indices: np.ndarray
+    face_groups: tuple
+    edge_positions: np.ndarray
+    edge_indices: np.ndarray
+    edge_groups: tuple
+    vertex_positions: np.ndarray
+    vertex_ids: tuple
+    solid_topo_id: str
+    triangle_count: int
+
+
+@dataclass(frozen=True)
+class PreviewNode:
+    node_id: str
+    part_key: str
+    definition_id: str
+    display_name: str
+    placement: Placement
+
+
+@dataclass
+class PreviewScene:
+    parts: dict
+    nodes: list
+    solids: dict = field(default_factory=dict)
+    definitions: dict = field(default_factory=dict)
+
+
+def _to_gltf(point) -> tuple[float, float, float]:
+    """CAD mm (x,y,z) -> glTF m (x, z, -y)."""
+    return (float(point[0]) / 1000.0, float(point[2]) / 1000.0, -float(point[1]) / 1000.0)
+
+
+def _tessellate(shape) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Tessellate a TopoDS_Shape -> (positions, normals, indices) float32/uint32."""
+
+    if BRepMesh_IncrementalMesh is None:
+        raise PreviewError("OCP meshing is unavailable")
+    mesher = BRepMesh_IncrementalMesh(shape, _LINEAR_DEFLECTION, _ANGULAR_DEFLECTION, True)
+    mesher.Perform()
+    positions: list[tuple[float, float, float]] = []
+    normals: list[tuple[float, float, float]] = []
+    indices: list[int] = []
+    for face in faces_of(shape):
+        location = TopLoc_Location()
+        triangulation = BRep_Tool.Triangulation_s(face, location)
+        if triangulation is None:
+            continue
+        if not triangulation.HasNormals():
+            # BRepMesh stores no vertex normals: derive them from the triangles.
+            triangulation.ComputeNormals()
+        offset = len(positions)
+        transform = location.Transformation()
+        for i in range(1, triangulation.NbNodes() + 1):
+            p = triangulation.Node(i).Transformed(transform)
+            positions.append(_to_gltf((p.X(), p.Y(), p.Z())))
+            n = triangulation.Normal(i)
+            nv = gp_Vec(n.X(), n.Y(), n.Z()).Transformed(gp_Trsf())  # placeholder
+            # normals: transform direction by the location's rotation only
+            trsf = transform
+            nv = gp_Vec(n.X(), n.Y(), n.Z()).Transformed(trsf)
+            normals.append(_to_gltf((nv.X(), nv.Y(), nv.Z())))
+        for i in range(1, triangulation.NbTriangles() + 1):
+            a, b, c = triangulation.Triangle(i).Get()
+            # account for face orientation
+            if face.Orientation() == TopAbs_REVERSED:
+                indices.extend((offset + a - 1, offset + c - 1, offset + b - 1))
+            else:
+                indices.extend((offset + a - 1, offset + b - 1, offset + c - 1))
+    pos = np.asarray(positions, dtype=np.float32).reshape(-1, 3)
+    nrm = np.asarray(normals, dtype=np.float32).reshape(-1, 3)
+    idx = np.asarray(indices, dtype=np.uint32)
+    return pos, nrm, idx
+
+
+def _edge_tessellation(shape) -> tuple[np.ndarray, np.ndarray]:
+    """Polyline segments of every edge -> (positions, indices) glTF metres."""
+
+    positions: list[tuple[float, float, float]] = []
+    indices: list[int] = []
+    for edge in _iter_edges(shape):
+        try:
+            pts = edge.get_points(64) if hasattr(edge, "get_points") else None
+        except Exception:
+            pts = None
+        if not pts:
+            # fall back to discretised curve via OCP
+            pts = _discretize_edge(edge)
+        base = len(positions)
+        for p in pts:
+            positions.append(_to_gltf(p))
+        for i in range(len(pts) - 1):
+            indices.extend((base + i, base + i + 1))
+    pos = np.asarray(positions, dtype=np.float32).reshape(-1, 3)
+    idx = np.asarray(indices, dtype=np.uint32)
+    return pos, idx
+
+
+def _iter_edges(shape):
+    from cadflow._engine.geometry.kernel.ocp_topology import edges_of
+
+    return edges_of(shape)
+
+
+def _discretize_edge(edge) -> list[tuple[float, float, float]]:
+    """Sample an edge's curve to points (CAD mm)."""
+
+    try:
+        from OCP.BRepAdaptor import BRepAdaptor_Curve
+        from OCP.GCPnts import GCPnts_QuasiUniformDeflection
+        from OCP.GeomAbs import GeomAbs_Shape
+
+        # ``_iter_edges`` hands over raw TopoDS_Edge objects, not cadflow Edges.
+        c = BRepAdaptor_Curve(getattr(edge, "wrapped", edge))
+        disc = GCPnts_QuasiUniformDeflection(c, 0.5, c.FirstParameter(), c.LastParameter())
+        if disc.IsDone():
+            return [(disc.Value(i).X(), disc.Value(i).Y(), disc.Value(i).Z()) for i in range(1, disc.NbPoints() + 1)]
+    except Exception:
+        pass
+    try:
+        c = edge.get_center()
+        return [(c[0], c[1], c[2]), (c[0], c[1], c[2])]
+    except Exception:
+        return []
+
+
+def _vertex_points(shape) -> tuple[np.ndarray, tuple]:
+    from cadflow._engine.geometry.kernel.ocp_topology import vertices_of
+    from cadflow._engine.geometry.core import Vertex
+
+    pts = []
+    ids = []
+    for v in vertices_of(shape):
+        try:
+            p = v  # TopoDS_Vertex
+            from OCP.BRep import BRep_Tool
+            from OCP.TopLoc import TopLoc_Location
+
+            pt = BRep_Tool.Pnt_s(p)
+            pts.append(_to_gltf((pt.X(), pt.Y(), pt.Z())))
+        except Exception:
+            continue
+        ids.append(getattr(v, "topo_id", ""))
+    pos = np.asarray(pts, dtype=np.float32).reshape(-1, 3)
+    return pos, tuple(ids)
+
+
+def preview_solid(solid: Solid, *, key: str | None = None) -> PartPreview:
+    """Tessellate one cadflow ``Solid`` into a :class:`PartPreview`."""
+
+    shape = solid.wrapped
+    pos, nrm, idx = _tessellate(shape)
+    epos, eidx = _edge_tessellation(shape)
+    vpos, vids = _vertex_points(shape)
+    tri_count = int(idx.size // 3)
+    topo = getattr(solid, "topo_id", key or "solid")
+    face_groups = ((str(topo), 0, int(idx.size)),) if idx.size else ()
+    return PartPreview(
+        key=key or str(topo),
+        positions=pos,
+        normals=nrm,
+        indices=idx,
+        face_groups=face_groups,
+        edge_positions=epos,
+        edge_indices=eidx,
+        edge_groups=(),
+        vertex_positions=vpos,
+        vertex_ids=vids,
+        solid_topo_id=str(topo),
+        triangle_count=tri_count,
+    )
+
+
+def _solids_of(product) -> list:
+    """All cadflow ``Solid`` objects reachable from a product."""
+
+    found: list = []
+    seen = set()
+
+    def add(shape):
+        if shape is None or id(shape) in seen:
+            return
+        seen.add(id(shape))
+        if isinstance(shape, Solid):
+            found.append(shape)
+            return
+        # Compound / assembly bodies
+        try:
+            for s in shape.get_solids():
+                add(s)
+        except Exception:
+            pass
+        try:
+            for f in shape.get_faces():
+                add(f)
+        except Exception:
+            pass
+
+    if isinstance(product, Assembly):
+        for inst in getattr(product, "instances", []) or []:
+            add(getattr(inst, "product", None) or getattr(inst, "value", None))
+        add(getattr(product, "body", None))
+    elif isinstance(product, Part):
+        add(getattr(product, "body", None) or getattr(product, "shape", None))
+    else:
+        add(product)
+    return found
+
+
+def compile_preview(product) -> PreviewScene:
+    """Build a :class:`PreviewScene` for a cadflow Part or Assembly."""
+
+    parts: dict[str, PartPreview] = {}
+    solids: dict[str, Any] = {}
+    nodes: list[PreviewNode] = []
+    definitions: dict[str, str] = {}
+
+    def register(solid: Solid, part_key: str, node_id: str, display: str, placement):
+        key = part_key or getattr(solid, "topo_id", "part")
+        if key not in parts:
+            parts[key] = preview_solid(solid, key=key)
+            solids[key] = solid
+        nodes.append(
+            PreviewNode(
+                node_id=node_id,
+                part_key=key,
+                definition_id=display,
+                display_name=display,
+                placement=placement if placement is not None else identity_placement(),
+            )
+        )
+
+    if isinstance(product, Assembly):
+        aid = getattr(product, "assembly_id", "assembly")
+        definitions[aid] = aid
+        for i, inst in enumerate(getattr(product, "instances", []) or []):
+            body = getattr(inst, "product", None) or getattr(inst, "value", None)
+            placement = getattr(inst, "placement", None) or identity_placement()
+            name = getattr(inst, "name", None) or getattr(inst, "instance_id", f"instance-{i}")
+            for solid in _solids_of(body) or [body]:
+                if isinstance(solid, Solid):
+                    register(solid, f"{aid}/{name}", f"{aid}/node/{i}", str(name), placement)
+    else:
+        pid = getattr(product, "part_id", "part")
+        definitions[pid] = pid
+        body = getattr(product, "body", None) or getattr(product, "shape", None) or product
+        for solid in _solids_of(body) or [body]:
+            if isinstance(solid, Solid):
+                register(solid, pid, f"{pid}/node/0", pid, identity_placement())
+            elif body is not None:
+                raise PreviewError(f"product {pid!r} has no solid to preview")
+    if not parts:
+        raise PreviewError("product has no solid to preview")
+    return PreviewScene(parts=parts, nodes=nodes, solids=solids, definitions=definitions)
+
+
+def part_key(part: PartPreview) -> str:
+    return part.key
+
+
+def _array(data: np.ndarray, fmt: str) -> dict:
+    return {"dtype": fmt, "data": data.tobytes()}
+
+
+def encode_preview(scene: PreviewScene) -> bytes:
+    """Encode a :class:`PreviewScene` to the SCAPREV1 wire format.
+
+    The header describes each vertex/index array by its byte offset in the
+    body and its element count: the web UI views the body directly as typed
+    arrays, so the array bytes never travel through JSON.
+    """
+
+    parts = []
+    chunks: list[bytes] = []
+    cursor = 0
+
+    def place(array: np.ndarray) -> dict:
+        nonlocal cursor
+        data = np.ascontiguousarray(array).tobytes()
+        entry = {"offset": cursor, "count": int(array.size)}
+        cursor += len(data)
+        chunks.append(data)
+        return entry
+
+    for key, part in scene.parts.items():
+        definition = scene.definitions.get(key, key)
+        prefix = f"entity/{definition}/"
+        parts.append(
+            {
+                "key": key,
+                "definition_id": definition,
+                "positions": place(part.positions),
+                "normals": place(part.normals),
+                "indices": place(part.indices),
+                "edge_positions": place(part.edge_positions),
+                "edge_indices": place(part.edge_indices),
+                "vertex_positions": place(part.vertex_positions),
+                "vertex_ids": [f"{prefix}vertex/{t}" for t in part.vertex_ids],
+                "face_groups": [
+                    {"entity_id": f"{prefix}face/{t}", "first_index": first, "index_count": count}
+                    for t, first, count in part.face_groups
+                ],
+                "edge_groups": [
+                    {"entity_id": f"{prefix}edge/{t}", "first_index": first, "index_count": count}
+                    for t, first, count in part.edge_groups
+                ],
+                "solid_entity_id": f"{prefix}solid/{part.solid_topo_id}",
+                "triangles": part.triangle_count,
+            }
+        )
+    header = {
+        "schema": PREVIEW_SCHEMA,
+        "parts": parts,
+        "nodes": [
+            {
+                "node_id": n.node_id,
+                "part": n.part_key,
+                "definition_id": n.definition_id,
+                "display_name": n.display_name,
+                "transform": {
+                    "origin": list(n.placement.origin),
+                    "x_axis": list(n.placement.x_axis),
+                    "y_axis": list(n.placement.y_axis),
+                    "z_axis": list(n.placement.z_axis),
+                },
+            }
+            for n in scene.nodes
+        ],
+    }
+    encoded = json.dumps(header, separators=(",", ":")).encode("utf-8")
+    encoded += b" " * (-len(encoded) % 8)
+    body = b"".join(chunks)
+    return MAGIC + struct.pack("<I", len(encoded)) + b"\0\0\0\0" + encoded + body
+
+
+def _array_bytes(entry: dict) -> bytes:
+    return entry["data"]
+
+
+def decode_preview_header(data: bytes) -> dict[str, Any]:
+    if not data.startswith(MAGIC):
+        raise PreviewError("not a preview")
+    (length,) = struct.unpack_from("<I", data, len(MAGIC))
+    start = len(MAGIC) + 8
+    return json.loads(data[start : start + length])
+
+
+def clear_preview_cache() -> None:
+    return None
+
+
+# -- one picked entity ---------------------------------------------------------------
+
+
+def _solid_for(scene: PreviewScene, definition: str):
+    for key, d in scene.definitions.items():
+        if d == definition:
+            return scene.solids.get(key)
+    return None
+
+
+def entity_info(scene: PreviewScene, entity_id: str) -> dict[str, Any] | None:
+    """Geometric properties of one picked entity, or ``None``."""
+
+    _, _, rest = entity_id.partition("entity/")
+    definition, _, tail = rest.partition("/")
+    kind, _, topo_id = tail.partition("/")
+    solid = _solid_for(scene, definition)
+    if solid is None:
+        return None
+    if kind == "solid":
+        try:
+            volume = float(solid.get_volume())
+        except Exception:
+            volume = 0.0
+        try:
+            area = float(sum(f.get_area() for f in solid.get_faces()))
+        except Exception:
+            area = 0.0
+        try:
+            c = solid.get_center()
+            centroid = [float(c[0]), float(c[1]), float(c[2])]
+        except Exception:
+            centroid = [0.0, 0.0, 0.0]
+        return {
+            "entity_id": entity_id,
+            "kind": "solid",
+            "topo_id": getattr(solid, "topo_id", topo_id),
+            "geometry": {"type": "brep_solid"},
+            "properties": {"volume": volume, "surface_area": area, "centroid": centroid},
+            "tags": sorted(solid._list_tags()) if hasattr(solid, "_list_tags") else [],
+        }
+    if kind == "face":
+        for f in solid.get_faces():
+            if getattr(f, "topo_id", None) == topo_id:
+                try:
+                    c = f.get_center()
+                    centroid = [float(c[0]), float(c[1]), float(c[2])]
+                except Exception:
+                    centroid = [0.0, 0.0, 0.0]
+                return {
+                    "entity_id": entity_id,
+                    "kind": "face",
+                    "topo_id": topo_id,
+                    "geometry": {"type": "brep_face"},
+                    "properties": {"area": float(f.get_area()), "centroid": centroid},
+                    "tags": sorted(f._list_tags()) if hasattr(f, "_list_tags") else [],
+                }
+        return None
+    if kind == "edge":
+        for e in solid.get_edges():
+            if getattr(e, "topo_id", None) == topo_id:
+                try:
+                    c = e.get_center()
+                    centroid = [float(c[0]), float(c[1]), float(c[2])]
+                except Exception:
+                    centroid = [0.0, 0.0, 0.0]
+                return {
+                    "entity_id": entity_id,
+                    "kind": "edge",
+                    "topo_id": topo_id,
+                    "geometry": {"type": "brep_edge"},
+                    "properties": {"length": float(e.get_length()), "centroid": centroid},
+                    "tags": sorted(e._list_tags()) if hasattr(e, "_list_tags") else [],
+                }
+        return None
+    if kind == "vertex":
+        for e in solid.get_edges():
+            for v in e.get_vertices():
+                if getattr(v, "topo_id", None) == topo_id:
+                    try:
+                        p = v.get_coordinates()
+                        point = [float(p[0]), float(p[1]), float(p[2])]
+                    except Exception:
+                        point = [0.0, 0.0, 0.0]
+                    return {
+                        "entity_id": entity_id,
+                        "kind": "vertex",
+                        "topo_id": topo_id,
+                        "geometry": {"type": "point", "position": point},
+                        "properties": {"bounds": {"min": point, "max": point}, "position": point},
+                        "tags": sorted(v._list_tags()) if hasattr(v, "_list_tags") else [],
+                    }
+        return None
+    return None
+
+
+__all__ = [
+    "MAGIC",
+    "PREVIEW_SCHEMA",
+    "PartPreview",
+    "PreviewError",
+    "PreviewNode",
+    "PreviewScene",
+    "clear_preview_cache",
+    "compile_preview",
+    "decode_preview_header",
+    "encode_preview",
+    "entity_info",
+    "part_key",
+    "preview_solid",
+]

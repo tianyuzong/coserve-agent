@@ -40,6 +40,12 @@ pnpm dsh web
 
 `pnpm run build` prepares the repository artifacts. `pnpm dsh web` uses those built artifacts without rebuilding.
 
+## CAD workspace (CAStudio)
+
+Desktop builds bundle the CAStudio CAD service from the in-repo [`castudio/`](castudio/README.md) tree: `apps/desktop/scripts/prepare-castudio.ts` installs and builds that npm project, then stages it under `resources/castudio` inside the packaged app. The service owns the CAD projects, parametric editor, builds, measurements and simulations; Desktop probes, spawns and stops it (see [apps/desktop/README.md](apps/desktop/README.md)).
+
+`castudio/` is a self-contained npm project (its own `package-lock.json`, toolchain and third-party notices), so it is deliberately not part of the pnpm workspace. Third-party notices for the components vendored with it live in [castudio/THIRD_PARTY_NOTICES.md](castudio/THIRD_PARTY_NOTICES.md).
+
 ## Community and support
 
 - Submit feedback or bug reports through [GitHub Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions).

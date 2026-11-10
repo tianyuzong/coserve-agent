@@ -1,0 +1,14 @@
+cadflow 0.2.0
+https://pypi.org/project/cadflow/ and https://github.com/yhz5613813/CadFlow
+(official Windows wheel: native cadflow_core backend + OCCT 7.9.3 runtime; MIT)
+Vendored wheel and OCCT notices retained in ../cadflow-wheel
+(LICENSE via the wheel dist-info, NOTICE-OCCT.md, LICENSE_LGPL_21.txt,
+OCCT_LGPL_EXCEPTION.txt).
+
+castudio_runtime 0.1.0
+Adapted from SimpleCADAPI 2.2.6.post2
+https://github.com/PhySpace/SimpleCADAPI
+Commit 9e749ed706aa3e40cbf78b2dcfff5717737a0c2f
+Apache-2.0; full license and attribution retained in ../castudio-runtime (LICENSE / THIRD_PARTY.txt).
+The editor and runtime are embedded as a managed CAStudio module.
+CAStudio additions: worker lifecycle, project routes, cylinder notebook, semantic boundary and exact CAD equivalence bridge, shell solver integration, cadflow engine retargeting (shared GraphSession per run, cell cache disabled in Stage 1).

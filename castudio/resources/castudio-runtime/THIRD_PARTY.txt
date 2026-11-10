@@ -1,0 +1,11 @@
+castudio-runtime — CAStudio's notebook runtime and parametric editor.
+
+The runtime/editor layer is adapted from SimpleCADAPI 2.2.6.post2
+(https://github.com/PhySpace/SimpleCADAPI, commit
+9e749ed706aa3e40cbf78b2dcfff5717737a0c2f), licensed Apache-2.0; the full
+license is retained in LICENSE.  The geometry engine it was adapted from is
+replaced by cadflow 0.2.0 (MIT; official Windows wheel in
+resources/cadflow-wheel, native cadflow_core backend + OCCT 7.9.3).
+
+CAStudio additions: shared-session executor, cadflow scene-package publish,
+SCAPREV1 preview, project routes and the settled handshake.

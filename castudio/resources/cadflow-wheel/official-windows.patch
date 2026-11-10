@@ -1,0 +1,11 @@
+--- a/native/CMakeLists.txt	2026-11-08 19:51:14.245708300 +0800
++++ b/native/CMakeLists.txt	2026-11-08 19:51:25.864714000 +0800
+@@ -66,6 +66,8 @@
+   foreach(OCCT_NAME ${OCCT_NAMES})
+     if (APPLE)
+       file(GLOB OCCT_LIBRARY "${CADFLOW_OCCT_LIB_DIR}/lib${OCCT_NAME}.7.9.3.dylib")
++    elseif (WIN32)
++      file(GLOB OCCT_LIBRARY "${CADFLOW_OCCT_LIB_DIR}/${OCCT_NAME}.lib")
+     else()
+       file(GLOB OCCT_LIBRARY "${CADFLOW_OCCT_LIB_DIR}/lib${OCCT_NAME}-*.so.7.9.3")
+     endif()
