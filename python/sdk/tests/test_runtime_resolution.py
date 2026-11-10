@@ -226,25 +226,25 @@ def test_node_mode_runs_the_deployed_dsh_cli(
 def test_python_dsh_command_requires_explicit_home(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    monkeypatch.delenv("DSH_HOME", raising=False)
+    monkeypatch.delenv("COSERVE_HOME", raising=False)
 
     with pytest.raises(SystemExit) as excinfo:
         main()
 
     assert excinfo.value.code == 2
-    assert "explicit DSH_HOME" in capsys.readouterr().err
+    assert "explicit COSERVE_HOME" in capsys.readouterr().err
 
 
 def test_python_dsh_command_executes_the_bundled_cli(
     monkeypatch: pytest.MonkeyPatch
 ) -> None:
     called: dict[str, object] = {}
-    monkeypatch.setenv("DSH_HOME", "/explicit/home")
+    monkeypatch.setenv("COSERVE_HOME", "/explicit/home")
     monkeypatch.setattr(runtime, "resolve_bundled_launch_args", lambda: ("/runtime",))
     monkeypatch.setattr(runtime, "sys", SimpleNamespace(platform="linux", argv=["dsh", "plugin", "--profile", "sdk", "list"]))
 
     def execvpe(file: str, args: tuple[str, ...], env: dict[str, str]) -> None:
-        called.update(file=file, args=args, home=env.get("DSH_HOME"))
+        called.update(file=file, args=args, home=env.get("COSERVE_HOME"))
 
     monkeypatch.setattr(runtime.os, "execvpe", execvpe)
 
@@ -259,7 +259,7 @@ def test_python_dsh_command_executes_the_bundled_cli(
 
 @pytest.mark.parametrize("returncode", [0, 37, 513])
 def test_windows_console_waits_and_forwards_runtime_status(monkeypatch: pytest.MonkeyPatch, returncode: int) -> None:
-    monkeypatch.setenv("DSH_HOME", "/explicit/home")
+    monkeypatch.setenv("COSERVE_HOME", "/explicit/home")
     monkeypatch.setattr(runtime, "sys", SimpleNamespace(platform="win32", argv=["dsh", "plugin", "argument with spaces", "中文"]))
     monkeypatch.setattr(runtime, "resolve_bundled_launch_args", lambda: ("runtime.exe",))
     called = []
@@ -298,7 +298,7 @@ def test_windows_console_branch_preserves_real_child_io_and_completion(tmp_path:
         f"runtime.resolve_bundled_launch_args = lambda: ({sys.executable!r}, {str(child)!r}); runtime.main()"
     )
     result = subprocess.run([sys.executable, "-c", driver], capture_output=True, text=True, encoding="utf-8",
-                            env={**os.environ, "DSH_HOME": str(tmp_path), "PYTHONIOENCODING": "utf-8"}, timeout=15)
+                            env={**os.environ, "COSERVE_HOME": str(tmp_path), "PYTHONIOENCODING": "utf-8"}, timeout=15)
     assert result.returncode == returncode, result.stderr
     assert result.stdout == "stdout-中文\n"
     assert result.stderr == "stderr-中文\n"
@@ -347,7 +347,7 @@ def test_explicit_download_uses_runtime_without_a_harness_home(
     destination = root / "linux-x64/primary-runtime" if resource == "primary" else root
     script.write_text("import json,os,sys\n" + f"assert os.environ['DSH_RUNTIME_DOWNLOAD'] == {resource!r}\n"
                       + f"sys.stdout.buffer.write(json.dumps({str(destination)!r}, ensure_ascii=False).encode('utf-8'))\n", encoding="utf-8")
-    monkeypatch.delenv("DSH_HOME", raising=False)
+    monkeypatch.delenv("COSERVE_HOME", raising=False)
     monkeypatch.setattr(runtime, "resolve_bundled_launch_args", lambda: (sys.executable, str(script)))
     assert function() == destination
     script.write_text("import sys\nsys.stderr.buffer.write('下载失败'.encode('utf-8'))\nsys.exit(2)\n", encoding="utf-8")

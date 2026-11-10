@@ -13,6 +13,7 @@ import type { Agent } from '@deepseek-ai/dsh-agent'
 import { SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
 import type { ToolExecution } from '@deepseek-ai/dsh-tools'
 import { ShellEnvRegistry } from '@deepseek-ai/dsh-shell-env'
+import type { BashEnvContributor } from '@deepseek-ai/dsh-shell-env'
 import * as BashEnvPlugin from '@deepseek-ai/dsh-shell-env'
 
 const testToolSignal = new AbortController().signal
@@ -42,14 +43,14 @@ function execution(sessionId?: string): ToolExecution {
 describe('ShellEnvRegistry', () => {
   it('collects unconditional shell facts and the current agent session id', () => {
     const ctx = new Context()
-    const registry = new ShellEnvRegistry(ctx, { dshHome: './test-dsh-home' })
+    const registry = new ShellEnvRegistry(ctx, { coserveHome: './test-dsh-home' })
 
     expect(registry.collect(execution())).toEqual({
-      DSH_HOME: resolve('./test-dsh-home'),
+      COSERVE_HOME: resolve('./test-dsh-home'),
       DSH_SHELL: '1',
     })
     expect(registry.collect(execution('session-a'))).toEqual({
-      DSH_HOME: resolve('./test-dsh-home'),
+      COSERVE_HOME: resolve('./test-dsh-home'),
       DSH_SESSION_ID: 'session-a',
       DSH_SHELL: '1',
     })
@@ -61,7 +62,7 @@ describe('ShellEnvRegistry', () => {
       name: 'web', dir: '/profiles/web', patchPath: '/profiles/web/cordis.patch.yml', installAnchor: '/dsh/package.json',
       cwd: '/work', home: '/home', startedBundles: [], overlays: [], telemetryDisabledEnv: undefined,
     })
-    const registry = new ShellEnvRegistry(ctx, { dshHome: './test-dsh-home' })
+    const registry = new ShellEnvRegistry(ctx, { coserveHome: './test-dsh-home' })
     expect(registry.collect(execution())).toMatchObject({ DSH_PROFILE: 'web', DSH_PROFILE_DIR: '/profiles/web' })
     expect(() => registry.register({
       name: 'profile-claimer',
@@ -70,19 +71,19 @@ describe('ShellEnvRegistry', () => {
     })).toThrow(/reserved key "DSH_PROFILE"/)
   })
 
-  it('resolves DSH_HOME from the ambient override or the user-home default', () => {
-    vi.stubEnv('DSH_HOME', './ambient-dsh-home')
+  it('resolves COSERVE_HOME from the ambient override or the user-home default', () => {
+    vi.stubEnv('COSERVE_HOME', './ambient-dsh-home')
     const fromEnvironment = new ShellEnvRegistry(new Context())
-    expect(fromEnvironment.collect(execution()).DSH_HOME).toBe(resolve('./ambient-dsh-home'))
+    expect(fromEnvironment.collect(execution()).COSERVE_HOME).toBe(resolve('./ambient-dsh-home'))
 
-    vi.stubEnv('DSH_HOME', undefined)
+    vi.stubEnv('COSERVE_HOME', undefined)
     const fromDefault = new ShellEnvRegistry(new Context())
-    expect(fromDefault.collect(execution()).DSH_HOME).toBe(join(homedir(), '.dsh'))
+    expect(fromDefault.collect(execution()).COSERVE_HOME).toBe(join(homedir(), '.coserve'))
   })
 
   it('collects declared contributor variables and omits unavailable values', () => {
     const ctx = new Context()
-    const registry = new ShellEnvRegistry(ctx, { dshHome: './test-dsh-home' })
+    const registry = new ShellEnvRegistry(ctx, { coserveHome: './test-dsh-home' })
     registry.register({
       name: 'optional-session-fact',
       variables: {
@@ -117,7 +118,7 @@ describe('ShellEnvRegistry', () => {
 
   it('rejects duplicate variable ownership at registration time', () => {
     const ctx = new Context()
-    const registry = new ShellEnvRegistry(ctx, { dshHome: './test-dsh-home' })
+    const registry = new ShellEnvRegistry(ctx, { coserveHome: './test-dsh-home' })
     registry.register({
       name: 'first',
       variables: { DSH_SHARED: { description: 'First owner.' } },
@@ -132,7 +133,7 @@ describe('ShellEnvRegistry', () => {
   })
 
   it('rejects duplicate contributor names and malformed declarations', () => {
-    const registry = new ShellEnvRegistry(new Context(), { dshHome: './test-dsh-home' })
+    const registry = new ShellEnvRegistry(new Context(), { coserveHome: './test-dsh-home' })
     registry.register({
       name: 'declared',
       variables: { DSH_DECLARED: { description: 'Declared fact.' } },
@@ -156,7 +157,7 @@ describe('ShellEnvRegistry', () => {
     })).toThrow(/invalid key/)
     expect(() => registry.register({
       name: 'reserved-key',
-      variables: { DSH_HOME: { description: 'Reserved key.' } },
+      variables: { COSERVE_HOME: { description: 'Reserved key.' } } as BashEnvContributor['variables'],
       resolve: () => ({}),
     })).toThrow(/reserved key/)
     expect(() => registry.register({
@@ -168,7 +169,7 @@ describe('ShellEnvRegistry', () => {
 
   it('rejects undeclared variables returned by a contributor', () => {
     const ctx = new Context()
-    const registry = new ShellEnvRegistry(ctx, { dshHome: './test-dsh-home' })
+    const registry = new ShellEnvRegistry(ctx, { coserveHome: './test-dsh-home' })
     registry.register({
       name: 'drifted-provider',
       variables: { DSH_DECLARED: { description: 'Declared fact.' } },
@@ -179,7 +180,7 @@ describe('ShellEnvRegistry', () => {
   })
 
   it('rejects non-string values returned by a contributor', () => {
-    const registry = new ShellEnvRegistry(new Context(), { dshHome: './test-dsh-home' })
+    const registry = new ShellEnvRegistry(new Context(), { coserveHome: './test-dsh-home' })
     registry.register({
       name: 'wrong-value-type',
       variables: { DSH_STRING: { description: 'String fact.' } },
@@ -191,7 +192,7 @@ describe('ShellEnvRegistry', () => {
 
   it('removes an effect-scoped contributor when its plugin is disposed', async () => {
     const ctx = new Context()
-    const registry = new ShellEnvRegistry(ctx, { dshHome: './test-dsh-home' })
+    const registry = new ShellEnvRegistry(ctx, { coserveHome: './test-dsh-home' })
     const fiber = await ctx.plugin({
       inject: ['shellEnv'],
       apply(inner: Context) {
@@ -209,7 +210,7 @@ describe('ShellEnvRegistry', () => {
   })
 
   it('returns an explicit contributor disposer', () => {
-    const registry = new ShellEnvRegistry(new Context(), { dshHome: './test-dsh-home' })
+    const registry = new ShellEnvRegistry(new Context(), { coserveHome: './test-dsh-home' })
     const dispose = registry.register({
       name: 'explicit-disposal',
       variables: { DSH_EXPLICIT_DISPOSAL: { description: 'Explicitly disposed fact.' } },

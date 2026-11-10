@@ -34,8 +34,8 @@ it.each([
       tsconfigPath: fileURLToPath(new URL('../../../tsconfig.json', import.meta.url)),
       configArgs: ['--profile', 'web', '--patch', patch, '--no-open', '--port', '0'],
       env: {
-        DSH_HOME: join(root, '.dsh'),
-        DSH_AGENTS_HOME: join(root, '.agents'),
+        COSERVE_HOME: join(root, '.coserve'),
+        COSERVE_AGENTS_HOME: join(root, '.coserve-agents'),
         DSH_TELEMETRY_DISABLED: '1',
       },
     })

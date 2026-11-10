@@ -43,7 +43,7 @@ let testHome: string
 
 beforeEach(() => {
   testHome = mkdtempSync(join(tmpdir(), 'dsh-llm-deepseek-'))
-  vi.stubEnv('DSH_HOME', testHome)
+  vi.stubEnv('COSERVE_HOME', testHome)
 })
 
 afterEach(async () => {
@@ -2284,7 +2284,7 @@ describe('plugin registration and config', () => {
 
   it('takes DEEPSEEK_BASE_URL from any environment layer, with explicit config still on top', () => {
     const trusted = createLaunchEnvironmentSnapshot([
-      { source: 'user-env', path: '/home/.dsh/.env', values: { DEEPSEEK_BASE_URL: 'https://user.example' } },
+      { source: 'user-env', path: '/home/.coserve/.env', values: { DEEPSEEK_BASE_URL: 'https://user.example' } },
     ])
     expect(resolveAdapterOptions({}, trusted).baseURL).toBe('https://user.example')
     // The product trusts the project it is launched in, so a checkout can

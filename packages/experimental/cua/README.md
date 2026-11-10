@@ -67,7 +67,7 @@ The Host marker has no configurable fields; platform providers own native config
 <details>
 <summary>Shared execution and platform ownership</summary>
 
-The [permission store](src/permission-store.ts) uses `storageDomain` with the configured backend. The default JSON backend writes `$DSH_HOME/storages/cua_permissions_<sha256>.json`, where the digest identifies the canonical profile directory. Each authorization check opens fresh state under the profile's file lock and closes its domain afterward; native dispatch uses a separate application lock. Revocation waits for operations already admitted by another process; after it completes, every process rejects old handles. Files on different machines or PID namespaces must not share this lock.
+The [permission store](src/permission-store.ts) uses `storageDomain` with the configured backend. The default JSON backend writes `$COSERVE_HOME/storages/cua_permissions_<sha256>.json`, where the digest identifies the canonical profile directory. Each authorization check opens fresh state under the profile's file lock and closes its domain afterward; native dispatch uses a separate application lock. Revocation waits for operations already admitted by another process; after it completes, every process rejects old handles. Files on different machines or PID namespaces must not share this lock.
 
 Legacy `allowedApps` are imported on first store access and never reapplied after migration. The old configuration can be removed after checking the permission page. Grants, denials and the option to ask again are durable; the page still omits conversation-only grants. Standalone compositions without a profile retain only process-local decisions; a profile without domain storage refuses authorization operations.
 

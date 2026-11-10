@@ -86,7 +86,7 @@ const sessionWriteMode = recording ? 'record' : refreshing ? 'refresh' : 'replay
 const RUNTIME_WORKSPACE_ENTRIES = [
   '.agents',
   '.child-dsh',
-  '.dsh',
+  '.coserve',
   '.replay-fixtures',
   '.snapshot-patches',
 ] as const
@@ -761,8 +761,8 @@ async function runScenario(scenario: CorpusScenario): Promise<{
   }
   const cwd = await realpath(await mkdtemp(join(workspaceParent, workspacePrefix)))
   if (fixedWidthCwd) expect(JSON.stringify(cwd)).toHaveLength(192)
-  const dshHome = join(cwd, '.dsh')
-  const sessionsRoot = join(dshHome, 'sessions')
+  const coserveHome = join(cwd, '.coserve')
+  const sessionsRoot = join(coserveHome, 'sessions')
   const replayFixtures = recording ? [] : await hydrateReplayFixtures(scenario, cwd)
   const fixtureContents = await Promise.all((await fixtureFiles(scenario)).map(file => readFile(file, 'utf8')))
   const primaryFixture = fixtureContents[0]
@@ -819,7 +819,7 @@ async function runScenario(scenario: CorpusScenario): Promise<{
     DSH_SNAPSHOT_PROVIDER: route.provider,
     DSH_SNAPSHOT_MODEL: route.model,
     DSH_TELEMETRY_DISABLED: '1',
-    DSH_AGENTS_HOME: join(cwd, '.agents'),
+    COSERVE_AGENTS_HOME: join(cwd, '.coserve-agents'),
     NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
     ...parentFixture === undefined ? {} : {
       DSH_SNAPSHOT_FILE: parentFixture,
@@ -852,7 +852,7 @@ async function runScenario(scenario: CorpusScenario): Promise<{
     profile: scenario.manifest.profile,
     ...(assertions.approvalOutcomes === undefined ? {} : { approvalRequests: true }),
     patches,
-    dshHome,
+    coserveHome,
     processCwd: cwd,
     env,
     initializeTimeoutMs: 110_000,
@@ -1037,7 +1037,7 @@ async function runScenario(scenario: CorpusScenario): Promise<{
       ignoredRootEntries: RUNTIME_WORKSPACE_ENTRIES,
     })
     const modelRequests = assertions.modelRequestsFile !== undefined
-      ? records(await readFile(join(dshHome, assertions.modelRequestsFile), 'utf8'))
+      ? records(await readFile(join(coserveHome, assertions.modelRequestsFile), 'utf8'))
       : []
     if (planReviews !== undefined) expect(planReviews).toEqual([])
     return { results, notifications, observedMethods, logs, initialWorkspace, finalWorkspace, cwd, modelRequests }

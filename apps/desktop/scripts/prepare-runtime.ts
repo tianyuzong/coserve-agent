@@ -1,7 +1,7 @@
 /** Prepare Desktop resources and publish their versions after every preparation stage succeeds. */
 
 import { execFileSync } from 'node:child_process'
-import { chmodSync, cpSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { chmodSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import { parseArgs } from 'node:util'
@@ -23,11 +23,19 @@ type DesktopTarget = ReturnType<typeof desktopTargetPlatform>
 async function prepareElectron({ platform, arch }: DesktopTarget): Promise<string> {
   const require = createRequire(import.meta.url)
   const { version } = require('electron/package.json') as { version: string }
-  const archive = await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'download:electron',
-    () => downloadArtifact({ version, platform, arch, artifactName: 'electron', cacheRoot: BUILD_PATHS.downloads }))
-  rmSync(BUILD_PATHS.electron, { recursive: true, force: true })
-  await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'extract:electron', () => extractZip(archive, { dir: BUILD_PATHS.electron }))
   const executable = join(BUILD_PATHS.electron, platform === 'win32' ? 'electron.exe' : 'Electron.app/Contents/MacOS/Electron')
+  // Reuse a distribution already prepared for this exact version. Repeat and offline builds must not
+  // depend on the download mirror; anything unexpected (missing tree, other version) downloads again.
+  const prepared = existsSync(executable) && (platform === 'win32'
+    ? existsSync(join(BUILD_PATHS.electron, 'version'))
+      && readFileSync(join(BUILD_PATHS.electron, 'version'), 'utf8').trim() === version
+    : existsSync(join(BUILD_PATHS.electron, 'Electron.app', 'Contents', 'Info.plist')))
+  if (!prepared) {
+    const archive = await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'download:electron',
+      () => downloadArtifact({ version, platform, arch, artifactName: 'electron', cacheRoot: BUILD_PATHS.downloads }))
+    rmSync(BUILD_PATHS.electron, { recursive: true, force: true })
+    await packagingStep(process.env.DSH_DESKTOP_PACKAGING_RUN_DIR, 'extract:electron', () => extractZip(archive, { dir: BUILD_PATHS.electron }))
+  }
   return execFileSync(executable, ['-p', 'process.versions.node'], {
     encoding: 'utf8', env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' },
   }).trim()

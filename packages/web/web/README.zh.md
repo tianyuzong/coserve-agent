@@ -98,7 +98,7 @@ ctx.remote.$on('web/providers-changed', () => { /* re-read the lists */ })
 <a id="adding-a-provider"></a>
 #### 添加其他提供方
 
-内置组合之外的搜索或抓取后端是一个插件包，它以唯一的 `id` 和可选的 `title` 调用 `ctx.web.registerSearchProvider()` 或 `ctx.web.registerFetchProvider()`。要在某个 profile 中启用它，先用 `dsh plugin --profile <name> add <package>` 安装该包（[安装规则](../../../docs/user/develop/basic/publish.zh.md)），再把它的行加入该 profile 的用户 patch 层 `$DSH_HOME/profiles/<name>/cordis.patch.yml`，然后重启 DSH。该文件是由 patch 条目组成的顶层 YAML 数组；请追加下面的 `insert` 条目，或用它替换单独的 `[]`。示例挂载一个假想的 `@example/dsh-web-search-acme`；请换成提供方真实的包名，并添加其 README 说明的 `config`。
+内置组合之外的搜索或抓取后端是一个插件包，它以唯一的 `id` 和可选的 `title` 调用 `ctx.web.registerSearchProvider()` 或 `ctx.web.registerFetchProvider()`。要在某个 profile 中启用它，先用 `dsh plugin --profile <name> add <package>` 安装该包（[安装规则](../../../docs/user/develop/basic/publish.zh.md)），再把它的行加入该 profile 的用户 patch 层 `$COSERVE_HOME/profiles/<name>/cordis.patch.yml`，然后重启 DSH。该文件是由 patch 条目组成的顶层 YAML 数组；请追加下面的 `insert` 条目，或用它替换单独的 `[]`。示例挂载一个假想的 `@example/dsh-web-search-acme`；请换成提供方真实的包名，并添加其 README 说明的 `config`。
 
 ```yaml
 - insert:

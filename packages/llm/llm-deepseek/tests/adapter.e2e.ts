@@ -36,7 +36,7 @@ afterEach(async () => {
 async function boot(models?: Messages.Options['models'], baseURL = Protocol.PUBLIC_BASE_URL) {
   const home = await mkdtemp(join(tmpdir(), 'dsh-messages-e2e-'))
   cleanups.push(() => rm(home, { recursive: true, force: true }))
-  vi.stubEnv('DSH_HOME', home)
+  vi.stubEnv('COSERVE_HOME', home)
   const ctx = new Context()
   cleanups.push(() => ctx.fiber.dispose())
   await ctx.plugin(LlmRuntime)

@@ -414,6 +414,10 @@
       "@deepseek-ai/dsh-native-command/types": ["./packages/util/native-command/src/types.ts"],
       "@deepseek-ai/dsh-message-quotes/client": ["./packages/session/message-quotes/src/client/index.ts"],
       "@deepseek-ai/dsh-ptc-runtime-node/configuration": ["./packages/ptc-runtime/ptc-runtime-node/src/configuration.ts"],
+      // ui-castudio's directory drops the ui- prefix its npm name carries, so
+      // the generated aliases cannot map it; these stay hand-written.
+      "@deepseek-ai/dsh-client-ui-castudio": ["./packages/client/ui-castudio/src"],
+      "@deepseek-ai/dsh-client-ui-castudio/client": ["./packages/client/ui-castudio/src/client/index.ts"],
       // BEGIN generated package aliases — pnpm run gen-tsconfig-paths
       "@deepseek-ai/dsh-acp": ["./packages/acp/acp/src"],
       "@deepseek-ai/dsh-acp-app": ["./packages/bundle/acp-app/src"],
@@ -435,6 +439,7 @@
       "@deepseek-ai/dsh-bash-local": ["./packages/shell/bash-local/src"],
       "@deepseek-ai/dsh-bash-sandbox": ["./packages/shell/bash-sandbox/src"],
       "@deepseek-ai/dsh-brand": ["./packages/util/brand/src"],
+      "@deepseek-ai/dsh-castudio-context": ["./packages/context/castudio-context/src"],
       "@deepseek-ai/dsh-chunked-list": ["./packages/util/chunked-list/src"],
       "@deepseek-ai/dsh-cmdline": ["./packages/boot/cmdline/src"],
       "@deepseek-ai/dsh-command-compact": ["./packages/compaction/command-compact/src"],
@@ -577,6 +582,7 @@
       "@deepseek-ai/dsh-tool-ask-user": ["./packages/interaction/tool-ask-user/src"],
       "@deepseek-ai/dsh-tool-bash": ["./packages/shell/tool-bash/src"],
       "@deepseek-ai/dsh-tool-bash-persistent": ["./packages/shell/tool-bash-persistent/src"],
+      "@deepseek-ai/dsh-tool-castudio": ["./packages/context/tool-castudio/src"],
       "@deepseek-ai/dsh-tool-cordis": ["./packages/extensions/tool-cordis/src"],
       "@deepseek-ai/dsh-tool-executor-native": ["./packages/core/tool-executor-native/src"],
       "@deepseek-ai/dsh-tool-executor-ptc": ["./packages/core/tool-executor-ptc/src"],

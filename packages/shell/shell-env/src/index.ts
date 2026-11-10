@@ -12,7 +12,7 @@ import { Service, type Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
 import { DSH_ENV_PREFIX } from '@deepseek-ai/dsh-shell'
 import type { DshEnvironment, DshEnvironmentKey } from '@deepseek-ai/dsh-shell'
-import { DSH_HOME_ENV, resolveDshHome } from '@deepseek-ai/dsh-home-paths'
+import { COSERVE_HOME_ENV, resolveCoserveHome } from '@deepseek-ai/dsh-home-paths'
 import type { ToolExecution } from '@deepseek-ai/dsh-tools'
 // Declares `Context.profileContext`, the launcher-provided profile the built-ins read.
 import type {} from '@deepseek-ai/dsh-app-boot'
@@ -28,13 +28,13 @@ export const inject: string[] = []
 
 /** Plugin config (all optional — the built-in facts resolve without defaults). */
 export interface Config {
-  /** DeepSeek Harness home directory exposed as `DSH_HOME`; defaults to `$DSH_HOME` or `~/.dsh`. */
-  dshHome?: string
+  /** DeepSeek Harness home directory exposed as `COSERVE_HOME`; defaults to `$COSERVE_HOME` or `~/.coserve`. */
+  coserveHome?: string
 }
 
 /** Runtime configuration schema for the shell-env plugin. */
 export const Config: z<Config> = z.object({
-  dshHome: z.string(),
+  coserveHome: z.string(),
 })
 
 /** Model-visible metadata for one managed `DSH_*` environment variable. */
@@ -42,6 +42,13 @@ export interface BashEnvVariable {
   /** Concise description of the environment fact represented by the variable. */
   description: string
 }
+
+/**
+ * Keys a contributor may declare and resolve: the `DSH_*` managed facts.
+ * `COSERVE_HOME` is resolved and injected by the registry itself, so it is
+ * reserved rather than contributable.
+ */
+export type BashEnvContributorKey = `${typeof DSH_ENV_PREFIX}${string}`
 
 /**
  * A plugin contribution to the managed environment of each model shell call.
@@ -52,13 +59,13 @@ export interface BashEnvContributor {
   /** Stable contributor name used in diagnostics and duplicate detection. */
   name: string
   /** Complete set of `DSH_*` keys this contributor may return. */
-  variables: Readonly<Record<DshEnvironmentKey, BashEnvVariable>>
+  variables: Readonly<Record<BashEnvContributorKey, BashEnvVariable>>
   /**
    * Resolve this contributor's available values for one tool execution.
    * @param execution - the shell tool execution and its optional calling agent.
    * @returns a partial map containing only keys declared in {@link variables}.
    */
-  resolve(execution: ToolExecution): Readonly<Partial<Record<DshEnvironmentKey, string>>>
+  resolve(execution: ToolExecution): Readonly<Partial<Record<BashEnvContributorKey, string>>>
 }
 
 /** An enumerable declaration returned by {@link ShellEnvRegistry.list}. */
@@ -66,7 +73,7 @@ export interface BashEnvVariableInfo extends BashEnvVariable {
   /** Contributor that owns the variable. */
   contributor: string
   /** Declared `DSH_*` environment variable name. */
-  key: DshEnvironmentKey
+  key: BashEnvContributorKey
 }
 
 const DSH_SHELL_KEY = `${DSH_ENV_PREFIX}SHELL` as const
@@ -74,7 +81,7 @@ const DSH_SESSION_ID_KEY = `${DSH_ENV_PREFIX}SESSION_ID` as const
 const DSH_PROFILE_KEY = `${DSH_ENV_PREFIX}PROFILE` as const
 const DSH_PROFILE_DIR_KEY = `${DSH_ENV_PREFIX}PROFILE_DIR` as const
 const RESERVED_BASH_ENV_KEYS = new Set<DshEnvironmentKey>([
-  DSH_HOME_ENV,
+  COSERVE_HOME_ENV,
   DSH_SHELL_KEY,
   DSH_SESSION_ID_KEY,
   DSH_PROFILE_KEY,
@@ -92,8 +99,8 @@ const BASH_ENV_KEY_SUFFIX = /^[A-Z][A-Z0-9_]*$/
  */
 export class ShellEnvRegistry extends Service {
   private readonly contributors = new Map<string, BashEnvContributor>()
-  private readonly keyOwners = new Map<DshEnvironmentKey, string>()
-  private readonly dshHome: string
+  private readonly keyOwners = new Map<BashEnvContributorKey, string>()
+  private readonly coserveHome: string
 
   /**
    * Create and install the `ctx.shellEnv` service.
@@ -102,7 +109,7 @@ export class ShellEnvRegistry extends Service {
    */
   constructor(ctx: Context, config: Config = {}) {
     super(ctx, 'shellEnv')
-    this.dshHome = resolveDshHome(config.dshHome)
+    this.coserveHome = resolveCoserveHome(config.coserveHome)
   }
 
   /**
@@ -120,14 +127,14 @@ export class ShellEnvRegistry extends Service {
         throw new Error(`bash env contributor "${contributor.name}" is already registered`)
       }
 
-      const variables = Object.entries(contributor.variables) as [DshEnvironmentKey, BashEnvVariable][]
+      const variables = Object.entries(contributor.variables) as [BashEnvContributorKey, BashEnvVariable][]
       for (const [key, variable] of variables) {
+        if (RESERVED_BASH_ENV_KEYS.has(key)) {
+          throw new Error(`bash env contributor "${contributor.name}" cannot own reserved key "${key}"`)
+        }
         if (!key.startsWith(DSH_ENV_PREFIX)
           || !BASH_ENV_KEY_SUFFIX.test(key.slice(DSH_ENV_PREFIX.length))) {
           throw new Error(`bash env contributor "${contributor.name}" declared invalid key "${key}"`)
-        }
-        if (RESERVED_BASH_ENV_KEYS.has(key)) {
-          throw new Error(`bash env contributor "${contributor.name}" cannot own reserved key "${key}"`)
         }
         if (variable.description.trim().length === 0) {
           throw new Error(`bash env contributor "${contributor.name}" must describe "${key}"`)
@@ -155,7 +162,7 @@ export class ShellEnvRegistry extends Service {
    */
   collect(execution: ToolExecution): DshEnvironment {
     const values: Record<DshEnvironmentKey, string> = {
-      [DSH_HOME_ENV]: this.dshHome,
+      [COSERVE_HOME_ENV]: this.coserveHome,
       [DSH_SHELL_KEY]: '1',
     }
     if (execution.agent !== undefined) {
@@ -170,7 +177,7 @@ export class ShellEnvRegistry extends Service {
     for (const contributor of [...this.contributors.values()].sort((left, right) => left.name.localeCompare(right.name))) {
       const resolved = contributor.resolve(execution)
       for (const [rawKey, value] of Object.entries(resolved)) {
-        const key = rawKey as DshEnvironmentKey
+        const key = rawKey as BashEnvContributorKey
         if (!Object.hasOwn(contributor.variables, key)) {
           throw new Error(`bash env contributor "${contributor.name}" returned undeclared key "${key}"`)
         }
@@ -195,7 +202,7 @@ export class ShellEnvRegistry extends Service {
       .flatMap(contributor => Object.entries(contributor.variables).map(([key, variable]) => ({
         contributor: contributor.name,
         description: variable.description,
-        key: key as DshEnvironmentKey,
+        key: key as BashEnvContributorKey,
       })))
       .sort((left, right) => left.key.localeCompare(right.key))
   }

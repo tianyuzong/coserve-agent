@@ -359,7 +359,7 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY)('GitHub webhook through the real 
     const workspacePath = join(root, 'workspace')
     await mkdir(workspacePath)
     const canonicalWorkspacePath = await realpath(workspacePath)
-    const profile = join(root, '.dsh/profiles/web')
+    const profile = join(root, '.coserve/profiles/web')
     initProfile(profile, PROFILE_TEMPLATES.web!.bundles)
     const manifestPath = join(profile, 'package.json')
     const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as { dependencies: Record<string, string> }
@@ -383,12 +383,12 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY)('GitHub webhook through the real 
       cwd: root,
       env: {
         ...process.env,
-        DSH_AGENTS_HOME: join(root, '.agents'),
+        COSERVE_AGENTS_HOME: join(root, '.coserve-agents'),
         DSH_GITHUB_E2E_MARKER: MARKER,
         DSH_GITHUB_E2E_WORKSPACE: workspacePath,
         DSH_GITHUB_WEBHOOK_PORT: String(webhookPort),
         DSH_GITHUB_WEBHOOK_SECRET: SECRET,
-        DSH_HOME: join(root, '.dsh'),
+        COSERVE_HOME: join(root, '.coserve'),
         DSH_TELEMETRY_DISABLED: '1',
       },
       stdio: ['ignore', 'pipe', 'pipe'],

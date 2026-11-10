@@ -1302,7 +1302,7 @@ describe('tool-owned UI presentation (presentCall / presentResult)', () => {
 })
 
 describe('the model-facing bash tool builds its request from named args only (no {...args} forward)', () => {
-  const recordingDshHome = join(spillDir, 'dsh-home')
+  const recordingCoserveHome = join(spillDir, 'dsh-home')
 
   /**
    * Records every {@link ShellExecRequest} the consumer hands to `resolve()`, so a
@@ -1360,7 +1360,7 @@ describe('the model-facing bash tool builds its request from named args only (no
     await ctx.plugin(AgentRegistry)
     await ctx.plugin(LocalJobRegistry)
     await ctx.plugin(ToolJobs)
-    await ctx.plugin(BashEnvPlugin, { dshHome: recordingDshHome })
+    await ctx.plugin(BashEnvPlugin, { coserveHome: recordingCoserveHome })
     await ctx.plugin(RecordingBashExecutor)
     await ctx.plugin(ToolBash)
     return { ctx, bash: ctx.shell as RecordingBashExecutor }
@@ -1386,7 +1386,7 @@ describe('the model-facing bash tool builds its request from named args only (no
     })
 
     expect(bash.requests[0]?.dshEnv).toEqual({
-      DSH_HOME: recordingDshHome,
+      COSERVE_HOME: recordingCoserveHome,
       DSH_SESSION_ID: 'request-fg',
       DSH_SHELL: '1',
     })
@@ -1412,7 +1412,7 @@ describe('the model-facing bash tool builds its request from named args only (no
 
     expect(bash.requests[0]?.env).toBeUndefined()
     expect(bash.requests[0]?.dshEnv).toEqual({
-      DSH_HOME: recordingDshHome,
+      COSERVE_HOME: recordingCoserveHome,
       DSH_SESSION_ID: 'request-bg',
       DSH_SHELL: '1',
     })
@@ -1435,12 +1435,12 @@ describe('the model-facing bash tool builds its request from named args only (no
 
     expect(bash.requests.map(request => request.dshEnv)).toEqual([
       {
-        DSH_HOME: recordingDshHome,
+        COSERVE_HOME: recordingCoserveHome,
         DSH_SESSION_ID: 'request-parent',
         DSH_SHELL: '1',
       },
       {
-        DSH_HOME: recordingDshHome,
+        COSERVE_HOME: recordingCoserveHome,
         DSH_SESSION_ID: 'request-child',
         DSH_SHELL: '1',
       },

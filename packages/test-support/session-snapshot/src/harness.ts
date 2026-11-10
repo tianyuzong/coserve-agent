@@ -265,7 +265,7 @@ export async function runScenario(input: InputScript, opts: RunOptions): Promise
     }
     await opts.prepareWorkspace?.(cwd)
     const initialWorkspace = await captureWorkspaceSnapshot(cwd, {
-      ignoredRootEntries: ['.agents', '.dsh', '.dsh-profile-patches', '.dsh-snapshot-stream-ready'],
+      ignoredRootEntries: ['.agents', '.coserve', '.coserve-agents', '.dsh-profile-patches', '.dsh-snapshot-stream-ready'],
     })
     const env: NodeJS.ProcessEnv = {
       ...opts.mode === 'replay' ? REPLAY_CREDENTIAL_ENV : {},
@@ -281,8 +281,8 @@ export async function runScenario(input: InputScript, opts: RunOptions): Promise
       DSH_SNAPSHOT_SESSIONS_ROOT: sessionsRoot,
       DSH_SNAPSHOT_SPILL_ROOT: spillRoot,
       DSH_SNAPSHOT_SPILL_LOCATOR_ROOT: snapshotSpillRoot(opts.fixtureFile),
-      DSH_HOME: join(cwd, '.dsh'),
-      DSH_AGENTS_HOME: join(cwd, '.agents'),
+      COSERVE_HOME: join(cwd, '.coserve'),
+      COSERVE_AGENTS_HOME: join(cwd, '.coserve-agents'),
       ...opts.overrideFile !== undefined ? { DSH_SNAPSHOT_OVERRIDE: opts.overrideFile } : {},
       ...opts.childFiles !== undefined && opts.childFiles.length > 0
         ? { DSH_SNAPSHOT_CHILD_FILES: opts.childFiles.join(delimiter) }
@@ -355,7 +355,7 @@ export async function runScenario(input: InputScript, opts: RunOptions): Promise
     // generated dirs still exist, ordered primary-first.
     sessionLogs = await harvestSessionLogs(sessionsRoot)
     const finalWorkspace = await captureWorkspaceSnapshot(cwd, {
-      ignoredRootEntries: ['.agents', '.dsh', '.dsh-profile-patches', '.dsh-snapshot-stream-ready'],
+      ignoredRootEntries: ['.agents', '.coserve', '.coserve-agents', '.dsh-profile-patches', '.dsh-snapshot-stream-ready'],
     })
     return {
       rawStdout: launched.rawStdout(),

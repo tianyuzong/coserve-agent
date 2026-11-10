@@ -64,7 +64,7 @@ async function setup(home: string, config: toolSkill.Config = {}): Promise<Conte
   await ctx.plugin(NativeToolExecutor)
   await ctx.plugin(AgentRegistry)
   await ctx.plugin(SkillRegistry)
-  await ctx.plugin(SkillFileSystem, { dshHome: join(home, '.dsh'), agentsHome: join(home, '.agents'), watch: false })
+  await ctx.plugin(SkillFileSystem, { coserveHome: join(home, '.coserve'), agentsHome: join(home, '.coserve-agents'), watch: false })
   await ctx.plugin(toolSkill, config)
   return ctx
 }
@@ -205,7 +205,7 @@ describe('dsh-tool-skill', () => {
     await ctx.plugin(AgentRegistry)
     const home = await tempDir('tool-schema')
     await ctx.plugin(SkillRegistry)
-    await ctx.plugin(SkillFileSystem, { dshHome: join(home, '.dsh'), agentsHome: join(home, '.agents'), watch: false })
+    await ctx.plugin(SkillFileSystem, { coserveHome: join(home, '.coserve'), agentsHome: join(home, '.coserve-agents'), watch: false })
     ctx.skills.register({ name: 'lifecycle-skill', description: 'Lifecycle', source: 'runtime', content: 'body' })
 
     const fiber = await ctx.plugin(toolSkill)
@@ -716,7 +716,7 @@ describe('dsh-tool-skill', () => {
 
   it('keeps body-only edits out of the catalog and loads the latest body on demand', async () => {
     const home = await tempDir('tool-body-refresh')
-    const root = join(home, '.dsh/skills')
+    const root = join(home, '.coserve/skills')
     await writeSkill(root, 'body-skill', 'Stable description', 'First body.')
     const ctx = await setup(home)
     const session = Session.create(SessionId('body-refresh'))
@@ -898,7 +898,7 @@ describe('dsh-tool-skill', () => {
     await ctx.plugin(NativeToolExecutor)
     await ctx.plugin(AgentRegistry)
     await ctx.plugin(SkillRegistry)
-    await ctx.plugin(SkillFileSystem, { dshHome: join(home, '.dsh'), agentsHome: join(home, '.agents'), watch: false })
+    await ctx.plugin(SkillFileSystem, { coserveHome: join(home, '.coserve'), agentsHome: join(home, '.coserve-agents'), watch: false })
 
     await expect(ctx.plugin(toolSkill, { catalogDescriptionMaxLength: 2 })).rejects.toThrow('greater than or equal to 3')
   })
@@ -907,7 +907,7 @@ describe('dsh-tool-skill', () => {
     const home = await tempDir('tool-load')
     const project = await tempDir('tool-project')
     await mkdir(join(project, '.git'), { recursive: true })
-    await writeSkill(join(project, '.dsh/skills'), 'project-skill', 'Project skill', 'Project instructions.')
+    await writeSkill(join(project, '.coserve/skills'), 'project-skill', 'Project skill', 'Project instructions.')
     const ctx = await setup(home)
 
     const result = await executeToolFixture(ctx, {
@@ -923,7 +923,7 @@ describe('dsh-tool-skill', () => {
     expect(result.value).toEqual({
       name: 'project-skill',
       provider: 'filesystem',
-      resourceBase: { kind: 'directory', path: join(project, '.dsh/skills/project-skill') },
+      resourceBase: { kind: 'directory', path: join(project, '.coserve/skills/project-skill') },
       content: 'Project instructions.',
     })
     const block = result.content[0]
@@ -932,7 +932,7 @@ describe('dsh-tool-skill', () => {
     expect(block.text).toBe([
       '<skill_content name="project-skill">',
       '<skill_resources>',
-      `Base directory for this skill: ${join(project, '.dsh/skills/project-skill')}`,
+      `Base directory for this skill: ${join(project, '.coserve/skills/project-skill')}`,
       'Resolve relative paths mentioned by this skill against the base directory before using them. Load referenced resources only as needed.',
       '</skill_resources>',
       '',
@@ -1006,8 +1006,8 @@ describe('dsh-tool-skill', () => {
 
   it('returns isError for unknown, invalid, and model-disabled skills', async () => {
     const home = await tempDir('tool-errors')
-    await writeSkill(join(home, '.dsh/skills'), 'hidden-skill', 'Hidden skill', 'Hidden instructions.')
-    await writeFile(join(home, '.dsh/skills/hidden-skill/SKILL.md'), '---\nname: hidden-skill\ndescription: Hidden skill\ndisable-model-invocation: true\n---\n\nHidden instructions.\n')
+    await writeSkill(join(home, '.coserve/skills'), 'hidden-skill', 'Hidden skill', 'Hidden instructions.')
+    await writeFile(join(home, '.coserve/skills/hidden-skill/SKILL.md'), '---\nname: hidden-skill\ndescription: Hidden skill\ndisable-model-invocation: true\n---\n\nHidden instructions.\n')
     const ctx = await setup(home)
     ctx.skills.register({
       name: 'model-only-skill',
@@ -1113,7 +1113,7 @@ describe('user-explicit invocation injection', () => {
 
   async function invokeHarness(): Promise<{ ctx: Context; agent: Agent }> {
     const home = await tempDir('invoke')
-    const skillsRoot = join(home, '.agents', 'skills')
+    const skillsRoot = join(home, '.coserve-agents', 'skills')
     await writePolicySkill(skillsRoot, 'hidden-demo', 'User-only demo', 'disable-model-invocation: true', 'Say the magic word: PINEAPPLE.')
     await writePolicySkill(skillsRoot, 'shared-skill', 'Ordinary skill', '', 'Shared instructions.')
     await writePolicySkill(skillsRoot, 'model-only-skill', 'Model only', 'user-invocable: false', 'Model-only instructions.')

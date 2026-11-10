@@ -395,8 +395,8 @@ export interface Config {
 ```ts config-catalog
 /** Local attachment backend configuration. */
 export interface Config {
-  /** Explicit harness home; omitted follows `DSH_HOME`, then `~/.dsh`. */
-  dshHome?: string
+  /** Explicit harness home; omitted follows `COSERVE_HOME`, then `~/.coserve`. */
+  coserveHome?: string
   /** Maximum encoded bytes accepted for one submitted image. Default: 50 MiB. */
   maxImageBytes?: number
   /** Maximum image count accepted in one submitted message. Default: 20. */
@@ -470,6 +470,29 @@ export interface Config {
 export type Config = LocalConfig
 ```
 <!-- END GENERATED config-catalog:@deepseek-ai/dsh-bash-sandbox -->
+
+<!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-castudio-context -->
+<a id="deepseek-aidsh-castudio-context"></a>
+
+## `@deepseek-ai/dsh-castudio-context`
+
+- `inject`: `agents` · `sessionProjections`
+- `source`: [`packages/context/castudio-context/src/index.ts:47`](../packages/context/castudio-context/src/index.ts)
+
+```ts config-catalog
+/** CAStudio service scheduling and response bounds. Invalid values fail plugin load. */
+export interface Config {
+  /** Service origin such as `http://127.0.0.1:4317`. Omit to read `COSERVE_CASTUDIO_URL`, then the default loopback origin. */
+  url?: string
+  /** Per-request timeout in milliseconds. */
+  timeoutMs?: number
+  /** Minimum milliseconds between durable injections in one session. Omit or set to 0 to inject on every eligible change. */
+  refreshIntervalMs?: number
+  /** Maximum projects listed in one reading; the remainder is summarized as a count. */
+  maxProjects?: number
+}
+```
+<!-- END GENERATED config-catalog:@deepseek-ai/dsh-castudio-context -->
 
 <!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-client-connection -->
 <a id="deepseek-aidsh-client-connection"></a>
@@ -843,8 +866,8 @@ export interface Config {
 export interface Config {
   /** Credentials document path; defaults to `.credentials.yaml` under the harness home. */
   path?: string
-  /** Harness home used when `path` is omitted; defaults to `$DSH_HOME` or `~/.dsh`. */
-  dshHome?: string
+  /** Harness home used when `path` is omitted; defaults to `$COSERVE_HOME` or `~/.coserve`. */
+  coserveHome?: string
   /** Watch the document and hot-publish external edits; defaults to true. */
   watch?: boolean
   /** Watcher write-settle window in milliseconds; defaults to 100. */
@@ -3355,8 +3378,8 @@ export interface Config extends SessionTitleLlmConfig {
 ```ts config-catalog
 /** Plugin config (all optional — the built-in facts resolve without defaults). */
 export interface Config {
-  /** DeepSeek Harness home directory exposed as `DSH_HOME`; defaults to `$DSH_HOME` or `~/.dsh`. */
-  dshHome?: string
+  /** DeepSeek Harness home directory exposed as `COSERVE_HOME`; defaults to `$COSERVE_HOME` or `~/.coserve`. */
+  coserveHome?: string
 }
 ```
 <!-- END GENERATED config-catalog:@deepseek-ai/dsh-shell-env -->
@@ -3392,9 +3415,9 @@ export interface Config {
   providerName?: string
   /** Whether project and user roots are included around custom roots. */
   includeDefaultRoots?: boolean
-  /** DeepSeek Harness config root. Defaults to `$DSH_HOME` or `~/.dsh`. */
-  dshHome?: string
-  /** Shared agent config root. Defaults to `$DSH_AGENTS_HOME` or `~/.agents`. */
+  /** DeepSeek Harness config root. Defaults to `$COSERVE_HOME` or `~/.coserve`. */
+  coserveHome?: string
+  /** Shared agent config root. Defaults to `$COSERVE_AGENTS_HOME` or `~/.coserve-agents`. */
   agentsHome?: string
   /** Additional skill roots scanned after project roots and before user roots. */
   customSkillDirs?: string[]
@@ -3775,7 +3798,7 @@ export interface Config {
   /** Ordered per-launch profile patch files, resolved and checked at plugin load. */
   patches: string[]
   /** Absolute isolated Harness home for every nested child process. */
-  dshHome: string
+  coserveHome: string
   /** Provider route the child runtime initializes with (default `deepseek-official`). */
   provider: string
   /** Model the child runtime initializes with (default `deepseek-v4-flash`). */
@@ -4066,6 +4089,27 @@ export interface Config {
 }
 ```
 <!-- END GENERATED config-catalog:@deepseek-ai/dsh-tool-bash-persistent -->
+
+<!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-tool-castudio -->
+<a id="deepseek-aidsh-tool-castudio"></a>
+
+## `@deepseek-ai/dsh-tool-castudio`
+
+- `inject`: `tools`
+- `source`: [`packages/context/tool-castudio/src/index.ts:40`](../packages/context/tool-castudio/src/index.ts)
+
+```ts config-catalog
+/** CAStudio service scheduling bounds. Invalid values fail plugin load. */
+export interface Config {
+  /** Service origin such as `http://127.0.0.1:4317`. Omit to read `COSERVE_CASTUDIO_URL`, then the default loopback origin. */
+  url?: string
+  /** Per-request timeout in milliseconds for workbench listing and state reads. */
+  stateTimeoutMs?: number
+  /** Per-request timeout in milliseconds for viewport commands; the service answers within 10 seconds. */
+  commandTimeoutMs?: number
+}
+```
+<!-- END GENERATED config-catalog:@deepseek-ai/dsh-tool-castudio -->
 
 <!-- BEGIN GENERATED config-catalog:@deepseek-ai/dsh-tool-executor-ptc -->
 <a id="deepseek-aidsh-tool-executor-ptc"></a>

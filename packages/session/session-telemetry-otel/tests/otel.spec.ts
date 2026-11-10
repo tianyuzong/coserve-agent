@@ -48,17 +48,17 @@ interface OtlpLogsRequest {
 const servers: Server[] = []
 
 // The backend resolves the harness home's anonymous user id at construction;
-// pin DSH_HOME to a temp dir so the suite never touches the ambient ~/.dsh.
+// pin COSERVE_HOME to a temp dir so the suite never touches the ambient ~/.coserve.
 let tempHome: string
-let previousDshHome: string | undefined
+let previousCoserveHome: string | undefined
 beforeAll(() => {
   tempHome = mkdtempSync(join(tmpdir(), 'dsh-otel-home-'))
-  previousDshHome = process.env.DSH_HOME
-  process.env.DSH_HOME = tempHome
+  previousCoserveHome = process.env.COSERVE_HOME
+  process.env.COSERVE_HOME = tempHome
 })
 afterAll(() => {
-  if (previousDshHome === undefined) delete process.env.DSH_HOME
-  else process.env.DSH_HOME = previousDshHome
+  if (previousCoserveHome === undefined) delete process.env.COSERVE_HOME
+  else process.env.COSERVE_HOME = previousCoserveHome
   rmSync(tempHome, { recursive: true, force: true })
 })
 

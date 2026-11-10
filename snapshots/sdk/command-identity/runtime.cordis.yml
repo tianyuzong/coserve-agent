@@ -4,4 +4,4 @@
     - id: command-identity-capture
       name: '../manual-compact/capture-requests.mjs'
       config:
-        path: !!js dshHomePath('command-identity-requests.jsonl')
+        path: !!js coserveHomePath('command-identity-requests.jsonl')

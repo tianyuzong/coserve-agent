@@ -32,8 +32,8 @@ async function run(cwd: string, home: string, args: readonly string[]) {
     // Source diagnostics use the hook the launch contract names; artifact acceptance uses built lib.
     sourceImport: 'tsx/esm',
     env: {
-      DSH_HOME: home,
-      DSH_AGENTS_HOME: join(cwd, '.agents'),
+      COSERVE_HOME: home,
+      COSERVE_AGENTS_HOME: join(cwd, '.coserve-agents'),
       DSH_TELEMETRY_DISABLED: '1',
       DEEPSEEK_API_KEY: '',
       NODE_OPTIONS: [
@@ -84,7 +84,7 @@ describe('three-mode acceptance: real-profile base', () => {
   it('completes one real turn, writes through the real tool, and reclaims the workspace', async () => {
     const cwd = await mkdtemp(join(tmpdir(), 'liveshare-profile-'))
     try {
-      const home = join(cwd, '.dsh')
+      const home = join(cwd, '.coserve')
       const sessions = join(home, 'sessions')
       const profileDir = join(home, 'profiles', 'headless')
       await mkdir(profileDir, { recursive: true })

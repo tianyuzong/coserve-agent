@@ -9,7 +9,7 @@ kind: "package-reference"
 
 ## 概述
 
-使用 `dsh-client-locale` 可在 web GUI 中切换内置的英文、中文、日语、西班牙语、法语、德语、俄语和巴西葡萄牙语（`pt`，也匹配 `pt-PT` 浏览器请求）locale，或 client 插件添加的语言。用户选择会立即生效；每个已认证浏览器都通过 Host settings 服务把选择以 `locale.preference` 持久化到 `$DSH_HOME/cordis.patch.yml`。全新浏览器会使用浏览器请求的第一个受支持语言，直到 Host 读取送达已存储偏好。插件作者可添加类型化命名空间字典，并通过公开 locale API 翻译；经 slot 渲染的文案无需重新加载即可随语言切换更新。
+使用 `dsh-client-locale` 可在 web GUI 中切换内置的英文、中文、日语、西班牙语、法语、德语、俄语和巴西葡萄牙语（`pt`，也匹配 `pt-PT` 浏览器请求）locale，或 client 插件添加的语言。用户选择会立即生效；每个已认证浏览器都通过 Host settings 服务把选择以 `locale.preference` 持久化到 `$COSERVE_HOME/cordis.patch.yml`。全新浏览器会使用浏览器请求的第一个受支持语言，直到 Host 读取送达已存储偏好。插件作者可添加类型化命名空间字典，并通过公开 locale API 翻译；经 slot 渲染的文案无需重新加载即可随语言切换更新。
 
 ## 目录
 

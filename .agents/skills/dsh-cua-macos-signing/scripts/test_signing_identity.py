@@ -155,11 +155,11 @@ class DevelopmentSigningTests(unittest.TestCase):
                 pass
         self.assertEqual({p.name for p in self.root.iterdir()}, {f"{p.name}.lock" for p in directories})
 
-    def test_default_identity_is_outside_dsh_home(self):
+    def test_default_identity_is_outside_coserve_home(self):
         home = self.root / "user"
         with patch.object(Path, "home", return_value=home):
             for value in ("", str(self.root / "custom-dsh-home")):
-                with patch.dict(signing.os.environ, {"DSH_HOME": value}):
+                with patch.dict(signing.os.environ, {"COSERVE_HOME": value}):
                     self.assertEqual(signing.default_directory(), home / ".cua-macos-keys/dev")
         self.assertFalse(home.exists())
 

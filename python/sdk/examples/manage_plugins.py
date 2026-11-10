@@ -15,14 +15,14 @@ def main() -> None:
     """Prepare package tools, answer stdio approvals, and print the final response."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("prompt")
-    parser.add_argument("--dsh-home", type=Path, required=True)
+    parser.add_argument("--coserve-home", type=Path, required=True)
     parser.add_argument("--dsh-bin", type=Path)
     parser.add_argument("--workspace", type=Path, default=Path.cwd())
     args = parser.parse_args()
     if os.environ.get("DSH_PRIMARY_RUNTIME") is None:
         download_primary_runtime()
     with ThreadPoolExecutor(max_workers=2) as worker:
-        harness = DeepSeekHarness(dsh_home=str(args.dsh_home.resolve()), cwd=str(args.workspace.resolve()),
+        harness = DeepSeekHarness(coserve_home=str(args.coserve_home.resolve()), cwd=str(args.workspace.resolve()),
                                   dsh_bin=None if args.dsh_bin is None else str(args.dsh_bin.resolve()),
                                   approval_requests=True,
                                   env={"DSH_PERMISSION_MODE": "workspace-write"})

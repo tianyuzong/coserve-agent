@@ -39,7 +39,7 @@ export { DEFAULT_ROOT } from '@deepseek-ai/dsh-experimental-webworker-runtime'
 /** Image path of the manifest; the layout contract's name, re-exported for callers. */
 export const MANIFEST_PATH: string = IMAGE_MANIFEST_PATH
 
-/** Image path of the home patch: `$DSH_HOME/cordis.patch.yml` under the Worker home. */
+/** Image path of the home patch: `$COSERVE_HOME/cordis.patch.yml` under the Worker home. */
 export const HOME_PATCH_PATH = `${IMAGE_HOME_DIRECTORY}/${PROFILE_PATCH_FILENAME}`
 
 /** Exclude matcher over tree-root-relative paths ({@link EXCLUDE}). */

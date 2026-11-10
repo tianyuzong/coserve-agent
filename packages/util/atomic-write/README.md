@@ -33,7 +33,7 @@ Use `writeFileAtomic` when a file-backed store must replace complete text or bin
 import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write'
 
 declare const text: string
-await writeFileAtomic('/home/u/.dsh/cordis.patch.yml', text, { mode: 0o600 })
+await writeFileAtomic('/home/u/.coserve/cordis.patch.yml', text, { mode: 0o600 })
 ```
 
 Parent directories are created as needed, and readers observe either the old or the new complete content. On Windows, transient replacement interference reported as `EACCES`, `EBUSY`, or `EPERM` is retried for a bounded interval; any remaining failure removes the temporary file and leaves the target untouched.
@@ -48,9 +48,9 @@ import { withFileLock, writeFileAtomic } from '@deepseek-ai/dsh-atomic-write'
 declare const render: (previous: string) => string
 declare const readCurrent: () => Promise<string>
 
-await withFileLock('/home/u/.dsh/cordis.patch.yml', async () => {
+await withFileLock('/home/u/.coserve/cordis.patch.yml', async () => {
   const previous = await readCurrent()
-  await writeFileAtomic('/home/u/.dsh/cordis.patch.yml', render(previous), { mode: 0o600 })
+  await writeFileAtomic('/home/u/.coserve/cordis.patch.yml', render(previous), { mode: 0o600 })
 })
 ```
 

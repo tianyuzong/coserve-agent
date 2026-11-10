@@ -2,4 +2,4 @@
     - id: plan-request-capture
       name: '../manual-compact/capture-requests.mjs'
       config:
-        path: !!js dshHomePath('plan-requests.jsonl')
+        path: !!js coserveHomePath('plan-requests.jsonl')

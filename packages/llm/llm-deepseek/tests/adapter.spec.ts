@@ -46,7 +46,7 @@ async function endpoint(...args: Parameters<typeof server>) {
 async function context() {
   const home = await mkdtemp(join(tmpdir(), 'dsh-messages-test-'))
   cleanup.push(() => rm(home, { recursive: true, force: true }))
-  vi.stubEnv('DSH_HOME', home)
+  vi.stubEnv('COSERVE_HOME', home)
   const ctx = new Context()
   cleanup.push(() => ctx.fiber.dispose())
   return { ctx, home }
@@ -323,7 +323,7 @@ describe('Cordis provider composition', () => {
     const price = () => ctx.llm.imageRequestPricing('deepseek-official', model)!
     const dummy = { attachmentId: AttachmentId(`sha256:${'a'.repeat(64)}`), width: 1, height: 1, bytes: 3, mediaType: 'image/png' as const }
     expect(price().priceImages([{ type: 'image', attachment: dummy }])[0]?.text).toBeDefined()
-    await ctx.plugin(LocalAttachments, { dshHome: home })
+    await ctx.plugin(LocalAttachments, { coserveHome: home })
     const attachment = await ctx.attachments.saveImage({ data: await readFile(new URL('fixtures/red.png', import.meta.url)), mediaType: 'image/png' })
     expect(price().priceImages([{ type: 'image', attachment }])[0]?.text).not.toContain('/mounted/image.png')
     class MappedFiles extends Service {

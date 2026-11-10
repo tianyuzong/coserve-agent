@@ -89,8 +89,8 @@ export async function createPackedInstallation(temporaryPrefix: string, extraPac
     !/KEY|SECRET|TOKEN|PASSWORD/.test(key) && key !== 'NODE_OPTIONS' && key !== 'NODE_PATH'
   )))
   Object.assign(environment, {
-    DSH_HOME: home,
-    DSH_AGENTS_HOME: join(temporary, 'agents'),
+    COSERVE_HOME: home,
+    COSERVE_AGENTS_HOME: join(temporary, 'agents'),
     DSH_TELEMETRY_DISABLED: '1',
     CI: 'true',
   })

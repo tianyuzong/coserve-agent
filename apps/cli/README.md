@@ -8,7 +8,7 @@ The `dsh` command is the sole supported Node application launcher: profiles are 
 
 | Command | Purpose |
 |---|---|
-| `dsh <name>` / `dsh --profile <name>` | Boot the named profile under `$DSH_HOME/profiles/<name>`. |
+| `dsh <name>` / `dsh --profile <name>` | Boot the named profile under `$COSERVE_HOME/profiles/<name>`. |
 | `dsh --profile <name> --from-default-profile <template>` | Replace a custom profile with a fresh copy of a shipped template, then boot it. |
 | `dsh --profile acp` | Serve automation clients over ACP stdio until disconnect. |
 | `dsh --profile headless "job"` | Run one fresh persisted session, print the final answer, and exit. |
@@ -40,7 +40,7 @@ Installation and profile startup enforce the declared `engines.dsh` range, or DS
 
 The tree composes over an empty root:
 - each bundle's patch in `dsh.profile.bundles` order
-- then the profile's `cordis.patch.yml`, then the home-level `$DSH_HOME/cordis.patch.yml`
+- then the profile's `cordis.patch.yml`, then the home-level `$COSERVE_HOME/cordis.patch.yml`
 - then `--patch` overlays
 
 Bundles named in `dsh.profile.bundles` resolve from the dsh installation first (`@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@deepseek-ai/dsh-headless`, `@deepseek-ai/dsh-sdk-app`, `@deepseek-ai/dsh-sdk-minimal`, `@deepseek-ai/dsh-acp-app`), then from the profile's own `node_modules`, where pnpm installs out-of-tree plugins.

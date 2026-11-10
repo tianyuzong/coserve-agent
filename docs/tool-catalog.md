@@ -45,6 +45,7 @@ This table connects model-visible tool names to the plugin package and service s
 | `@deepseek-ai/dsh-tool-jobs` | `job_kill`, `job_list`, `job_output` | `ctx.tools`, `ctx.jobs`, `ctx.systemPrompt` | `tool/call`, `tool/result`, `user/message via agent.inject() for background completion notices` | - | The kind-agnostic background-job controller: background bash commands and PTY sends are read, listed, and killed through the same three tools. Loading the plugin attaches the controller that arms producers' `ctx.jobs.start()`. |
 | `@deepseek-ai/dsh-tool-agent-team` | `team_task_create`, `team_task_get`, `team_task_list`, `team_task_update` | `ctx.tools`, `ctx.systemPrompt`, `ctx.agentTeams`, `ctx.subagents`, `an exact live Team member Agent` | `tool/call`, `team/task`, `tool/result` | - | Four task-board tools share the subagent tree’s root Session. Enabling Team mode on the root Session adds task-board guidance alongside standard subagent delegation and control tools. Standard subagent controls provide required identity independently of Team mode. |
 | `@deepseek-ai/dsh-tool-todo` | `todo_write` | `ctx.tools`, `owning Agent session` | `tool/call`, `todo/write`, `tool/result` | - | todo_write is session-owned state; UIs render the latest todo/write event as a checklist. `allowParallelInProgress` is required with no default, so the catalog states its choice: `true`, whose description invites several `in_progress` items. A deployment choosing `false` receives the same tool with a description asking for exactly one active task. |
+| `@deepseek-ai/dsh-tool-castudio` | `cad_workbench` | `ctx.tools` | `tool/call`, `tool/result` | - | cad_workbench inspects and operates the live CAStudio viewport through the loopback service; it changes view state only and writes no project files beyond the service-owned snapshot PNG. |
 | `@deepseek-ai/dsh-tool-working-directory` | `working_directory` | `ctx.tools`, `ctx.workingDirectory` | `tool/call`, `working-directory/change`, `user context for directory changes`, `tool/result` | - | Reads or changes the calling Session directory. Existing shells and processes retain their own directories; origin metadata and permission roots stay fixed. |
 | `@deepseek-ai/dsh-experimental-tool-worktree` | `create_worktree` | `ctx.tools`, `ctx.worktrees`, `a calling Agent` | `tool/call`, `Git branch and checkout`, `working-directory/change`, `tool/result` | - | Enabled through the Change requests & worktrees bundle on Web and Desktop; other profiles can select the standalone bundle. Creates a new branch and checkout from a pinned local commit under existing write permissions, then changes the Session directory. Leaving retains the branch and checkout. |
 | `@deepseek-ai/dsh-tool-workflow` | `workflow` | `ctx.tools`, `ctx.workflowEngine`, `ctx.systemPrompt`, `a calling Agent (exec.agent parents the script children)` | `tool/call`, `tool/result` | - | - |
@@ -2482,6 +2483,114 @@ Record and update a task list to plan multi-step work and show progress; skip it
 Source: [`packages/todo/tool-todo/src/index.ts`](../packages/todo/tool-todo/src/index.ts)
 
 todo_write is session-owned state; UIs render the latest todo/write event as a checklist. `allowParallelInProgress` is required with no default, so the catalog states its choice: `true`, whose description invites several `in_progress` items. A deployment choosing `false` receives the same tool with a description asking for exactly one active task.
+
+<a id="deepseek-aidsh-tool-castudio"></a>
+
+## `@deepseek-ai/dsh-tool-castudio`
+
+### `cad_workbench`
+
+Inspect and operate the live CAD workbench the user has open in CAStudio. Actions: state (read the viewport state), snapshot (save a PNG of the viewport), fit (frame the model from iso/top/front/right), select and select_face (pick a part by id or exact name, or a CAD face), visible (show or hide a part), options (edges, grid, ortho, section, explode, selection mode), and workspace (switch the model/parametric/structural/thermal tab). It only inspects and operates the view; geometry, colour and material edits go through the parametric code API described in the castudio skill. When several workbenches are open, pass "project" with the workbench id from the CAStudio context.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "description": "What to do with the workbench.",
+      "enum": [
+        "state",
+        "snapshot",
+        "fit",
+        "select",
+        "select_face",
+        "visible",
+        "options",
+        "workspace"
+      ]
+    },
+    "project": {
+      "type": "string",
+      "description": "Workbench project id. Required when several workbenches are open; defaults to the only connected one."
+    },
+    "view": {
+      "type": "string",
+      "description": "fit only: camera direction to frame the model from.",
+      "enum": [
+        "iso",
+        "top",
+        "front",
+        "right"
+      ]
+    },
+    "part": {
+      "type": "string",
+      "description": "select, select_face, and visible: a part id or an exact part name from the reported state."
+    },
+    "face": {
+      "type": "integer",
+      "description": "select_face only: non-negative CAD face index on the part."
+    },
+    "visible": {
+      "type": "boolean",
+      "description": "visible action only: true to show the part, false to hide it."
+    },
+    "options": {
+      "type": "object",
+      "description": "options action only: any subset of display options to change.",
+      "additionalProperties": false,
+      "properties": {
+        "edges": {
+          "type": "boolean",
+          "description": "Show mesh edges."
+        },
+        "grid": {
+          "type": "boolean",
+          "description": "Show the ground grid."
+        },
+        "ortho": {
+          "type": "boolean",
+          "description": "Orthographic instead of perspective projection."
+        },
+        "section": {
+          "type": "number",
+          "description": "Section plane percentage, 0-100 (100 = off)."
+        },
+        "explode": {
+          "type": "number",
+          "description": "Exploded-view amount, 0-180 (0 = off)."
+        },
+        "mode": {
+          "type": "string",
+          "description": "Selection mode: whole component or single CAD face.",
+          "enum": [
+            "component",
+            "face"
+          ]
+        }
+      }
+    },
+    "workspace": {
+      "type": "string",
+      "description": "workspace action only: the workbench tab to switch to.",
+      "enum": [
+        "model",
+        "parametric",
+        "structural",
+        "thermal"
+      ]
+    }
+  },
+  "required": [
+    "action"
+  ]
+}
+```
+
+Source: [`packages/context/tool-castudio/src/index.ts`](../packages/context/tool-castudio/src/index.ts)
+
+cad_workbench inspects and operates the live CAStudio viewport through the loopback service; it changes view state only and writes no project files beyond the service-owned snapshot PNG.
 
 <a id="deepseek-aidsh-tool-working-directory"></a>
 

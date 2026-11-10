@@ -324,7 +324,7 @@ describe('headless stream-json snapshots', () => {
             'Record this wake without calling tools.',
           ],
           inspect: async () => {
-            const logs = await persistedLogs(cwd, join(cwd, '.dsh', 'sessions'))
+            const logs = await persistedLogs(cwd, join(cwd, '.coserve', 'sessions'))
             expect(logs).toHaveLength(1)
             const log = logs[0]!
             expect(typeof log.header.id).toBe('string')
@@ -341,7 +341,7 @@ describe('headless stream-json snapshots', () => {
           type: 'final', sessionId, reason: { kind: 'completed' }, text: 'AUTO_SHUTDOWN_OK',
         })
       }
-      const beforeRejectedRestore = (await persistedLogs(cwd, join(cwd, '.dsh', 'sessions')))[0]!.content
+      const beforeRejectedRestore = (await persistedLogs(cwd, join(cwd, '.coserve', 'sessions')))[0]!.content
       const unavailable = await runLoaderSmoke({
         ...options,
         label: 'Auto restore without its integration',
@@ -350,7 +350,7 @@ describe('headless stream-json snapshots', () => {
       })
       expect(unavailable.stderr).toContain('cannot restore preset "auto" without its active integration')
       expect(parseJsonl(unavailable.stdout).some(event => event.type === 'final')).toBe(false)
-      const afterRejectedRestore = (await persistedLogs(cwd, join(cwd, '.dsh', 'sessions')))[0]!.content
+      const afterRejectedRestore = (await persistedLogs(cwd, join(cwd, '.coserve', 'sessions')))[0]!.content
       expect(afterRejectedRestore.startsWith(beforeRejectedRestore)).toBe(true)
       // Restore records its seed boundary before live publication validates the saved permission.
       const appended = parseJsonl(afterRejectedRestore.slice(beforeRejectedRestore.length))
@@ -370,7 +370,7 @@ describe('headless stream-json snapshots', () => {
           '--session-id', sessionId, '--permission-mode', 'read-only', 'Continue.',
         ],
         inspect: async () => {
-          const log = (await persistedLogs(cwd, join(cwd, '.dsh', 'sessions')))[0]!
+          const log = (await persistedLogs(cwd, join(cwd, '.coserve', 'sessions')))[0]!
           const restored = parseJsonl(log.content)
           expect(restored.filter(event => event.type === 'permission/preset').at(-1)?.data)
             .toEqual({ preset: 'read-only' })
@@ -399,7 +399,7 @@ describe('headless stream-json snapshots', () => {
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
       inspect: async (cwd) => {
-        const logs = await persistedLogs(cwd, join(cwd, '.dsh', 'sessions'))
+        const logs = await persistedLogs(cwd, join(cwd, '.coserve', 'sessions'))
         expect(logs).toHaveLength(1)
         const actual = logs[0]
         if (actual === undefined) throw new Error('the headless profile did not persist its session')
@@ -439,7 +439,7 @@ describe('headless stream-json snapshots', () => {
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),
       },
       inspect: async (cwd) => {
-        const logs = await persistedLogs(cwd, join(cwd, '.dsh', 'sessions'))
+        const logs = await persistedLogs(cwd, join(cwd, '.coserve', 'sessions'))
         const content = logs[0]?.content ?? ''
         const modes = parseJsonl(content).filter(event => event.type === 'sandbox/mode')
         expect(modes.at(-1)?.data).toEqual({ mode: 'workspace-write' })
@@ -522,7 +522,7 @@ describe('headless stream-json snapshots', () => {
         tsconfigPath,
         env,
         inspect: async (inspected) => {
-          const logs = await persistedLogs(inspected, join(inspected, '.dsh', 'sessions'))
+          const logs = await persistedLogs(inspected, join(inspected, '.coserve', 'sessions'))
           expect(logs).toHaveLength(1)
           const content = logs[0]?.content ?? ''
           expect(content).toContain(firstTask)
@@ -557,7 +557,7 @@ describe('headless stream-json snapshots', () => {
       tsconfigPath,
       env: { DSH_AUTO_REVIEW_TEST_MODE: mode, DSH_TELEMETRY_DISABLED: '1' },
       inspect: async (cwd) => {
-        const logs = await persistedLogs(cwd, join(cwd, '.dsh', 'sessions'))
+        const logs = await persistedLogs(cwd, join(cwd, '.coserve', 'sessions'))
         expect(logs).toHaveLength(1)
         const events = parseJsonl(logs[0]!.content)
         expect(events.find(event => event.type === 'user/message')?.data).toMatchObject({
@@ -617,7 +617,7 @@ describe('headless stream-json snapshots', () => {
         binArgs: [...args, '--session-id', sessionId, 'I authorize the exact CLI probe. Retry it.'], tsconfigPath,
         env: { DSH_AUTO_REVIEW_TEST_MODE: 'allow', DSH_TELEMETRY_DISABLED: '1' },
         inspect: async (directory) => {
-          const logs = await persistedLogs(directory, join(directory, '.dsh', 'sessions'))
+          const logs = await persistedLogs(directory, join(directory, '.coserve', 'sessions'))
           expect(logs).toHaveLength(1)
           const events = parseJsonl(logs[0]!.content)
           const sources = events.filter(event => event.type === 'user/message')
@@ -732,7 +732,7 @@ describe('headless stream-json snapshots', () => {
       binArgs: [credentialsConfigPath, 'say pong'],
       tsconfigPath,
       env: {
-        // First-run posture: no key in the environment, none under ./.dsh.
+        // First-run posture: no key in the environment, none under ./.coserve.
         DEEPSEEK_API_KEY: '',
         DEEPSEEK_BASE_URL: '',
         NODE_OPTIONS: [process.env.NODE_OPTIONS, '--disable-warning=ExperimentalWarning'].filter(Boolean).join(' '),

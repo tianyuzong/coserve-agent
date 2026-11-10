@@ -9,7 +9,7 @@ import { runProfile } from '@deepseek-ai/dsh/profile-boot'
 import type {} from '@deepseek-ai/dsh-client-connection'
 import type {} from '@deepseek-ai/dsh-host-webserver'
 import type {} from '@deepseek-ai/dsh-deepseek-account'
-import { resolveDshHome } from '@deepseek-ai/dsh-home-paths'
+import { resolveCoserveHome } from '@deepseek-ai/dsh-home-paths'
 import * as desktopOffice from './office.ts'
 import { localDragResource } from './file-drag.ts'
 
@@ -134,7 +134,7 @@ async function main(): Promise<void> {
   await ctx.plugin(desktopOffice, {
     runtimeDir,
     source: process.argv[4] ?? join(runtimeDir, '..', 'runtime', 'primary-runtime'),
-    root: join(resolveDshHome(), 'dsh-runtimes', 'dsh-primary-runtime'),
+    root: join(resolveCoserveHome(), 'dsh-runtimes', 'dsh-primary-runtime'),
   })
   installPlatformSessionPublisher(ctx, (session) => {
     if (process.connected) process.send?.({ type: 'platform-session', session })

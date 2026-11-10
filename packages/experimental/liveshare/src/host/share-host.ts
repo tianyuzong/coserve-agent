@@ -614,8 +614,8 @@ export async function apply(ctx: Context, config: Config): Promise<() => Promise
 }
 
 function defaultOwnerStateFile(): string {
-  const dshHome = nonEmpty(process.env.DSH_HOME) ?? join(homedir(), '.dsh')
-  return join(dshHome, 'liveshare', 'owner-shares.json')
+  const coserveHome = nonEmpty(process.env.COSERVE_HOME) ?? join(homedir(), '.coserve')
+  return join(coserveHome, 'liveshare', 'owner-shares.json')
 }
 
 function nonEmpty(value: string | undefined): string | undefined {

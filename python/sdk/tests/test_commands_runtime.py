@@ -259,7 +259,7 @@ def _runtime(
     dsh_bin = _dsh_bin()
     with _ModelServer(completions) as model_server, ThreadPoolExecutor(max_workers=2) as workers:
         harness = DeepSeekHarness(
-            cwd=str(workspace), runtime_cwd=str(workspace), dsh_home=str(home),
+            cwd=str(workspace), runtime_cwd=str(workspace), coserve_home=str(home),
             dsh_bin=dsh_bin, profile="sdk", patches=tuple(str(item) for item in patches), model=model,
             base_url=model_server.url, api_key="keyless-commands-runtime",
             initialize_timeout_seconds=60, request_timeout_seconds=20, shutdown_timeout_seconds=20,

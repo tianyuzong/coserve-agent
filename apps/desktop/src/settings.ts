@@ -8,7 +8,7 @@ export interface DesktopSettings {
 
 /**
  * Initialize the shared document explicitly at startup, then resolve the popup preference.
- * @param userData - Electron userData, independent of DSH_HOME.
+ * @param userData - Electron userData, independent of COSERVE_HOME.
  * @returns Validated popup preference, or false with a diagnostic on failure; changes require restart.
  */
 export async function readDesktopSettings(userData: string): Promise<DesktopSettings> {

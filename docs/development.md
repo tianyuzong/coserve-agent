@@ -155,7 +155,7 @@ Contributors can opt into the comprehensive local gate set with `pnpm run check:
 
 Outside CI (`CI` other than `true`), default worker counts follow the [local worker budget](../scripts/parallelism.ts): 12 for gate schedulers, `build`, `typecheck`, Oxlint, and publint, and 48 for Vitest forks and local coverage. `doc-sync`, `test:docs`, `hygiene`, and `check:all` run at most 8 gates at once, in CI as well. `os.availableParallelism()` reports host CPUs rather than a container's CPU quota, so uncapped defaults oversubscribe shared hosts. CI keeps the runner's CPU count. `DSH_GATE_CONCURRENCY`, `DSH_OXLINT_THREADS`, `DSH_COVERAGE_MAX_WORKERS`, and Vitest `--maxWorkers` override the defaults.
 
-`run-gates` gives the CLI help generator one child at a time; direct `pnpm run verify-cli-help` uses the standalone worker budget. `DSH_CLI_HELP_CONCURRENCY` overrides that child limit with a positive integer validated before startup. Each invocation retains its private `DSH_HOME` and `DSH_AGENTS_HOME` and 30-second deadline.
+`run-gates` gives the CLI help generator one child at a time; direct `pnpm run verify-cli-help` uses the standalone worker budget. `DSH_CLI_HELP_CONCURRENCY` overrides that child limit with a positive integer validated before startup. Each invocation retains its private `COSERVE_HOME` and `COSERVE_AGENTS_HOME` and 30-second deadline.
 
 ### CI gates
 

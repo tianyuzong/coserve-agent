@@ -13,7 +13,7 @@ from deepseek_harness import DeepSeekHarness, DeepSeekHarnessConfig
 root = Path(mkdtemp(prefix="dsh-shutdown-"))
 config = DeepSeekHarnessConfig(
     profile="sdk-minimal",
-    dsh_home=str(root / "home"),
+    coserve_home=str(root / "home"),
     cwd=str(root),
     shutdown_timeout_seconds=1.0,
 )

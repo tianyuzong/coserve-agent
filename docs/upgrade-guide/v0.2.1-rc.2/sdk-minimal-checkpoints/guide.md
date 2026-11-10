@@ -13,6 +13,6 @@ The `sdk-minimal` profile enables `session-checkpoint-policy`. It waits for sess
 
 ## Migration
 
-1. Keep the selected `dsh_home` writable and allow request deadlines to cover storage initialization and checkpoint writes. A longer shutdown timeout alone does not affect a pre-request checkpoint.
+1. Keep the selected `coserve_home` writable and allow request deadlines to cover storage initialization and checkpoint writes. A longer shutdown timeout alone does not affect a pre-request checkpoint.
 2. Check profile and invocation patches for overrides of `session-checkpoint-policy`. To receive the durability policy, retain its enabled default alongside `sessions`.
 3. Run a short SDK turn, close normally, and use `resume_session()` with the same home and session ID to verify restoration. Investigate checkpoint failures before retrying model or tool work; the operation does not run until the checkpoint succeeds.

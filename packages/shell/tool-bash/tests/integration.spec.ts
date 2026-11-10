@@ -26,7 +26,7 @@ import { MockAdapter, textResponse, toolCallResponse } from '../../../core/agent
  * (tool/call + tool/result session events, the generic `ctx.jobs` runtime,
  * agent.inject completion notices).
  */
-async function harness(adapter: MockAdapter, sessionRoot?: string, dshHome?: string) {
+async function harness(adapter: MockAdapter, sessionRoot?: string, coserveHome?: string) {
   const ctx = new Context()
   await mountAgentLoopTestDependencies(ctx, { workingDirectory: true })
   if (sessionRoot !== undefined) {
@@ -36,7 +36,7 @@ async function harness(adapter: MockAdapter, sessionRoot?: string, dshHome?: str
   await ctx.plugin(LocalJobRegistry)
   await ctx.plugin(ToolJobs)
   await ctx.plugin(LocalSubprocessRuntime)
-  await ctx.plugin(BashEnvPlugin, dshHome === undefined ? {} : { dshHome })
+  await ctx.plugin(BashEnvPlugin, coserveHome === undefined ? {} : { coserveHome })
   await ctx.plugin(LocalBashExecutor, { timeoutMs: 10_000 })
   await ctx.plugin(ToolBash)
   ctx.llm.registerAdapter(['mock'], adapter)
@@ -140,16 +140,16 @@ describe('bash tool through the agent loop', () => {
   it('first-turn bash receives session identity in a scrubbed DSH_* namespace', async () => {
     const root = mkdtempSync(join(tmpdir(), 'dsh-bash-session-env-'))
     dirs.push(root)
-    const dshHome = join(root, 'dsh-home')
+    const coserveHome = join(root, 'dsh-home')
     vi.stubEnv('DSH_STALE_PARENT', 'stale')
     const adapter = new MockAdapter([
       toolCallResponse('call-1', 'bash', {
-        command: 'printf \'%s\\n%s\\n%s\\n%s\\n\' "$DSH_HOME" "$DSH_SHELL" "$DSH_SESSION_ID" "${DSH_STALE_PARENT-unset}"',
+        command: 'printf \'%s\\n%s\\n%s\\n%s\\n\' "$COSERVE_HOME" "$DSH_SHELL" "$DSH_SESSION_ID" "${DSH_STALE_PARENT-unset}"',
         description: 'inspect session environment',
       }),
       textResponse('Session environment inspected.'),
     ])
-    const ctx = await harness(adapter, root, dshHome)
+    const ctx = await harness(adapter, root, coserveHome)
     const handle = await ctx.agents.create({
       sessionId: SessionId('session-env-id'),
       agentOptions: { provider: 'mock', model: 'mock' },
@@ -160,7 +160,7 @@ describe('bash tool through the agent loop', () => {
     await waitForIdle(ctx, agent)
 
     const result = findEvent(events(agent), 'tool/result')
-    expect(resultText(result)).toBe(`${dshHome}\n1\nsession-env-id\nunset\n`)
+    expect(resultText(result)).toBe(`${coserveHome}\n1\nsession-env-id\nunset\n`)
     await handle.dispose()
   })
 

@@ -17,7 +17,7 @@ A `cordis.yml`, patch, or overlay that names a removed module fails to load it. 
 
 ## Migration
 
-1. Delete rows whose `name` is `@deepseek-ai/dsh-invariants` or ends in `/invariant` from `cordis.yml`, `$DSH_HOME/profiles/<name>/cordis.patch.yml`, and `--patch` overlays.
+1. Delete rows whose `name` is `@deepseek-ai/dsh-invariants` or ends in `/invariant` from `cordis.yml`, `$COSERVE_HOME/profiles/<name>/cordis.patch.yml`, and `--patch` overlays.
 2. Delete patch entries that target the ids `invariants`, `session-invariant`, `agent-invariant`, `scope-invariant`, or `agent-loop-invariant`.
 3. Remove `@deepseek-ai/dsh-invariants` from `package.json` dependencies and delete imports of it and of `<package>/invariant` subpaths. A plugin that relied on a rethrown `INVARIANT` failure from one of the four emitters must report the failure through its own channel.
 4. Confirm: `dsh` starts the profile without a module-not-found error or `patch: entry ... not found` warning, and `tsc` reports no missing module or export.

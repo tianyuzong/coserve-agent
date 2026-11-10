@@ -16,7 +16,7 @@
 - id: session-persistence-jsonl
   name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
-    root: !!js dshHomePath('sessions')
+    root: !!js coserveHomePath('sessions')
     compression: none
 
 - insert:
@@ -29,7 +29,7 @@
       config:
         profile: sdk
         patches: !!js JSON.parse(process.env.DSH_TEST_CHILD_PATCHES ?? '[]')
-        dshHome: !!js process.env.DSH_TEST_CHILD_HOME
+        coserveHome: !!js process.env.DSH_TEST_CHILD_HOME
         provider: mock
         model: mock-routed
         env:

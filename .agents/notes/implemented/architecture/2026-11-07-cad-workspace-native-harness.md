@@ -1,8 +1,8 @@
 # Agent Note: CAD workspace with the native harness
 
-English | [中文](2026-11-07-cad-workspace-native-harness.zh.md)
-
 Status: implemented
+
+English | [中文](2026-11-07-cad-workspace-native-harness.zh.md)
 
 ## Problem
 

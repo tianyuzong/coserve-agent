@@ -39,7 +39,7 @@ import { DeepSeekHarness } from '@deepseek-ai/dsh-sdk-client'
 const terminal = createInterface({ input: stdin, output: stdout })
 try {
   await using harness = new DeepSeekHarness({
-    dshHome: '/absolute/path/to/isolated-dsh-home', approvalRequests: true,
+    coserveHome: '/absolute/path/to/isolated-dsh-home', approvalRequests: true,
   })
   harness.client.start()
   harness.client.onRequest(async (method, params) => {
@@ -53,7 +53,7 @@ try {
 }
 ```
 
-`await harness.resumeSession(savedId)` 从配置的 `dshHome` 恢复持久化会话，并返回可调用 `run()` 的 `HarnessSession`。请保存原会话 id，并沿用其 home 和工作区。恢复会保留对话历史及其目录、修复最后一个被中断的轮次，且不发送新输入。会话缺失、不可读、不兼容或被占用时，请求失败且不创建替代会话。`session(id)` 仍是当前进程内会话的惰性句柄，不会请求持久化恢复。此 API 不恢复 shell、浏览器或其他外部进程。
+`await harness.resumeSession(savedId)` 从配置的 `coserveHome` 恢复持久化会话，并返回可调用 `run()` 的 `HarnessSession`。请保存原会话 id，并沿用其 home 和工作区。恢复会保留对话历史及其目录、修复最后一个被中断的轮次，且不发送新输入。会话缺失、不可读、不兼容或被占用时，请求失败且不创建替代会话。`session(id)` 仍是当前进程内会话的惰性句柄，不会请求持久化恢复。此 API 不恢复 shell、浏览器或其他外部进程。
 
 `HarnessSession.getWorkingDirectory()` 读取有效目录；`setWorkingDirectory(path)` 修改目录并返回校验后的绝对路径。两个方法都可创建未知 Session，而不启动模型轮次。相对路径以 Session 当前目录解析。起始目录元数据、权限与已有进程保持不变。`HarnessClient` 提供同名方法，并以 `sessionId` 作为首个参数。
 
@@ -65,7 +65,7 @@ import { ReasoningEffortId } from '@deepseek-ai/dsh-llm'
 
 await using harness = new DeepSeekHarness({
   profile: 'sdk',
-  dshHome: '/absolute/path/to/dsh-home',
+  coserveHome: '/absolute/path/to/dsh-home',
   patches: ['./automation.cordis.yml'],
   provider: 'deepseek-official',
   model: 'deepseek-v4-flash',
@@ -87,7 +87,7 @@ console.log(result.finalResponse)
 ```ts
 import { DeepSeekHarness } from '@deepseek-ai/dsh-sdk-client'
 
-await using harness = new DeepSeekHarness({ profile: 'sdk', dshHome: '/absolute/path/to/dsh-home' })
+await using harness = new DeepSeekHarness({ profile: 'sdk', coserveHome: '/absolute/path/to/dsh-home' })
 const session = harness.session()
 const result = await session.run('/compact')
 console.log(result.finalResponse)

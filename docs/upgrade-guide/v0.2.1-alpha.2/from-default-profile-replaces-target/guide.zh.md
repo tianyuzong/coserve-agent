@@ -16,5 +16,5 @@ description: "`--from-default-profile` 现在会替换已存在的自定义 prof
 ## 迁移
 
 1. 要在不重置的情况下启动已存在的 profile，去掉该选项：运行 `dsh rescue`，而不是 `dsh rescue --from-default-profile web`。
-2. 要在重置后保留本地修改，先复制 `$DSH_HOME/profiles/<name>/cordis.patch.yml`，执行命令后用 `dsh plugin --profile <name> add <package>` 重新安装该 profile 的插件，再恢复该 patch。
-3. 确认迁移结果：执行 `dsh rescue --from-default-profile web --help` 后，`$DSH_HOME/profiles/rescue/package.json` 中没有任何依赖。
+2. 要在重置后保留本地修改，先复制 `$COSERVE_HOME/profiles/<name>/cordis.patch.yml`，执行命令后用 `dsh plugin --profile <name> add <package>` 重新安装该 profile 的插件，再恢复该 patch。
+3. 确认迁移结果：执行 `dsh rescue --from-default-profile web --help` 后，`$COSERVE_HOME/profiles/rescue/package.json` 中没有任何依赖。

@@ -1,7 +1,7 @@
 /**
  * Shared boot glue for `dsh` profiles, including the CLI packaged by the Python runtime wheel: load the gitignored
  * `.env`, install the fail-loud Loader guards, resolve the config path (snapshot-aware), load the
- * optional user patch layers from the Harness home (`~/.dsh`), expose its path resolver to
+ * optional user patch layers from the Harness home (`~/.coserve`), expose its path resolver to
  * config expressions, and drive the Cordis Loader against a leaf `cordis.yml` until the tree settles.
  * @module @deepseek-ai/dsh-app-boot
  */
@@ -17,7 +17,7 @@ import { Context, type Fiber, type FiberState } from '@deepseek-ai/cordis'
 import Loader, { type Entry, type EntryGroup, type EntryOptions } from '@deepseek-ai/cordis-plugin-loader'
 import Include, { applyEntryPatches, entryListSchema, type PatchOptions } from '@deepseek-ai/cordis-plugin-include'
 import Group from '@deepseek-ai/cordis-plugin-group'
-import { dshHomePath, resolveDshHome } from '@deepseek-ai/dsh-home-paths'
+import { AGENTS_HOME_ENV, COSERVE_HOME_ENV, coserveHomePath, resolveCoserveHome } from '@deepseek-ai/dsh-home-paths'
 import { createLaunchEnvironmentSnapshot, type LaunchEnvironmentSnapshot } from '@deepseek-ai/dsh-launch-environment'
 export { readBundlePatches, readProfilePatches, resolveTelemetryPatch, type ProfileContext, type ProfilePnpmInvocation } from './profile-context.ts'
 export { sanitizeProfile } from './profile-sanitize.ts'
@@ -43,7 +43,7 @@ export {
 declare module '@deepseek-ai/cordis' {
   interface Context {
     /** Harness-home path resolver available to Loader `!!js` config expressions. */
-    dshHomePath?: typeof dshHomePath
+    coserveHomePath?: typeof coserveHomePath
   }
 
   interface Events {
@@ -152,6 +152,8 @@ const BOOTSTRAP_NAMES = new Set([
   'HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY', 'NO_PROXY',
   'REQUESTS_CA_BUNDLE', 'CURL_CA_BUNDLE',
   'NODE_TLS_REJECT_UNAUTHORIZED',
+  // Harness home selection decides where sessions, settings, and credentials load from.
+  COSERVE_HOME_ENV, AGENTS_HOME_ENV,
 ])
 
 /** Name prefixes no discovered file may set. */
@@ -160,7 +162,7 @@ const BOOTSTRAP_PREFIXES = ['DSH_', 'XDG_', 'DYLD_', 'BASH_FUNC_']
 /**
  * The bootstrap names the Harness-home `.env` alone may set. A proxy chooses the route every
  * request takes, so the invoking directory's file — which arrives with a clone — keeps refusing
- * them; the home file is the user's own, and `DSH_HOME` is itself bootstrap-only, so no `.env` can
+ * them; the home file is the user's own, and `COSERVE_HOME` is itself bootstrap-only, so no `.env` can
  * relocate this exemption. The CA and TLS names in the same group stay refused everywhere: they
  * change what is trusted, not where traffic goes.
  */
@@ -237,7 +239,7 @@ export function loadLayeredEnv(
   binName: string, cwd: string = process.cwd(),
   warn: (line: string) => void = line => void process.stderr.write(line),
 ): LaunchEnvironmentSnapshot {
-  const home = resolveDshHome()
+  const home = resolveCoserveHome()
   const inherited = { ...process.env } as Record<string, string>
   // Parse both layers first: a rejection must not leave one file applied.
   const project = readEnvLayer(binName, cwd, warn, home)
@@ -1220,7 +1222,7 @@ export async function boot(
   let stage = 'host preparation failed'
   try {
     ctx.baseUrl = pathToFileURL(dirname(absoluteConfigPath)).href + '/'
-    ctx.provide('dshHomePath', dshHomePath)
+    ctx.provide('coserveHomePath', coserveHomePath)
     await ctx.plugin(Loader)
     await prepare?.(ctx)
     stage = 'plugin tree failed to load'

@@ -47,17 +47,26 @@ export type {
 export const SENSITIVE_ENV_PATTERN = /KEY|PASSWORD|SECRET|TOKEN/i
 
 /**
- * The ambient parent environment minus credential-shaped names and minus all
- * `DSH_*` names — the canonical base every harness child starts from. `PATH`,
- * `HOME`, locale, and proxy variables survive, so child CLIs run normally;
- * harness identity never leaks implicitly (a deliberately forwarded
- * credential or current `DSH_*` fact goes through the spec's explicit `env`,
- * which merges after this scrub). Both scrubs match case-insensitively:
- * Windows environment names are case-insensitive, so a parent `dsh_*` entry
- * would otherwise survive and read back as `$env:DSH_*` in the child;
- * deliberate lowercase `dsh_*` names on POSIX are implausible. Exported as a plain function so spawners
- * that cannot route through the service (node-pty backends, SDK-managed
- * transports) share the one scrub definition.
+ * Exact ambient names scrubbed beside `DSH_*`: the two harness-home overrides
+ * are harness configuration, so a resolved home reaches a child only through
+ * the spec's explicit `env` layer.
+ */
+const SCRUBBED_HOME_ENV_NAMES: ReadonlySet<string> = new Set(['COSERVE_HOME', 'COSERVE_AGENTS_HOME'])
+
+/**
+ * The ambient parent environment minus credential-shaped names, minus all
+ * `DSH_*` names, and minus the `COSERVE_HOME`/`COSERVE_AGENTS_HOME` home
+ * overrides — the canonical base every harness child starts from. `PATH`,
+ * `HOME`, locale, other `COSERVE_*` deployment names, and proxy variables
+ * survive, so child CLIs run normally; harness identity and home selection
+ * never leak implicitly (a deliberately forwarded credential, `DSH_*` fact,
+ * or resolved home arrives through the spec's explicit `env`, which merges
+ * after this scrub). All scrubs match case-insensitively: Windows environment
+ * names are case-insensitive, so a parent `dsh_*` or `coserve_home` entry
+ * would otherwise survive and read back under the canonical name in the
+ * child; deliberate lowercase `dsh_*` names on POSIX are implausible. Exported
+ * as a plain function so spawners that cannot route through the service
+ * (node-pty backends, SDK-managed transports) share the one scrub definition.
  *
  * When a proxy is active the result also carries the resolved proxy names and the flag a child Node
  * needs to honor them, so a child inherits the same routing as its parent.
@@ -66,7 +75,11 @@ export const SENSITIVE_ENV_PATTERN = /KEY|PASSWORD|SECRET|TOKEN/i
 export function scrubbedParentEnv(): Record<string, string> {
   const env: Record<string, string> = {}
   for (const [key, value] of Object.entries(process.env)) {
-    if (value !== undefined && !SENSITIVE_ENV_PATTERN.test(key) && !key.toUpperCase().startsWith(DSH_ENV_PREFIX)) env[key] = value
+    const upperKey = key.toUpperCase()
+    if (value !== undefined
+      && !SENSITIVE_ENV_PATTERN.test(key)
+      && !upperKey.startsWith(DSH_ENV_PREFIX)
+      && !SCRUBBED_HOME_ENV_NAMES.has(upperKey)) env[key] = value
   }
   // A child Node ignores the inherited proxy variables unless the flag this adds is set, so an MCP
   // stdio server or subagent CLI would connect directly while its parent proxies. The same overlay

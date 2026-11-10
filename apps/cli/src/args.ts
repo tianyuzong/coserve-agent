@@ -165,7 +165,7 @@ export function parseDshArgs(argv: readonly string[], version: string, manageDes
     .passThroughOptions()
     .enablePositionalOptions()
     .argument('[args...]', 'arguments for the booted profile\'s app (see: dsh --profile <name> --help)')
-    .option('--profile <name>', 'the profile under $DSH_HOME/profiles to boot', selectProfile)
+    .option('--profile <name>', 'the profile under $COSERVE_HOME/profiles to boot', selectProfile)
     .option('--from-default-profile <name>', 'replace a custom profile with a fresh copy of a shipped profile template')
     .option('--patch <path>', 'extra patch-list overlay applied after the profile layer (repeatable)', collect)
     .option('--dump-config', 'print the composed profile tree and exit')

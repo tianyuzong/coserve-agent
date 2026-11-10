@@ -77,7 +77,7 @@ describe.skipIf(!existsSync(join(root, 'apps/cli/lib/bin.js')))('Official option
     await mkdir(workspace)
     const home = join(temporary, 'home')
     const values = {
-      DSH_HOME: home, DSH_AGENTS_HOME: join(temporary, 'agents'), DSH_BUNDLED_SKILL_DIR: join(temporary, 'skills'),
+      COSERVE_HOME: home, COSERVE_AGENTS_HOME: join(temporary, 'agents'), DSH_BUNDLED_SKILL_DIR: join(temporary, 'skills'),
       DSH_TELEMETRY_DISABLED: '1', TMUX: '', TMUX_PANE: '',
     }
     originalEnvironment = Object.fromEntries(Object.keys(values).map(key => [key, process.env[key]]))

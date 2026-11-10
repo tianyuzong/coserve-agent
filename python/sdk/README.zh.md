@@ -30,13 +30,13 @@ preview = render_images("report.docx", "report-preview", pages=[1])
 
 Python SDK 没有独立的应用入口。它以 `--profile sdk` 启动内置的 `dsh` CLI（命令行界面）；所选 profile 负责 JSON-RPC 服务器、agent（智能体）组合、凭据、持久化、工具和关闭流程。
 
-每次启动都必须显式指定 Harness home。请传入 `dsh_home`，或在子进程环境中提供非空的 `DSH_HOME`。SDK 刻意不会发现 `~/.dsh`。
+每次启动都必须显式指定 Harness home。请传入 `coserve_home`，或在子进程环境中提供非空的 `COSERVE_HOME`。SDK 刻意不会发现 `~/.coserve`。
 
 ```py
 from deepseek_harness import DeepSeekHarness
 
 with DeepSeekHarness(
-    dsh_home="/absolute/path/to/isolated-dsh-home",
+    coserve_home="/absolute/path/to/isolated-dsh-home",
     cwd="/absolute/path/to/workspace",
     provider="deepseek-official",
     model="deepseek-v4-flash",
@@ -50,10 +50,10 @@ print(result.final_response)
 
 `DeepSeekHarness` 延迟启动运行时，并在调用 `close()` 或退出上下文管理器前复用该进程。首次 profile 握手通过 `initialize_timeout_seconds` 使用独立的 30 秒默认上限；普通活动在协议响应后仍不设时限；`request_timeout_seconds` 可以限制协议响应的等待。超时诊断会指明所选 profile，并包含保留的运行时诊断。`cwd` 是 agent workspace；`runtime_cwd` 独立选择子进程工作目录。两者都会在启动前转成绝对路径。`provider`、`model`、可选的 `reasoning_effort` 和可选的正整数 `max_tokens` 通过 JSON-RPC 初始化发送。`base_url` 与 `api_key` 会显式覆盖子进程环境中的 `DEEPSEEK_BASE_URL` 与 `DEEPSEEK_API_KEY`。
 
-`harness.resume_session(saved_session_id)` 恢复持久化历史，并返回可调用 `run()` 的 `Session`。请保存原会话 id，并沿用其 `dsh_home` 和工作区。恢复会保留存储的目录、修复最后一个被中断的轮次，且不发送新输入。会话缺失、不可读、不兼容或被占用时会抛出异常，不创建替代会话。`start_session(id)` 只打开惰性句柄，不会请求持久化恢复。此 API 不恢复 shell、浏览器或其他外部进程。
+`harness.resume_session(saved_session_id)` 恢复持久化历史，并返回可调用 `run()` 的 `Session`。请保存原会话 id，并沿用其 `coserve_home` 和工作区。恢复会保留存储的目录、修复最后一个被中断的轮次，且不发送新输入。会话缺失、不可读、不兼容或被占用时会抛出异常，不创建替代会话。`start_session(id)` 只打开惰性句柄，不会请求持久化恢复。此 API 不恢复 shell、浏览器或其他外部进程。
 
 ```py
-with DeepSeekHarness(dsh_home="/absolute/path/to/saved-home") as harness:
+with DeepSeekHarness(coserve_home="/absolute/path/to/saved-home") as harness:
     session = harness.resume_session(saved_session_id)
     result = session.run("Continue the task.")
 ```
@@ -89,7 +89,7 @@ with DeepSeekHarness(dsh_home="/absolute/path/to/saved-home") as harness:
 ```py
 from deepseek_harness import ApprovalRequestParams, HarnessClient, HarnessConfig
 
-with HarnessClient(HarnessConfig(dsh_home="/absolute/path/to/dsh-home")) as client:
+with HarnessClient(HarnessConfig(coserve_home="/absolute/path/to/dsh-home")) as client:
     client.initialize(cwd="/absolute/path/to/workspace", provider="deepseek-official",
                       model="deepseek-v4-flash", approval_requests=True)
     client.session_prompt("main", [{"type": "text", "text": "Run the operation requiring approval."}])
@@ -107,18 +107,18 @@ with HarnessClient(HarnessConfig(dsh_home="/absolute/path/to/dsh-home")) as clie
 持久自定义属于 `dsh` profile。使用运行时 wheel 包提供的 `dsh` 命令初始化随附的 SDK profile，并安装外部 bundle：
 
 ```sh
-export DSH_HOME=/absolute/path/to/isolated-dsh-home
+export COSERVE_HOME=/absolute/path/to/isolated-dsh-home
 dsh --profile sdk --dump-default-config >/dev/null
 dsh plugin --profile sdk add file:/absolute/path/to/my-plugin-bundle
 ```
 
-`file:` 形式会把本地 bundle 安装到 profile 包树中，使其 peer import 可以到达内置安装后备。profile manifest（元数据清单）会记录已安装依赖与有序 bundle 层；`$DSH_HOME/profiles/sdk/cordis.patch.yml` 是持久用户 patch。只有管理外部包时，`dsh plugin` 才需要 `pnpm`。运行 SDK 不需要系统 Node.js。
+`file:` 形式会把本地 bundle 安装到 profile 包树中，使其 peer import 可以到达内置安装后备。profile manifest（元数据清单）会记录已安装依赖与有序 bundle 层；`$COSERVE_HOME/profiles/sdk/cordis.patch.yml` 是持久用户 patch。只有管理外部包时，`dsh plugin` 才需要 `pnpm`。运行 SDK 不需要系统 Node.js。
 
 对于单次调用的变更，可传入一个或多个 patch 文件。它们会转成绝对路径，并在 profile 层与 home patch 层之后按顺序传给 CLI：
 
 ```py
 with DeepSeekHarness(
-    dsh_home="/absolute/path/to/isolated-dsh-home",
+    coserve_home="/absolute/path/to/isolated-dsh-home",
     profile="sdk",
     patches=("/absolute/path/to/first.patch.yml", "/absolute/path/to/last.patch.yml"),
 ) as harness:
@@ -145,7 +145,7 @@ with DeepSeekHarness(
 
 `HarnessClient` 会在运行时进程的整个生命周期内保留已发现的 subagent 谱系。在 `Session.run()` 期间，`RunResult.notifications` 与 `on_notification` 按协议顺序接收根会话和已知后代的通知。`RunResult.events` 只包含根会话事件，因此后代输出不会替换根响应。底层 `session_prompt()` 会立即返回已排队消息的 id；绕过 `Session.run()` 的调用方自行负责后续活动边界。
 
-所选 home 保存 profile、插件与每个 profile 自有的持久资源。完整 `sdk` profile 使用其中的凭据、设置与会话存储；`sdk-minimal` 保存 JSONL 会话，将图片存储在 `$DSH_HOME/attachments/v1` 下，请求图片缓存位于 `$DSH_HOME/cache/attachments` 下。需要隔离这些资源时应使用新的 home；独立工作应使用新的会话 ID。同时复用 harness 与会话 ID 会延续持久对话和会话资源。
+所选 home 保存 profile、插件与每个 profile 自有的持久资源。完整 `sdk` profile 使用其中的凭据、设置与会话存储；`sdk-minimal` 保存 JSONL 会话，将图片存储在 `$COSERVE_HOME/attachments/v1` 下，请求图片缓存位于 `$COSERVE_HOME/cache/attachments` 下。需要隔离这些资源时应使用新的 home；独立工作应使用新的会话 ID。同时复用 harness 与会话 ID 会延续持久对话和会话资源。
 
 另见 [Python 教程](../../docs/user/guide/python-sdk.zh.md)、[可运行示例](examples/README.zh.md) 和 [运行时 wheel 包参考](../sdk-runtime/README.zh.md)。
 

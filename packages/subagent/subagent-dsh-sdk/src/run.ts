@@ -35,7 +35,7 @@ export interface SdkRunSpec {
   /** Ordered per-launch profile patch files. */
   patches: string[]
   /** Absolute isolated Harness home for the nested runtime. */
-  dshHome: string
+  coserveHome: string
   /** Absolute initial working directory selected by the delegating runtime. */
   cwd: string
   /** Parent origin directory recorded independently of the child's effective directory. */
@@ -238,7 +238,7 @@ export async function startSdkRun(request: SubagentStartRequest, spec: SdkRunSpe
     ...spec.dshBin === undefined ? {} : { dshBin: spec.dshBin },
     profile: spec.profile,
     patches: spec.patches,
-    dshHome: spec.dshHome,
+    coserveHome: spec.coserveHome,
     processCwd: spec.cwd,
     env: { ...scrubbedParentEnv(), ...spec.env },
     shutdownTimeoutMs: spec.shutdownTimeoutMs,

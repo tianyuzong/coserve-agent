@@ -15,7 +15,7 @@ Web 和 Desktop 通过**变更请求与工作树**同时启用评审面板、新
 
 ## 迁移
 
-1. 停止 Web 或退出 Desktop。备份 `$DSH_HOME/profiles/<name>/package.json` 及同目录下的 `cordis.patch.yml`。未设置 `DSH_HOME` 时使用 `~/.dsh`；标准 profile 名称为 `web` 和 `desktop`。自定义 profile 使用其自身名称。
+1. 停止 Web 或退出 Desktop。备份 `$COSERVE_HOME/profiles/<name>/package.json` 及同目录下的 `cordis.patch.yml`。未设置 `COSERVE_HOME` 时使用 `~/.coserve`；标准 profile 名称为 `web` 和 `desktop`。自定义 profile 使用其自身名称。
 2. 编辑该 `package.json` 的 `dsh.profile.bundles`。移除所有 `@deepseek-ai/dsh-experimental-tool-worktree` 条目。若要通过统一开关保留工作树功能，添加一次 `@deepseek-ai/dsh-experimental-forge-bundle`；若已选中它，则保留该条目。若要关闭两项功能，则移除这两个组合包名称。保留其他所有条目和字段。
 3. 保留现有的 `cordis.patch.yml` 覆盖配置：`worktree`、`tool-worktree` 和 `optional-forge-panel` 的 id 均未改变。若只使用 Forge 面板，不向模型提供工作树工具，在现有 patch 列表中添加或更新以下条目：
 

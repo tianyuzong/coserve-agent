@@ -25,10 +25,10 @@ Use `dsh --profile sdk-minimal` when an SDK client needs a small, explicit codin
 <a id="use-this-package"></a>
 ## Use this package
 
-Launch the profile directly or select it from the Python SDK. Supply an explicit `DSH_HOME`, use a disposable workspace, and provide the model credential through `DEEPSEEK_API_KEY`.
+Launch the profile directly or select it from the Python SDK. Supply an explicit `COSERVE_HOME`, use a disposable workspace, and provide the model credential through `DEEPSEEK_API_KEY`.
 
 ```sh
-export DSH_HOME=/absolute/path/to/example-dsh-home
+export COSERVE_HOME=/absolute/path/to/example-dsh-home
 dsh --profile sdk-minimal
 ```
 
@@ -50,7 +50,7 @@ Like every shipped profile, it mounts [MCP resources](../../mcp/mcp-resources/RE
 <details>
 <summary>Implementation internals — click to expand</summary>
 
-The bundle's single insert is the complete application tree: SDK stdio startup and JSON-RPC serving, one environment-configured DeepSeek adapter, the explicit agent core, conditional MCP resource tools, local filesystem, image attachments, automatic context compaction, and subprocess services, Session working-directory state and its tool, a platform-selected persistent shell PTY, and uncompressed JSONL persistence under `$DSH_HOME/sessions`. It does not inherit another bundle, so every extra row is an explicit profile change.
+The bundle's single insert is the complete application tree: SDK stdio startup and JSON-RPC serving, one environment-configured DeepSeek adapter, the explicit agent core, conditional MCP resource tools, local filesystem, image attachments, automatic context compaction, and subprocess services, Session working-directory state and its tool, a platform-selected persistent shell PTY, and uncompressed JSONL persistence under `$COSERVE_HOME/sessions`. It does not inherit another bundle, so every extra row is an explicit profile change.
 
 ### Source map
 
@@ -95,7 +95,7 @@ Stable for a fixed persona, platform, provider, model, and bundle patch stack. C
 <a id="known-limitations-and-deferred-work"></a>
 
 - **The composition intentionally omits shared product services** — select `dsh --profile sdk` when settings, managed credentials, policy presets, telemetry, Web tools, or the full default tool roster are required.
-- **Image reading requires an image-capable model** — select a route whose adapter declares image input; text-only routes return a tool error. Images are stored under `$DSH_HOME/attachments/v1`.
+- **Image reading requires an image-capable model** — select a route whose adapter declares image input; text-only routes return a tool error. Images are stored under `$COSERVE_HOME/attachments/v1`.
 - **Compaction is automatic** — configure [compaction-basic](../../compaction/compaction-basic/README.md) through profile patches. SDK prompt text does not execute `/compact` or other slash commands.
 - **User patches can expand the tree and corrupt stdout** — profile customization is trusted application composition; a plugin that writes ordinary text to stdout can break JSON-RPC framing.
 

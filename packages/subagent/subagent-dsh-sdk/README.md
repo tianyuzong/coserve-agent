@@ -41,7 +41,7 @@ The provider advertises `agentOptions: true`, with `agentPreset`/`outputSchema`/
 | `dshBin` | SDK dependency | Explicit dsh CLI module, resolved and checked at plugin load; omission uses the SDK dependency |
 | `profile` | `sdk` | Named child profile |
 | `patches` | `[]` | Ordered per-launch profile patch files, resolved and checked at plugin load |
-| `dshHome` | required | Absolute isolated Harness home for every nested child process |
+| `coserveHome` | required | Absolute isolated Harness home for every nested child process |
 | `provider` | `deepseek-official` | Provider route sent in the child's `initialize` |
 | `model` | `deepseek-v4-flash` | Model sent in the child's `initialize` |
 | `maxTokens` | adapter/provider route default | Per-request output-token cap sent in the child's `initialize` |
@@ -61,7 +61,7 @@ Request `agentOptions` override `provider`, `model`, and `maxTokens` independent
     providerName: dsh-sdk
     profile: sdk
     patches: ['./profiles/research-child.cordis.yml']
-    dshHome: !!js dshHomePath('children')
+    coserveHome: !!js coserveHomePath('children')
     maxTokens: 49152
     env:
       DEEPSEEK_API_KEY: !!js process.env.DEEPSEEK_API_KEY

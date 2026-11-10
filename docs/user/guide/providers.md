@@ -10,7 +10,7 @@ Open **Settings → Models**. The DeepSeek card exposes one API-key field; enter
 
 ![The Models page: the DeepSeek card, with Add model provider below it](providers-models-page.png)
 
-Keys are write-only. The page receives a redacted descriptor after saving, never the literal secret. The key is stored in `$DSH_HOME/.credentials.yaml`, while settings retain only its credential reference.
+Keys are write-only. The page receives a redacted descriptor after saving, never the literal secret. The key is stored in `$COSERVE_HOME/.credentials.yaml`, while settings retain only its credential reference.
 
 With a key saved and the default endpoint, DeepSeek's models follow the list the DeepSeek API publishes. The list loads when the models are first needed, refreshes in the background about every ten minutes while they are in use, and falls back to the built-in models when it cannot load. Editing **Models** under **Customized settings** keeps your own list instead and stops following the published one; **Restore defaults** follows it again and reloads it. While the published list is in use, the card shows the built-in models, so a newly published model appears only in the model picker. The [API-key provider reference](../../../packages/llm/llm-deepseek-api-key/README.md) owns the listing, fallback, and gating rules.
 
@@ -51,16 +51,16 @@ If a saved default names a provider that was deleted, the composer displays **Se
 The generated [plugin configuration catalog](../../config-catalog.md) lists every supported field and default for every plugin; [`dsh-llm-pi-ai`](../../config-catalog.md#deepseek-aidsh-llm-pi-ai) is the provider section this page configures. The [`dsh-llm-pi-ai`](../../../packages/llm/llm-pi-ai/README.md) and [`dsh-llm-deepseek`](../../../packages/llm/llm-deepseek/README.md) references own direct `cordis.patch.yml` configuration, catalog resolution, reasoning controls, credentials, and adapter errors.
 
 ::: tip Additional settings
-The Models page exposes the API key, display name, base URL, API protocol, and each model's id, display name, context window, max output tokens, and input types, plus the reasoning levels of a model on a custom model API provider. Configure the reasoning levels of a built-in provider's models, request-compatibility switches, headers, timeouts, and retry policy in `$DSH_HOME/profiles/<profile>/cordis.patch.yml`, the same document the page writes. Edit it directly, or, when the browser runs on the same machine as the server, open it with **Open configuration file** in the Settings header; the adapters re-read it on the next request, so nothing needs a restart. The subsections below cover the fields most gateways need.
+The Models page exposes the API key, display name, base URL, API protocol, and each model's id, display name, context window, max output tokens, and input types, plus the reasoning levels of a model on a custom model API provider. Configure the reasoning levels of a built-in provider's models, request-compatibility switches, headers, timeouts, and retry policy in `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`, the same document the page writes. Edit it directly, or, when the browser runs on the same machine as the server, open it with **Open configuration file** in the Settings header; the adapters re-read it on the next request, so nothing needs a restart. The subsections below cover the fields most gateways need.
 
-For the standard Web UI launch with `dsh web`, `<profile>` is `web`, so the path is `$DSH_HOME/profiles/web/cordis.patch.yml`. If you launch a custom profile, use the name selected at startup instead.
+For the standard Web UI launch with `dsh web`, `<profile>` is `web`, so the path is `$COSERVE_HOME/profiles/web/cordis.patch.yml`. If you launch a custom profile, use the name selected at startup instead.
 :::
 
 ### Image input
 
 In **Settings → Models**, edit the provider, open **Customized settings**, and expand the model's **Model options**. **Input types** occupies its own row below the capacity fields. Select **Image** for a model that accepts images, and save. **Text** starts selected for a new custom model with no inherited image capability. At least one type must remain selected; select Image before clearing Text for an image-only model.
 
-The checkboxes save `input` for pi-ai models and `inputModalities` for the direct DeepSeek adapter. You can also edit the model in `$DSH_HOME/profiles/<profile>/cordis.patch.yml`; for example, this custom pi-ai provider declares one text-only model and one vision model:
+The checkboxes save `input` for pi-ai models and `inputModalities` for the direct DeepSeek adapter. You can also edit the model in `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`; for example, this custom pi-ai provider declares one text-only model and one vision model:
 
 These examples show config fields inside a profile patch. A Cordis config override replaces the complete entry config; preserve other providers and fields when editing an existing override.
 
@@ -118,7 +118,7 @@ Both fields state a claim about your endpoint rather than checking it. A model t
 
 ### DeepSeek account models
 
-A signed-in DeepSeek account lists its models from the account service, so the Models page offers no model editor for it. Adjust a single model with `modelOverrides` in `$DSH_HOME/profiles/<profile>/cordis.patch.yml`; the fields match a DeepSeek `models` entry, and unset fields keep the listed values:
+A signed-in DeepSeek account lists its models from the account service, so the Models page offers no model editor for it. Adjust a single model with `modelOverrides` in `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`; the fields match a DeepSeek `models` entry, and unset fields keep the listed values:
 
 ```yaml
 - id: llm-deepseek-account
@@ -137,7 +137,7 @@ The model picker offers an **Effort** menu for a model that declares reasoning l
 
 On a custom model API provider, declare the levels in **Settings → Models**: edit the provider, open **Customized settings**, expand the model's **Model options**, and turn on **Reasoning levels**. The rows start with off, low, medium, and high. Each row pairs a level with the **API value** sent for it, which defaults to the level name; change it only where the model provider's API documentation spells the level differently. Add or delete rows to match what the endpoint supports, keep at least one level besides off, and save. Turning the switch off removes the declaration.
 
-The page writes `reasoningEfforts` in `$DSH_HOME/profiles/<profile>/cordis.patch.yml`, where you can also declare the levels directly:
+The page writes `reasoningEfforts` in `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`, where you can also declare the levels directly:
 
 ```yaml
 - id: llm-pi-ai
@@ -183,7 +183,7 @@ A built-in provider's model whose gateway does not reason loses its levels with 
 
 A gateway can hold a working key at a reachable address and still refuse every request. pi-ai decides the shape of a request — which role carries the system prompt, which field caps the output, how a thinking level travels — from the endpoint's URL, and an address it does not recognize is addressed as though it were OpenAI itself. Most OpenAI-compatible gateways refuse at least one thing OpenAI accepts.
 
-Two account for most of it. A model that declares reasoning has its system prompt sent as `role: "developer"`, which many gateways reject outright, and the output cap is sent as `max_completion_tokens`, which a server that only knows `max_tokens` refuses. The form has no field for either; correct them on the route in `$DSH_HOME/profiles/<profile>/cordis.patch.yml`:
+Two account for most of it. A model that declares reasoning has its system prompt sent as `role: "developer"`, which many gateways reject outright, and the output cap is sent as `max_completion_tokens`, which a server that only knows `max_tokens` refuses. The form has no field for either; correct them on the route in `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`:
 
 ```yaml
 - id: llm-pi-ai

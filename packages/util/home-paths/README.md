@@ -29,31 +29,31 @@ Use these helpers wherever a package must agree with the rest of the harness abo
 ### Resolving the home
 
 ```ts
-import { resolveDshHome, dshHomePath, dshCachePath } from '@deepseek-ai/dsh-home-paths'
+import { resolveCoserveHome, coserveHomePath, dshCachePath } from '@deepseek-ai/dsh-home-paths'
 
-const home = resolveDshHome()                // configured path, else $DSH_HOME, else ~/.dsh
-const settings = dshHomePath('settings')     // join one child onto the resolved home
-const cache = dshCachePath('models')         // $DSH_HOME/cache/models, default ~/.dsh/cache/models
+const home = resolveCoserveHome()                // configured path, else $COSERVE_HOME, else ~/.coserve
+const settings = coserveHomePath('settings')     // join one child onto the resolved home
+const cache = dshCachePath('models')         // $COSERVE_HOME/cache/models, default ~/.coserve/cache/models
 ```
 
-An explicit configured path has the highest precedence, then `$DSH_HOME`, then the default `~/.dsh`. An empty or whitespace-only `$DSH_HOME` is treated as unset, so a blank override never resolves the home to the current working directory.
+An explicit configured path has the highest precedence, then `$COSERVE_HOME`, then the default `~/.coserve`. An empty or whitespace-only `$COSERVE_HOME` is treated as unset, so a blank override never resolves the home to the current working directory.
 
-`dshCachePath(...segments)` derives paths from the resolved home's `cache` directory. With no segments it returns the cache directory itself. Pass an initial options object, `dshCachePath({ dshHome: home }, ...segments)`, to use an explicit configured home with the same precedence and tilde expansion. It returns an absolute path without creating directories.
+`dshCachePath(...segments)` derives paths from the resolved home's `cache` directory. With no segments it returns the cache directory itself. Pass an initial options object, `dshCachePath({ coserveHome: home }, ...segments)`, to use an explicit configured home with the same precedence and tilde expansion. It returns an absolute path without creating directories.
 
 ### Resolving the shared agents root
 
 ```ts
 import { resolveAgentsHome, agentsHomeDisplay } from '@deepseek-ai/dsh-home-paths'
 
-const agents = resolveAgentsHome()   // configured path, else $DSH_AGENTS_HOME, else ~/.agents
-agentsHomeDisplay(agents)            // ~/.agents, or $DSH_AGENTS_HOME for any configured root
+const agents = resolveAgentsHome()   // configured path, else $COSERVE_AGENTS_HOME, else ~/.coserve-agents
+agentsHomeDisplay(agents)            // ~/.coserve-agents, or $COSERVE_AGENTS_HOME for any configured root
 ```
 
-`resolveAgentsHome` applies the same precedence, blank-value handling, and tilde expansion as `resolveDshHome`. The root is deliberately outside `$DSH_HOME` because other agent tools share it; `dsh-agent-instructions` reads its user-global `AGENTS.md`, and `dsh-skill-filesystem` scans its `skills/` directory.
+`resolveAgentsHome` applies the same precedence, blank-value handling, and tilde expansion as `resolveCoserveHome`. The root is deliberately outside `$COSERVE_HOME` because other agent tools share it; `dsh-agent-instructions` reads its user-global `AGENTS.md`, and `dsh-skill-filesystem` scans its `skills/` directory.
 
 ### Displaying a home
 
-For user-facing paths, render a root symbolically rather than as a machine path: the default harness home displays as `~/.dsh`, any configured harness home as `$DSH_HOME`, the default shared agents root as `~/.agents`, and any configured shared agents root as `$DSH_AGENTS_HOME`. Neither display form leaks an absolute machine path.
+For user-facing paths, render a root symbolically rather than as a machine path: the default harness home displays as `~/.coserve`, any configured harness home as `$COSERVE_HOME`, the default shared agents root as `~/.coserve-agents`, and any configured shared agents root as `$COSERVE_AGENTS_HOME`. Neither display form leaks an absolute machine path.
 
 ### Expanding user paths
 
@@ -81,7 +81,7 @@ The package is built on one principle: harness user data lives under one root, a
 
 ### Resolution rules
 
-`resolveDshHome` reads the explicit override, then `$DSH_HOME`, then falls back to the operating-system home joined with `.dsh`. `resolveAgentsHome` reads the same three levels for `$DSH_AGENTS_HOME` and `~/.agents`. The chosen value is tilde-expanded and normalized to an absolute path; `dshHomePath` joins child segments with Node's platform path rules. `dshHomeDisplay` and `agentsHomeDisplay` compare the resolved path against the default root and return the symbolic label, so a configured root never leaks its absolute path.
+`resolveCoserveHome` reads the explicit override, then `$COSERVE_HOME`, then falls back to the operating-system home joined with `.coserve`. `resolveAgentsHome` reads the same three levels for `$COSERVE_AGENTS_HOME` and `~/.coserve-agents`. The chosen value is tilde-expanded and normalized to an absolute path; `coserveHomePath` joins child segments with Node's platform path rules. `coserveHomeDisplay` and `agentsHomeDisplay` compare the resolved path against the default root and return the symbolic label, so a configured root never leaks its absolute path.
 
 ### Canonicalization mechanics
 
@@ -97,7 +97,7 @@ The package is built on one principle: harness user data lives under one root, a
 Read these pages when you need the launcher or the consumers that depend on a single home root.
 
 - [Boot package](../../boot/app-boot/README.md) — the launcher that resolves the home before any plugin mounts.
-- [Shell environment](../../shell/shell-env/README.md) — how `DSH_HOME` reaches model shell calls.
+- [Shell environment](../../shell/shell-env/README.md) — how `COSERVE_HOME` reaches model shell calls.
 - [Anonymous user id](../../identity/anonymous-user-id/README.md) — a stored identity file under the resolved home.
 
 -----

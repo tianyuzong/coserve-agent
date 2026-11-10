@@ -129,8 +129,8 @@ export function launchAcpTestAgent(options: AcpTestLaunchOptions): LaunchedAcpTe
     ...agent.profile === undefined ? {} : { sourceImport: 'tsx/esm' },
     env: {
       ...options.env,
-      DSH_HOME: join(cwd, '.dsh'),
-      DSH_AGENTS_HOME: join(cwd, '.agents'),
+      COSERVE_HOME: join(cwd, '.coserve'),
+      COSERVE_AGENTS_HOME: join(cwd, '.coserve-agents'),
     },
   })
   const child = spawn(
@@ -393,7 +393,7 @@ function linkProfilePackage(source: string, cwd: string, profile: string, packag
   const packageDir = packageDirFromPatch(source, packageName)
   // The package may instead belong to the dsh installation; profile boot heals those links.
   if (packageDir === undefined) return
-  const link = join(cwd, '.dsh', 'profiles', profile, 'node_modules', packageName)
+  const link = join(cwd, '.coserve', 'profiles', profile, 'node_modules', packageName)
   mkdirSync(dirname(link), { recursive: true })
   if (existsSync(link)) {
     if (realpathSync(link) !== packageDir) {

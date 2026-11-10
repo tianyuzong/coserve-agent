@@ -10,7 +10,7 @@
 
 ![模型页：DeepSeek 卡片，及其下方的添加模型提供商入口](providers-models-page.zh.png)
 
-密钥是只写的。保存后，页面只会收到脱敏描述符，永远不会收到明文密钥。密钥存储在 `$DSH_HOME/.credentials.yaml` 中，settings 只保留它的凭据引用。
+密钥是只写的。保存后，页面只会收到脱敏描述符，永远不会收到明文密钥。密钥存储在 `$COSERVE_HOME/.credentials.yaml` 中，settings 只保留它的凭据引用。
 
 保存了密钥且使用默认端点时，DeepSeek 的模型跟随 DeepSeek API 发布的列表。第一次需要模型时加载列表，使用期间约每十分钟在后台刷新一次，无法加载时退回内置模型。在**自定义设置**里编辑**模型目录**会改用你自己的列表，不再跟随发布的列表；点**恢复默认模型**会重新跟随并重新加载。使用发布的列表时，卡片上显示的是内置模型，因此新发布的模型只出现在模型选择器中。列表、兜底和门控规则见 [API key 提供方参考](../../../packages/llm/llm-deepseek-api-key/README.zh.md)。
 
@@ -51,16 +51,16 @@ Provider ID 是永久的，因为请求、已保存会话、模型默认值和�
 自动生成的[插件配置目录](../../config-catalog.zh.md)列出每个插件的所有受支持字段与默认值；[`dsh-llm-pi-ai`](../../config-catalog.zh.md#deepseek-aidsh-llm-pi-ai) 就是本页所配置的那个提供商段落。[`dsh-llm-pi-ai`](../../../packages/llm/llm-pi-ai/README.zh.md) 和 [`dsh-llm-deepseek`](../../../packages/llm/llm-deepseek/README.zh.md) 参考文档负责直接 `cordis.patch.yml` 配置、目录解析、推理控制、凭据与适配器错误。
 
 ::: tip 其他设置
-模型页提供 API 密钥、显示名称、API 地址、API 协议，以及每个模型的 ID、显示名称、上下文窗口、最大输出 token 数和输入类型；自定义模型 API 提供商的模型还可以在这里设置推理等级。内置提供商模型的推理等级、请求兼容性开关、请求头、超时和重试策略在 `$DSH_HOME/profiles/<profile>/cordis.patch.yml` 中设置，也就是模型页写入的同一份文档。可以直接编辑它；浏览器与服务器在同一台机器时，也可以点击设置页顶部的**打开配置文件**打开它。适配器会在下一次请求时重新读取，无需重启任何东西。下面各小节介绍多数网关会用到的字段。
+模型页提供 API 密钥、显示名称、API 地址、API 协议，以及每个模型的 ID、显示名称、上下文窗口、最大输出 token 数和输入类型；自定义模型 API 提供商的模型还可以在这里设置推理等级。内置提供商模型的推理等级、请求兼容性开关、请求头、超时和重试策略在 `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml` 中设置，也就是模型页写入的同一份文档。可以直接编辑它；浏览器与服务器在同一台机器时，也可以点击设置页顶部的**打开配置文件**打开它。适配器会在下一次请求时重新读取，无需重启任何东西。下面各小节介绍多数网关会用到的字段。
 
-按常规方式通过 `dsh web` 启动 Web UI 时，`<profile>` 就是 `web`，完整路径为 `$DSH_HOME/profiles/web/cordis.patch.yml`。如果使用自定义 profile，请替换为启动时指定的名称。
+按常规方式通过 `dsh web` 启动 Web UI 时，`<profile>` 就是 `web`，完整路径为 `$COSERVE_HOME/profiles/web/cordis.patch.yml`。如果使用自定义 profile，请替换为启动时指定的名称。
 :::
 
 ### 图片输入
 
 在**设置 → 模型**中编辑提供商，打开**自定义设置**并展开该模型的**模型选项**。**输入类型**独占容量字段下方的一行。对于支持图片的模型，勾选**图片**并保存。没有继承图片能力的新自定义模型默认勾选**文本**。至少保留一种输入类型；仅图片模型需先勾选图片，再取消文本。
 
-复选框将 pi-ai 模型的选择保存为 `input`，将直连 DeepSeek 适配器的选择保存为 `inputModalities`。也可以在 `$DSH_HOME/profiles/<profile>/cordis.patch.yml` 中编辑模型；例如，以下自定义 pi-ai 提供商声明了一个纯文本模型和一个视觉模型：
+复选框将 pi-ai 模型的选择保存为 `input`，将直连 DeepSeek 适配器的选择保存为 `inputModalities`。也可以在 `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml` 中编辑模型；例如，以下自定义 pi-ai 提供商声明了一个纯文本模型和一个视觉模型：
 
 这些示例展示 profile patch 中的配置字段。Cordis 配置覆盖会替换完整条目配置；编辑已有覆盖项时，请保留其他 provider 和字段。
 
@@ -118,7 +118,7 @@ DeepSeek 将省略的 `inputModalities` 视为纯文本，并拒绝空列表。�
 
 ### DeepSeek 账号的模型
 
-已登录 DeepSeek 账号的模型列表来自账号服务，因此模型页不为它提供模型编辑器。要调整单个模型，在 `$DSH_HOME/profiles/<profile>/cordis.patch.yml` 中使用 `modelOverrides`；字段与 DeepSeek 的 `models` 条目相同，未设置的字段沿用列表中的值：
+已登录 DeepSeek 账号的模型列表来自账号服务，因此模型页不为它提供模型编辑器。要调整单个模型，在 `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml` 中使用 `modelOverrides`；字段与 DeepSeek 的 `models` 条目相同，未设置的字段沿用列表中的值：
 
 ```yaml
 - id: llm-deepseek-account
@@ -137,7 +137,7 @@ DeepSeek 将省略的 `inputModalities` 视为纯文本，并拒绝空列表。�
 
 自定义模型 API 提供商可以在**设置 → 模型**中声明等级：编辑该提供商，打开**自定义设置**，展开该模型的**模型选项**，然后打开**推理等级**。默认带有 off、low、medium、high 四行。每行把一个档位与发送给它的 **API 参数值**配成一对，参数值默认与档位名相同；只有模型提供商的 API 文档写法不同时才需要修改。按端点支持的档位增删行，至少保留一个 off 以外的档位，然后保存。关闭开关会删除该声明。
 
-模型页会把 `reasoningEfforts` 写入 `$DSH_HOME/profiles/<profile>/cordis.patch.yml`，也可以直接在其中声明等级：
+模型页会把 `reasoningEfforts` 写入 `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`，也可以直接在其中声明等级：
 
 ```yaml
 - id: llm-pi-ai
@@ -183,7 +183,7 @@ DeepSeek 将省略的 `inputModalities` 视为纯文本，并拒绝空列表。�
 
 网关可能持有可用的密钥、地址也通得到，却仍然拒绝每一个请求。pi-ai 依据端点的 URL 决定请求的形状——系统提示词由哪个角色承载、输出上限写在哪个字段、思考级别如何传输——而对于它无法识别的地址，会当作 OpenAI 本身来对待。多数 OpenAI 兼容网关至少会拒绝 OpenAI 所接受的某一样东西。
 
-其中两样占了绝大多数。声明了推理能力的模型，其系统提示词会以 `role: "developer"` 发出，很多网关直接拒绝；输出上限则写作 `max_completion_tokens`，只认 `max_tokens` 的服务端会拒绝。表单里没有这两个字段；请在 `$DSH_HOME/profiles/<profile>/cordis.patch.yml` 的路由上更正：
+其中两样占了绝大多数。声明了推理能力的模型，其系统提示词会以 `role: "developer"` 发出，很多网关直接拒绝；输出上限则写作 `max_completion_tokens`，只认 `max_tokens` 的服务端会拒绝。表单里没有这两个字段；请在 `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml` 的路由上更正：
 
 ```yaml
 - id: llm-pi-ai

@@ -16,7 +16,7 @@ CLI = ROOT / 'apps' / 'cli' / 'lib' / 'bin.js'
 def test_account_provider_signout_snapshot(tmp_path: Path) -> None:
     with DeepSeekHarness(
         dsh_bin=str(CLI),
-        dsh_home=str(tmp_path / 'home'),
+        coserve_home=str(tmp_path / 'home'),
         cwd=str(tmp_path),
         profile='sdk',
         patches=(str(ROOT / 'snapshots' / 'sdk' / 'account-provider-signout' / 'cordis.yml'),),

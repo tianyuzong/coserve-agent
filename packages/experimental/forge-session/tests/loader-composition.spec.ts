@@ -177,7 +177,7 @@ async function load() {
   ])
   const configs: Record<string, readonly string[]> = {
     '@deepseek-ai/dsh-agent-loop': ['agents: []'],
-    '@deepseek-ai/dsh-shell-env': [`dshHome: ${JSON.stringify(join(root, 'dsh-home'))}`],
+    '@deepseek-ai/dsh-shell-env': [`coserveHome: ${JSON.stringify(join(root, 'dsh-home'))}`],
     '@deepseek-ai/dsh-bash-local': ['timeoutMs: 20000'],
     '@deepseek-ai/dsh-experimental-forge': ['activeIntervalMs: 600000', 'idleIntervalMs: 600000'],
     '@deepseek-ai/dsh-experimental-forge-github': [`ghCommand: ${JSON.stringify(join(bin, 'gh'))}`],

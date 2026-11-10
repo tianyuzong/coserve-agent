@@ -52,7 +52,7 @@ describe.skipIf(!existsSync(dshBin))('sdk-minimal durability checkpoints', () =>
       ...disabled ? [{ id: 'session-checkpoint-policy', disabled: true }] : [],
     ]))
     const harness = new DeepSeekHarness({
-      dshBin, profile: 'sdk-minimal', dshHome: join(root, 'home'),
+      dshBin, profile: 'sdk-minimal', coserveHome: join(root, 'home'),
       cwd: root, processCwd: root, patches: [patch],
       env: { ...process.env, DEEPSEEK_API_KEY: 'keyless-checkpoint-test', DEEPSEEK_BASE_URL: `http://127.0.0.1:${address.port}` },
     })

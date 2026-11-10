@@ -13,6 +13,6 @@ description: "sdk-minimal profile 现在会在会话持久化无法完成检查�
 
 ## 迁移
 
-1. 确保选定的 `dsh_home` 可写，并让请求超时覆盖存储初始化和检查点写入。仅延长关闭超时不会影响请求前的检查点。
+1. 确保选定的 `coserve_home` 可写，并让请求超时覆盖存储初始化和检查点写入。仅延长关闭超时不会影响请求前的检查点。
 2. 检查 profile 和调用级 patch 是否覆盖了 `session-checkpoint-policy`。要使用此持久化策略，应在 `sessions` 旁保留其默认启用状态。
 3. 运行一轮 SDK 短对话，正常关闭，再使用相同 home 和会话 ID 调用 `resume_session()` 验证恢复。重试模型或工具操作前，先排查检查点失败；只有检查点成功后，操作才会执行。

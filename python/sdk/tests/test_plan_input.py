@@ -138,7 +138,7 @@ def configured_harness(**options):
     )
 
 example["main"].__globals__["DeepSeekHarness"] = configured_harness
-sys.argv = [example_path, "--dsh-home", str(root / "home"), "--workspace", str(root), "Plan a change."]
+sys.argv = [example_path, "--coserve-home", str(root / "home"), "--workspace", str(root), "Plan a change."]
 try:
     example["main"]()
 except KeyboardInterrupt:

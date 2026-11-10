@@ -6,7 +6,7 @@ Platform runtime wheel for the DeepSeek Harness Python SDK. It packages the norm
 
 ## Installed commands and artifacts
 
-The wheel installs a `dsh` console command and the `deepseek_harness_runtime` Python module. `dsh` forwards its arguments to the bundled executable and requires a non-empty `DSH_HOME`; it never falls back to `~/.dsh`.
+The wheel installs a `dsh` console command and the `deepseek_harness_runtime` Python module. `dsh` forwards its arguments to the bundled executable and requires a non-empty `COSERVE_HOME`; it never falls back to `~/.coserve`.
 
 Production executables are named `deepseek-harness-sdk-runtime-<platform>-<arch>` under the module's `runtime/` directory; Windows uses the `.exe` suffix. Linux and macOS wheels include a target-native `-rg` sidecar, Windows includes `-rg.exe`, and macOS also includes `-spawn-helper` for `node-pty`. Published targets are Linux x64, Linux arm64, macOS arm64, macOS x64, and Windows x64. The wheel tag and payload must match exactly; no Windows arm64 wheel is published.
 
@@ -25,7 +25,7 @@ primary_runtime = download_primary_runtime()
 
 `DSH_RESOURCE_CACHE` selects an absolute cache root, defaulting to `~/.cache/deepseek-harness/resources`. Resource identities include the release's locked inputs. Downloads verify archive hashes and package identities, preserve executable permissions, and publish completed directories atomically. Failed downloads can be retried. `DSH_RESOURCE_DOWNLOAD_TIMEOUT_MS` bounds each archive download, including its body; the default is `300000`, and accepted values are integers from `1` to `2147483647`. Downloads follow the Harness proxy environment policy. Installed wheel files are never modified. Release versions have separate cache directories; unused versions require manual removal. Downloads use the locked upstream URLs without a registry or mirror override.
 
-On subsequent launches the packaged bootstrap exposes downloaded resources to the SDK profile. `DSH_PRIMARY_RUNTIME` overrides the cached authoring environment; an empty value disables its query and package-manager selection. `DSH_OFFICE_SIDECAR` can select an absolute sidecar directory with its standalone Node. Users may provide their own Python environment and document libraries without downloading the authoring environment. Office skills are available when either resource is selected; authoring-only deployments expose the skills with the Kit CLI disabled. External authoring payloads retain the `primary-runtime/` plus sibling `office-skills/` layout. The SDK reads resources in place without copying them into `DSH_HOME`. The `sdk-minimal` profile does not mount these providers.
+On subsequent launches the packaged bootstrap exposes downloaded resources to the SDK profile. `DSH_PRIMARY_RUNTIME` overrides the cached authoring environment; an empty value disables its query and package-manager selection. `DSH_OFFICE_SIDECAR` can select an absolute sidecar directory with its standalone Node. Users may provide their own Python environment and document libraries without downloading the authoring environment. Office skills are available when either resource is selected; authoring-only deployments expose the skills with the Kit CLI disabled. External authoring payloads retain the `primary-runtime/` plus sibling `office-skills/` layout. The SDK reads resources in place without copying them into `COSERVE_HOME`. The `sdk-minimal` profile does not mount these providers.
 
 Skill selection is independent of delivery: project, custom-directory, and user filesystem skills override same-name bundled skills. An SDK patch can disable only the Office provider while retaining the Python query:
 
@@ -48,7 +48,7 @@ Both carriers execute the same `dsh` grammar and shipped profiles, including the
 - `download_office() -> Path` explicitly downloads or reuses the Office sidecar and its standalone Node.
 - `download_primary_runtime() -> Path` explicitly downloads or reuses the authoring environment.
 - `resolve_office_launch_args() -> tuple[str, str]` locates the installed Node and Kit CLI without downloading; missing resources raise `FileNotFoundError` with the download instruction.
-- `main()` implements the installed `dsh` console command and rejects an absent or blank `DSH_HOME`. On Windows it waits for the bundled process with inherited standard streams and forwards its exit status; on POSIX it replaces the Python process.
+- `main()` implements the installed `dsh` console command and rejects an absent or blank `COSERVE_HOME`. On Windows it waits for the bundled process with inherited standard streams and forwards its exit status; on POSIX it replaces the Python process.
 
 Unsupported platforms and missing executables or sidecars raise `FileNotFoundError` with the build and installation routes. Unknown runtime modes raise `ValueError`.
 

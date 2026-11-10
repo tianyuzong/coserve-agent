@@ -1,0 +1,16 @@
+# Bilingual-pair consistency record for guide.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/upgrade-guide/v0.2.2-rc.1/coserve-home/guide.md
+/:
+  en: cb45b0f63dac7ef1
+  zh: cf6d9a9217f06b48
+/harness-home-environment-variables-and-directories-are-renamed:
+  en: cc1f094af3d0253b
+  zh: 3a6227e33dab34ac
+/harness-home-environment-variables-and-directories-are-renamed/change:
+  en: 48e153f48a2cff47
+  zh: 4603d7fbbd65e60d
+/harness-home-environment-variables-and-directories-are-renamed/migration:
+  en: 636acce889b36740
+  zh: dc38b4d6a65ba8ad

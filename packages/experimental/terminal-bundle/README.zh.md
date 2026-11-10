@@ -25,7 +25,7 @@ kind: "package-bundle"
 <a id="use-this-package"></a>
 ## 使用此包
 
-在 `$DSH_HOME/profiles/<name>/package.json` 中（home 默认为 `~/.dsh`），将 `@deepseek-ai/dsh-experimental-terminal-bundle` 加入 `dsh.profile.bundles` 即可启用其配置层；从列表移除即可关闭。重启该 profile 后生效，详见 [profile 参考](../../../apps/cli/reference/README.zh.md#profile-boot)。[minimal 预设](../../bundle/web-app/presets/minimal.patch.yml) 独立加载自己的持久 shell，不依赖此组合包。
+在 `$COSERVE_HOME/profiles/<name>/package.json` 中（home 默认为 `~/.coserve`），将 `@deepseek-ai/dsh-experimental-terminal-bundle` 加入 `dsh.profile.bundles` 即可启用其配置层；从列表移除即可关闭。重启该 profile 后生效，详见 [profile 参考](../../../apps/cli/reference/README.zh.md#profile-boot)。[minimal 预设](../../bundle/web-app/presets/minimal.patch.yml) 独立加载自己的持久 shell，不依赖此组合包。
 
 选中的配置层为 Host 中的每个智能体添加全局工具，覆盖所有预设（包括 minimal）。隐藏管理入口保留已有的启用配置；[升级说明](../../../docs/upgrade-guide/v0.2.1-rc.2/persistent-terminal-controls/guide.zh.md)介绍如何关闭此前启用的配置层。
 

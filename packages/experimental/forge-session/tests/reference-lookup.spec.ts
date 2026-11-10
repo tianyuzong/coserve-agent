@@ -63,7 +63,7 @@ async function fixture() {
   await ctx.plugin(LlmRuntime)
   await ctx.plugin(AgentRegistry)
   await ctx.plugin(AgentLoop, { agents: [] })
-  await ctx.plugin(ShellEnv, { dshHome: process.cwd() })
+  await ctx.plugin(ShellEnv, { coserveHome: process.cwd() })
   await ctx.plugin(LookupShell)
   const { agent } = await ctx.agents.create({ sessionId: SessionId('reference-observer') })
   const controller = new AbortController()

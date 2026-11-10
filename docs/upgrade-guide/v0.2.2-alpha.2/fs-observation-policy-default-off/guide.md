@@ -17,7 +17,7 @@ Affected: the base-backed profiles (`headless`, `web`, `sdk`, `acp`; `sdk-minima
 
 ## Migration
 
-1. To keep read-before-write behavior, add to the profile's `cordis.patch.yml` (`$DSH_HOME/profiles/<profile>/cordis.patch.yml`):
+1. To keep read-before-write behavior, add to the profile's `cordis.patch.yml` (`$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`):
 
    ```yaml
    - id: fs-observation-policy

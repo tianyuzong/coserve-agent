@@ -44,7 +44,7 @@ it.skipIf(process.platform === 'win32' || !existsSync(bridge) || !existsSync(boo
       await mountAgentLoopTestDependencies(ctx)
       await ctx.plugin(FileSystem)
       await ctx.plugin(Subprocess)
-      await ctx.plugin(LocalAttachmentStore, { dshHome: join(cwd, 'home') })
+      await ctx.plugin(LocalAttachmentStore, { coserveHome: join(cwd, 'home') })
       await ctx.plugin(ComputerUseRegistry)
       await ctx.plugin(Sandbox)
       await ctx.plugin(SandboxPolicy)

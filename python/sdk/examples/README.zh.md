@@ -11,13 +11,13 @@
 ```sh
 export DEEPSEEK_API_KEY=sk-your-key-here
 python python/sdk/examples/minimal.py \
-  --dsh-home /absolute/path/to/example-dsh-home \
+  --coserve-home /absolute/path/to/example-dsh-home \
   --workspace /absolute/path/to/disposable-workspace \
   --session-id example-001 \
   "Inspect the repository and fix the failing tests."
 ```
 
-如需使用兼容代理，请设置 `DEEPSEEK_BASE_URL`；可通过 `DSH_MODEL` 设置脚本的默认模型，通过 `DSH_SYSTEM_PROMPT` 指定部署角色设定。`--model` 是唯一运行时模型选择，不要求匹配的环境变量；`--profile` 可以选择另一个提供 SDK 服务的 profile。所选 home 保存生成的 `sdk-minimal` profile，并在 `sessions/` 下保存未压缩 JSONL 会话日志；脚本绝不会隐式读取 `~/.dsh`。
+如需使用兼容代理，请设置 `DEEPSEEK_BASE_URL`；可通过 `DSH_MODEL` 设置脚本的默认模型，通过 `DSH_SYSTEM_PROMPT` 指定部署角色设定。`--model` 是唯一运行时模型选择，不要求匹配的环境变量；`--profile` 可以选择另一个提供 SDK 服务的 profile。所选 home 保存生成的 `sdk-minimal` profile，并在 `sessions/` 下保存未压缩 JSONL 会话日志；脚本绝不会隐式读取 `~/.coserve`。
 
 随附的 [`@deepseek-ai/dsh-sdk-minimal` 组合包](../../../packages/bundle/sdk-minimal/README.zh.md) 是该模式完整且显式的 Cordis 配置树。它只暴露：
 
@@ -36,7 +36,7 @@ python python/sdk/examples/minimal.py \
 
 ```sh
 python python/sdk/examples/compact.py \
-  --dsh-home /absolute/path/to/compact-dsh-home \
+  --coserve-home /absolute/path/to/compact-dsh-home \
   --workspace /absolute/path/to/disposable-workspace
 ```
 
@@ -49,7 +49,7 @@ python python/sdk/examples/compact.py \
 
 ```sh
 python python/sdk/examples/permission.py \
-  --dsh-home /absolute/path/to/permission-dsh-home \
+  --coserve-home /absolute/path/to/permission-dsh-home \
   --workspace /absolute/path/to/disposable-workspace \
   --preset read-only
 ```
@@ -63,7 +63,7 @@ python python/sdk/examples/permission.py \
 
 ```sh
 python python/sdk/examples/plan.py \
-  --dsh-home /absolute/path/to/plan-dsh-home \
+  --coserve-home /absolute/path/to/plan-dsh-home \
   --workspace /absolute/path/to/disposable-workspace \
   "Plan the requested change and present it for review."
 ```
@@ -79,7 +79,7 @@ python python/sdk/examples/plan.py \
 
 ```sh
 python python/sdk/examples/goal.py \
-  --dsh-home /absolute/path/to/goal-dsh-home \
+  --coserve-home /absolute/path/to/goal-dsh-home \
   --workspace /absolute/path/to/disposable-workspace \
   "Calculate 17 * 19, verify the result, and complete the goal without changing files."
 ```
@@ -92,7 +92,7 @@ python python/sdk/examples/goal.py \
 
 ```sh
 python python/sdk/examples/manage_plugins.py \
-  --dsh-home /absolute/path/to/example-dsh-home \
+  --coserve-home /absolute/path/to/example-dsh-home \
   --workspace /absolute/path/to/disposable-workspace \
   "Install and enable the bundle at /absolute/path/to/my-plugin-bundle."
 ```
@@ -104,7 +104,7 @@ python python/sdk/examples/manage_plugins.py \
 对同一个显式 home 使用运行时 wheel 包提供的 `dsh` 命令，以进行持久 profile 变更：
 
 ```sh
-export DSH_HOME=/absolute/path/to/example-dsh-home
+export COSERVE_HOME=/absolute/path/to/example-dsh-home
 dsh plugin --profile sdk-minimal add file:/absolute/path/to/my-plugin-bundle
 ```
 

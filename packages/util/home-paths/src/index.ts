@@ -9,22 +9,22 @@ import { homedir } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
 
 /** Directory name for the default DeepSeek Harness home under the OS home. */
-export const DSH_HOME_DIR_NAME = '.dsh'
+export const COSERVE_HOME_DIR_NAME = '.coserve'
 
 /** Stable user-facing display form for the default DeepSeek Harness home. */
-export const DEFAULT_DSH_HOME_DISPLAY = `~/${DSH_HOME_DIR_NAME}`
+export const DEFAULT_COSERVE_HOME_DISPLAY = `~/${COSERVE_HOME_DIR_NAME}`
 
 /** Environment variable that overrides the default DeepSeek Harness home. */
-export const DSH_HOME_ENV = 'DSH_HOME'
+export const COSERVE_HOME_ENV = 'COSERVE_HOME'
 
 /** Directory name for the default shared agent configuration root under the OS home. */
-export const AGENTS_HOME_DIR_NAME = '.agents'
+export const AGENTS_HOME_DIR_NAME = '.coserve-agents'
 
 /** Stable user-facing display form for the default shared agent configuration root. */
 export const DEFAULT_AGENTS_HOME_DISPLAY = `~/${AGENTS_HOME_DIR_NAME}`
 
 /** Environment variable that overrides the default shared agent configuration root. */
-export const AGENTS_HOME_ENV = 'DSH_AGENTS_HOME'
+export const AGENTS_HOME_ENV = 'COSERVE_AGENTS_HOME'
 
 /**
  * Give a native filesystem watcher one canonical spelling of a path, even
@@ -67,8 +67,8 @@ export async function canonicalizeWatchPath(path: string): Promise<string> {
  * Resolve the default DeepSeek Harness home using Node's platform path rules.
  * @returns the absolute default harness home path.
  */
-export function defaultDshHome(): string {
-  return join(homedir(), DSH_HOME_DIR_NAME)
+export function defaultCoserveHome(): string {
+  return join(homedir(), COSERVE_HOME_DIR_NAME)
 }
 
 /**
@@ -124,28 +124,28 @@ function rootDisplay(resolvedRoot: string, defaultRoot: string, defaultLabel: st
 /**
  * Resolve the single-root DeepSeek Harness home.
  *
- * Precedence, highest first: an explicit configured path, `$DSH_HOME`, then
- * `~/.dsh`. The harness keeps all user data under one root. An empty or
- * whitespace-only `$DSH_HOME` is treated as unset, so a blank override never
+ * Precedence, highest first: an explicit configured path, `$COSERVE_HOME`, then
+ * `~/.coserve`. The harness keeps all user data under one root. An empty or
+ * whitespace-only `$COSERVE_HOME` is treated as unset, so a blank override never
  * resolves the home to the current working directory.
  * @param configured - explicit harness-home override, which has highest precedence.
- * @param env - environment mapping used to read `DSH_HOME`.
+ * @param env - environment mapping used to read `COSERVE_HOME`.
  * @returns the normalized absolute harness home path.
  */
-export function resolveDshHome(configured?: string, env: Record<string, string | undefined> = process.env): string {
-  return resolveRoot(configured, env, DSH_HOME_ENV, defaultDshHome)
+export function resolveCoserveHome(configured?: string, env: Record<string, string | undefined> = process.env): string {
+  return resolveRoot(configured, env, COSERVE_HOME_ENV, defaultCoserveHome)
 }
 
 /**
  * Resolve the shared agent configuration root.
  *
- * Precedence, highest first: an explicit configured path, `$DSH_AGENTS_HOME`,
- * then `~/.agents`. The root holds configuration shared with other agent tools,
+ * Precedence, highest first: an explicit configured path, `$COSERVE_AGENTS_HOME`,
+ * then `~/.coserve-agents`. The root holds configuration shared with other agent tools,
  * so it stays independent of the DeepSeek Harness home. An empty or
- * whitespace-only `$DSH_AGENTS_HOME` is treated as unset, so a blank override
+ * whitespace-only `$COSERVE_AGENTS_HOME` is treated as unset, so a blank override
  * never resolves the root to the current working directory.
  * @param configured - explicit shared-root override, which has highest precedence.
- * @param env - environment mapping used to read `DSH_AGENTS_HOME`.
+ * @param env - environment mapping used to read `COSERVE_AGENTS_HOME`.
  * @returns the normalized absolute shared agent configuration root.
  */
 export function resolveAgentsHome(configured?: string, env: Record<string, string | undefined> = process.env): string {
@@ -157,8 +157,8 @@ export function resolveAgentsHome(configured?: string, env: Record<string, strin
  * @param segments - path segments appended to the Harness home; an empty list returns the home itself.
  * @returns the normalized absolute joined path.
  */
-export function dshHomePath(...segments: string[]): string {
-  return join(resolveDshHome(), ...segments)
+export function coserveHomePath(...segments: string[]): string {
+  return join(resolveCoserveHome(), ...segments)
 }
 
 /**
@@ -167,30 +167,30 @@ export function dshHomePath(...segments: string[]): string {
  * @param segments - additional path segments after the first child, if any.
  * @returns the normalized absolute cache path.
  */
-export function dshCachePath(optionsOrSegment: { dshHome?: string } | string = {}, ...segments: string[]): string {
-  if (typeof optionsOrSegment === 'string') return dshHomePath('cache', optionsOrSegment, ...segments)
-  return join(resolveDshHome(optionsOrSegment.dshHome), 'cache', ...segments)
+export function dshCachePath(optionsOrSegment: { coserveHome?: string } | string = {}, ...segments: string[]): string {
+  if (typeof optionsOrSegment === 'string') return coserveHomePath('cache', optionsOrSegment, ...segments)
+  return join(resolveCoserveHome(optionsOrSegment.coserveHome), 'cache', ...segments)
 }
 
 /**
  * Describe a resolved harness home symbolically for user-facing display.
  *
  * It never returns an absolute machine path: the default home is labelled
- * `~/.dsh`, and any configured home is labelled `$DSH_HOME`.
- * @param resolvedHome - the absolute path returned by {@link resolveDshHome}.
- * @returns `~/.dsh` for the default home, otherwise `$DSH_HOME`.
+ * `~/.coserve`, and any configured home is labelled `$COSERVE_HOME`.
+ * @param resolvedHome - the absolute path returned by {@link resolveCoserveHome}.
+ * @returns `~/.coserve` for the default home, otherwise `$COSERVE_HOME`.
  */
-export function dshHomeDisplay(resolvedHome: string): string {
-  return rootDisplay(resolvedHome, defaultDshHome(), DEFAULT_DSH_HOME_DISPLAY, DSH_HOME_ENV)
+export function coserveHomeDisplay(resolvedHome: string): string {
+  return rootDisplay(resolvedHome, defaultCoserveHome(), DEFAULT_COSERVE_HOME_DISPLAY, COSERVE_HOME_ENV)
 }
 
 /**
  * Describe a resolved shared agent configuration root symbolically for user-facing display.
  *
  * It never returns an absolute machine path: the default root is labelled
- * `~/.agents`, and any configured root is labelled `$DSH_AGENTS_HOME`.
+ * `~/.coserve-agents`, and any configured root is labelled `$COSERVE_AGENTS_HOME`.
  * @param resolvedHome - the absolute path returned by {@link resolveAgentsHome}.
- * @returns `~/.agents` for the default root, otherwise `$DSH_AGENTS_HOME`.
+ * @returns `~/.coserve-agents` for the default root, otherwise `$COSERVE_AGENTS_HOME`.
  */
 export function agentsHomeDisplay(resolvedHome: string): string {
   return rootDisplay(resolvedHome, defaultAgentsHome(), DEFAULT_AGENTS_HOME_DISPLAY, AGENTS_HOME_ENV)

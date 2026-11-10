@@ -76,13 +76,13 @@ describe('headless credential policy', { retry: 0 }, () => {
           DEEPSEEK_API_KEY: scenario.launch, DEEPSEEK_BASE_URL: server.baseURL, DSH_TELEMETRY_DISABLED: '1',
         },
         prepare: async (cwd) => {
-          await mkdir(join(cwd, '.dsh'), { recursive: true })
-          await writeFile(join(cwd, '.dsh', '.credentials.yaml'), credentials, { mode: 0o600 })
+          await mkdir(join(cwd, '.coserve'), { recursive: true })
+          await writeFile(join(cwd, '.coserve', '.credentials.yaml'), credentials, { mode: 0o600 })
           if (scenario.project !== undefined) await writeFile(join(cwd, '.env'), `DEEPSEEK_API_KEY=${scenario.project}\n`)
-          if (scenario.home !== undefined) await writeFile(join(cwd, '.dsh', '.env'), `DEEPSEEK_API_KEY=${scenario.home}\n`)
+          if (scenario.home !== undefined) await writeFile(join(cwd, '.coserve', '.env'), `DEEPSEEK_API_KEY=${scenario.home}\n`)
         },
         inspect: async (cwd) => {
-          expect(await readFile(join(cwd, '.dsh', '.credentials.yaml'), 'utf8')).toBe(credentials)
+          expect(await readFile(join(cwd, '.coserve', '.credentials.yaml'), 'utf8')).toBe(credentials)
         },
       })
       expect(result.stdout.trim()).toBe('mock response recovered')
@@ -108,8 +108,8 @@ describe('headless credential policy', { retry: 0 }, () => {
           DEEPSEEK_API_KEY: undefined, DSH_TELEMETRY_DISABLED: '1',
         },
         prepare: async (cwd) => {
-          await mkdir(join(cwd, '.dsh'), { recursive: true })
-          await writeFile(join(cwd, '.dsh', '.credentials.yaml'), credentials, { mode: 0o600 })
+          await mkdir(join(cwd, '.coserve'), { recursive: true })
+          await writeFile(join(cwd, '.coserve', '.credentials.yaml'), credentials, { mode: 0o600 })
           await writeFile(join(cwd, 'auth.patch.json'), JSON.stringify([
             { id: 'agent-default-model', config: { provider: 'anthropic', model: 'headless-auth-model' } },
             { id: 'llm-pi-ai', config: { providers: { anthropic: {
@@ -120,7 +120,7 @@ describe('headless credential policy', { retry: 0 }, () => {
           ]))
         },
         inspect: async (cwd) => {
-          expect(await readFile(join(cwd, '.dsh', '.credentials.yaml'), 'utf8')).toBe(credentials)
+          expect(await readFile(join(cwd, '.coserve', '.credentials.yaml'), 'utf8')).toBe(credentials)
         },
       })
       expect(result.stdout.trim()).toBe('mock response recovered')
@@ -147,15 +147,15 @@ describe('headless credential policy', { retry: 0 }, () => {
         processTimeoutMs, expectedExitCode: missing ? 1 : 0,
         env: { DEEPSEEK_API_KEY: empty ? '' : missing ? undefined : launchKey, DEEPSEEK_BASE_URL: server.baseURL, DSH_TELEMETRY_DISABLED: '1' },
         prepare: async (cwd) => {
-          await mkdir(join(cwd, '.dsh'), { recursive: true })
-          await writeFile(join(cwd, '.dsh', '.credentials.yaml'), document, { mode: 0o600 })
+          await mkdir(join(cwd, '.coserve'), { recursive: true })
+          await writeFile(join(cwd, '.coserve', '.credentials.yaml'), document, { mode: 0o600 })
           if (empty) await writeFile(join(cwd, '.env'), `DEEPSEEK_API_KEY=${projectKey}\n`)
           if (restoring) await writeFile(join(cwd, 'auth.patch.json'), JSON.stringify(
             ['credentials', 'authorization', 'deepseek-account'].map(id => ({ id, disabled: false })),
           ))
         },
         inspect: async (cwd) => {
-          expect(await readFile(join(cwd, '.dsh', '.credentials.yaml'), 'utf8')).toBe(document)
+          expect(await readFile(join(cwd, '.coserve', '.credentials.yaml'), 'utf8')).toBe(document)
         },
       })
       if (missing) {
@@ -183,8 +183,8 @@ describe('headless credential policy', { retry: 0 }, () => {
       processTimeoutMs, expectedExitCode: 1,
       env: { DEEPSEEK_API_KEY: undefined, OPENAI_API_KEY: undefined, DSH_TELEMETRY_DISABLED: '1' },
       prepare: async (cwd) => {
-        await mkdir(join(cwd, '.dsh'), { recursive: true })
-        await writeFile(join(cwd, '.dsh', '.credentials.yaml'), credentials, { mode: 0o600 })
+        await mkdir(join(cwd, '.coserve'), { recursive: true })
+        await writeFile(join(cwd, '.coserve', '.credentials.yaml'), credentials, { mode: 0o600 })
         await writeFile(join(cwd, 'auth.patch.json'), JSON.stringify([
           { id: 'agent-default-model', config: { provider, model } },
           ...provider === 'openai-codex' ? [{ id: 'llm-pi-ai', config: { providers: {
@@ -193,7 +193,7 @@ describe('headless credential policy', { retry: 0 }, () => {
         ]))
       },
       inspect: async (cwd) => {
-        expect(await readFile(join(cwd, '.dsh', '.credentials.yaml'), 'utf8')).toBe(credentials)
+        expect(await readFile(join(cwd, '.coserve', '.credentials.yaml'), 'utf8')).toBe(credentials)
       },
     })
     expect(result.stdout).toBe('\n')

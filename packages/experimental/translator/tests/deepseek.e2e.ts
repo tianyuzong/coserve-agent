@@ -15,8 +15,8 @@ const enabled = process.env.DSH_TRANSLATION_DEEPSEEK_LIVE === '1' && (process.en
 
 it.skipIf(!enabled)('translates a small independent billed query with exact Flash and thinking off', async () => {
   const root = await mkdtemp(join(tmpdir(), 'dsh-paid-translation-live-'))
-  const previousHome = process.env.DSH_HOME
-  process.env.DSH_HOME = root
+  const previousHome = process.env.COSERVE_HOME
+  process.env.COSERVE_HOME = root
   let close: (() => Promise<void>) | undefined
   try {
     const configPath = join(root, 'cordis.yml')
@@ -65,8 +65,8 @@ it.skipIf(!enabled)('translates a small independent billed query with exact Flas
     expect(events[1]).toMatchObject({ type: 'plugin:translator/result', ignorable: true, data: { requestSeq: 0, text: result } })
   } finally {
     await close?.()
-    if (previousHome === undefined) Reflect.deleteProperty(process.env, 'DSH_HOME')
-    else process.env.DSH_HOME = previousHome
+    if (previousHome === undefined) Reflect.deleteProperty(process.env, 'COSERVE_HOME')
+    else process.env.COSERVE_HOME = previousHome
     await rm(root, { recursive: true, force: true })
   }
 })

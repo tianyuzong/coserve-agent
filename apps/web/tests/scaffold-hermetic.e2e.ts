@@ -21,20 +21,20 @@ Ambient host state.
 
 it('isolates replay skill discovery from every ambient host root', async () => {
   const ambient = await mkdtemp(join(tmpdir(), 'dsh-web-ambient-skills-'))
-  const dshHome = join(ambient, 'dsh-home')
+  const coserveHome = join(ambient, 'dsh-home')
   const agentsHome = join(ambient, 'agents-home')
   const bundled = join(ambient, 'bundled')
   await Promise.all([
-    writeSkill(join(dshHome, 'skills'), 'ambient-dsh'),
+    writeSkill(join(coserveHome, 'skills'), 'ambient-dsh'),
     writeSkill(join(agentsHome, 'skills'), 'ambient-agents'),
     writeSkill(bundled, 'ambient-bundled'),
   ])
 
-  const originalDshHome = process.env.DSH_HOME
-  const originalAgentsHome = process.env.DSH_AGENTS_HOME
+  const originalCoserveHome = process.env.COSERVE_HOME
+  const originalAgentsHome = process.env.COSERVE_AGENTS_HOME
   const originalBundled = process.env.DSH_BUNDLED_SKILL_DIR
-  process.env.DSH_HOME = dshHome
-  process.env.DSH_AGENTS_HOME = agentsHome
+  process.env.COSERVE_HOME = coserveHome
+  process.env.COSERVE_AGENTS_HOME = agentsHome
   process.env.DSH_BUNDLED_SKILL_DIR = bundled
   let scaffold: WebScaffold | undefined
   try {
@@ -62,10 +62,10 @@ it('isolates replay skill discovery from every ambient host root', async () => {
     try {
       await scaffold?.close()
     } finally {
-      if (originalDshHome === undefined) delete process.env.DSH_HOME
-      else process.env.DSH_HOME = originalDshHome
-      if (originalAgentsHome === undefined) delete process.env.DSH_AGENTS_HOME
-      else process.env.DSH_AGENTS_HOME = originalAgentsHome
+      if (originalCoserveHome === undefined) delete process.env.COSERVE_HOME
+      else process.env.COSERVE_HOME = originalCoserveHome
+      if (originalAgentsHome === undefined) delete process.env.COSERVE_AGENTS_HOME
+      else process.env.COSERVE_AGENTS_HOME = originalAgentsHome
       if (originalBundled === undefined) delete process.env.DSH_BUNDLED_SKILL_DIR
       else process.env.DSH_BUNDLED_SKILL_DIR = originalBundled
       await rm(ambient, { recursive: true, force: true })

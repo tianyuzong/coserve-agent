@@ -36,7 +36,7 @@ function setup(): { root: string; manager: DesktopProjectManager } {
   const root = temporaryRoot()
   const dsh = join(root, 'resources', 'dsh')
   runtimeFixture(dsh)
-  return { root, manager: new DesktopProjectManager(resolveDesktopPaths(join(root, '.dsh')), { dsh }) }
+  return { root, manager: new DesktopProjectManager(resolveDesktopPaths(join(root, '.coserve')), { dsh }) }
 }
 afterEach(() => {
   for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true })

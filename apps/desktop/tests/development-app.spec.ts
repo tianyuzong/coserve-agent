@@ -12,7 +12,7 @@ it.skipIf(process.platform === 'win32')('passes literal workspace paths and cold
   const bundle = join(root, "Harness ' $(false).app")
   const binary = join(bundle, 'Contents', 'MacOS', 'Electron')
   mkdirSync(join(bundle, 'Contents', 'MacOS'), { recursive: true })
-  writeFileSync(binary, '#!/bin/sh\nprintf "%s\\n" "$DSH_HOME" "$DSH_DESKTOP_DEV_APP" "$DSH_DESKTOP_OPEN_DEVTOOLS" "$@"\n', { mode: 0o755 })
+  writeFileSync(binary, '#!/bin/sh\nprintf "%s\\n" "$COSERVE_HOME" "$DSH_DESKTOP_DEV_APP" "$DSH_DESKTOP_OPEN_DEVTOOLS" "$@"\n', { mode: 0o755 })
   const launcher = join(root, 'launcher')
   const home = join(root, "home ' $(false)")
   writeFileSync(launcher, developmentLauncher({ electron: binary, appRoot: root, directory: root,

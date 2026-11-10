@@ -58,7 +58,7 @@ export function testProfileResolution(mode: ExampleMode): void {
   it.each(['installed', 'npm-link'] as const)(`resolves a %s profile dependency graph in ${mode} mode`, {
     timeout: processTimeoutMs + 15_000, retry: 0,
   }, async (layout) => {
-    // The child reports loaded module paths in the form DSH_HOME was given; hand it the native realpath so
+    // The child reports loaded module paths in the form COSERVE_HOME was given; hand it the native realpath so
     // Windows 8.3 tmpdir names and macOS /var symlinks match the expectations computed below.
     const root = realpathSync.native(await mkdtemp(join(tmpdir(), 'dsh-profile-resolution-')))
     const links: string[] = []
@@ -248,7 +248,7 @@ export function testProfileResolution(mode: ExampleMode): void {
         mode, sourceImport: 'tsx/esm', tsconfigPath: join(repoRoot, 'tsconfig.json'),
         configArgs: ['--profile', 'headless'],
         env: {
-          DSH_HOME: home, DSH_AGENTS_HOME: join(root, 'agents'), DSH_TELEMETRY_DISABLED: '1',
+          COSERVE_HOME: home, COSERVE_AGENTS_HOME: join(root, 'agents'), DSH_TELEMETRY_DISABLED: '1',
           NODE_OPTIONS: undefined, TSX_TSCONFIG_PATH: undefined,
         },
       })

@@ -42,7 +42,7 @@ getUnnotifiedBonuses 读取同一来源上的 GET /api/v0/users/get_unnotified_b
 
 余额请求使用 balanceTimeoutMs（默认 30,000ms）；超时返回失败结果，不清除账号，也不制造零余额。在插件行配置 platformOrigin、allowLoopbackHttp、requestTimeoutMs、balanceTimeoutMs 和 attemptTimeoutMs。HTTP 仅用于显式启用的本机开发。提供者先在现有 Host webServer 注册 /oauth/callback，再调用 auth_init；校验 state、使用 S256 PKCE 授权码兑换一次，并在跳转 auth_exchange.biz_data.authorized_url 前提交授权记录。浏览器地址默认要求匹配配置的平台来源，并始终要求固定的 /dsh/authorize 或 /dsh/authorized 路径。完成页地址将 `login_source` 设为发起登录的客户端类型（`web` 或 `desktop`），并保留平台返回的其他查询参数。设备标识是独立的随机 UUID 记录，由使用同一凭证存储的进程共享；device_model 报告操作系统和架构。
 
-开放平台 URL 统一由 `platformOrigin` 配置管理。授权请求、浏览器地址校验、完成跳转、用量和充值入口都使用该来源。将配置放在私有的 `$DSH_HOME/cordis.patch.yml`，部署地址不进入源码仓库。默认要求 HTTPS；只有本机 HTTP 可通过 `allowLoopbackHttp: true` 显式启用。模型及文件 token 的目标由独立的 `inferenceOrigin` 配置管理。
+开放平台 URL 统一由 `platformOrigin` 配置管理。授权请求、浏览器地址校验、完成跳转、用量和充值入口都使用该来源。将配置放在私有的 `$COSERVE_HOME/cordis.patch.yml`，部署地址不进入源码仓库。默认要求 HTTPS；只有本机 HTTP 可通过 `allowLoopbackHttp: true` 显式启用。模型及文件 token 的目标由独立的 `inferenceOrigin` 配置管理。
 
 `requestHeaders` 为 `platformOrigin` 上的授权、资料、余额和退登请求添加仅 Host 使用的请求头。请求头值属于敏感配置，不包含在账号 UI 状态中。Authorization、X-DSH-Auth-Token、Host、Content-Type 及连接和消息分帧请求头由提供者保留。客户端身份请求头覆盖部署配置中的同名请求头。重定向会失败，不会转发请求头。开发环境 Cookie 应保存在私有配置或环境变量中；不会自动收集浏览器 Cookie。
 

@@ -68,7 +68,7 @@ profile 继承 base 系统提示词，包括 `You are an AI agent powered by Dee
 - **定时任务依赖运行时生命周期**：投递需要运行中的进程及其持久化 Session 存储。
 - **profile 可能省略 SDK server**：TypeScript client 选择的自定义 profile 必须保留本组合包或另一个 `dsh-sdk-jsonrpc-server` 配置项；没有 peer 响应时，client 初始化会失败。
 - **用户插件可以破坏 stdout 纯净性**：profile 与逐次启动 patch 属于受信任应用组合。随附组合包不会向 stdout 写入非协议内容，但无法约束任意插入插件。
-- **插件变更共享 profile** — 保存的变更影响 `<DSH_HOME>/profiles/sdk`，以及使用同一 home 的其他嵌入方的下次启动；独立组合应使用不同的 `dshHome` 目录。Python 启动器使用所选下载运行时中的 Node/pnpm；没有该载荷或外部 pnpm 时，包操作会失败。
+- **插件变更共享 profile** — 保存的变更影响 `<COSERVE_HOME>/profiles/sdk`，以及使用同一 home 的其他嵌入方的下次启动；独立组合应使用不同的 `coserveHome` 目录。Python 启动器使用所选下载运行时中的 Node/pnpm；没有该载荷或外部 pnpm 时，包操作会失败。
 - **配置变化需要重启**：`sdk-app` 组合包在 YAML 中禁用 HMR，因此一个 stdio 连接不会观察到 server 或 agent 依赖被替换。
 
 

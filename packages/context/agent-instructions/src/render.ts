@@ -8,8 +8,8 @@ import { basename, dirname, sep } from 'node:path'
 import {
   AGENTS_HOME_ENV,
   DEFAULT_AGENTS_HOME_DISPLAY,
-  DEFAULT_DSH_HOME_DISPLAY,
-  DSH_HOME_ENV,
+  DEFAULT_COSERVE_HOME_DISPLAY,
+  COSERVE_HOME_ENV,
 } from '@deepseek-ai/dsh-home-paths'
 import type { InstructionFile, LoadedInstructionFile } from './files.ts'
 
@@ -136,8 +136,8 @@ export const USER_GLOBAL_FILE = 'AGENTS.md'
  * @returns `user-global`, `agents-global`, `.`, or the containing project-relative directory.
  */
 export function scopeForDisplayPath(displayPath: string): string {
-  if (displayPath === `${DEFAULT_DSH_HOME_DISPLAY}/${USER_GLOBAL_FILE}`
-    || displayPath === `$${DSH_HOME_ENV}/${USER_GLOBAL_FILE}`) return USER_GLOBAL_DIRECTORY
+  if (displayPath === `${DEFAULT_COSERVE_HOME_DISPLAY}/${USER_GLOBAL_FILE}`
+    || displayPath === `$${COSERVE_HOME_ENV}/${USER_GLOBAL_FILE}`) return USER_GLOBAL_DIRECTORY
   if (displayPath === `${DEFAULT_AGENTS_HOME_DISPLAY}/${USER_GLOBAL_FILE}`
     || displayPath === `$${AGENTS_HOME_ENV}/${USER_GLOBAL_FILE}`) return AGENTS_GLOBAL_DIRECTORY
   return dirname(displayPath)

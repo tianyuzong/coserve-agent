@@ -6,7 +6,7 @@ DeepSeek Harness Python SDK 的平台运行时 wheel 包。它把普通 `dsh` CL
 
 ## 安装命令与产物
 
-wheel 包会安装 `dsh` 控制台命令和 `deepseek_harness_runtime` Python 模块。`dsh` 将参数转发给内置可执行程序，并要求非空 `DSH_HOME`；它不会回退到 `~/.dsh`。
+wheel 包会安装 `dsh` 控制台命令和 `deepseek_harness_runtime` Python 模块。`dsh` 将参数转发给内置可执行程序，并要求非空 `COSERVE_HOME`；它不会回退到 `~/.coserve`。
 
 生产可执行程序位于模块的 `runtime/` 目录，命名为 `deepseek-harness-sdk-runtime-<platform>-<arch>`；Windows 使用 `.exe` 后缀。Linux 与 macOS wheel 包含目标平台原生的 `-rg` 伴随程序，Windows 包含 `-rg.exe`，macOS 还包含 `node-pty` 使用的 `-spawn-helper`。已发布目标是 Linux x64、Linux arm64、macOS arm64、macOS x64 与 Windows x64。wheel 包标签必须与载荷严格匹配；不发布 Windows arm64 wheel 包。
 
@@ -25,7 +25,7 @@ primary_runtime = download_primary_runtime()
 
 `DSH_RESOURCE_CACHE` 指定绝对缓存根目录，默认为 `~/.cache/deepseek-harness/resources`。资源身份包含发布版本锁定的输入。下载会校验归档哈希和包身份、保留执行权限，并原子发布完整目录。下载失败后可重试。`DSH_RESOURCE_DOWNLOAD_TIMEOUT_MS` 限制每个归档的下载耗时，包含响应内容；默认值为 `300000`，接受 `1` 到 `2147483647` 的整数。下载遵循 Harness 代理环境策略。已安装的 wheel 文件不会被修改。不同发布版本使用独立缓存目录；不再使用的版本需手动删除。下载使用锁定的上游 URL，不提供 registry 或镜像覆盖。
 
-后续启动时，打包 bootstrap 将已下载资源提供给 SDK profile。`DSH_PRIMARY_RUNTIME` 覆盖缓存中的创作环境；空值禁用其查询和包管理器选择。`DSH_OFFICE_SIDECAR` 可选择包含独立 Node 的绝对 sidecar 目录。用户可自行提供 Python 环境和文档库，无需下载创作环境。选择任一种资源即可使用 Office skills；仅有创作环境时，skills 中的 Kit CLI 被禁用。外部创作载荷保留 `primary-runtime/` 及同级 `office-skills/` 布局。SDK 原位读取资源，不复制到 `DSH_HOME`。`sdk-minimal` profile 不挂载这些提供方。
+后续启动时，打包 bootstrap 将已下载资源提供给 SDK profile。`DSH_PRIMARY_RUNTIME` 覆盖缓存中的创作环境；空值禁用其查询和包管理器选择。`DSH_OFFICE_SIDECAR` 可选择包含独立 Node 的绝对 sidecar 目录。用户可自行提供 Python 环境和文档库，无需下载创作环境。选择任一种资源即可使用 Office skills；仅有创作环境时，skills 中的 Kit CLI 被禁用。外部创作载荷保留 `primary-runtime/` 及同级 `office-skills/` 布局。SDK 原位读取资源，不复制到 `COSERVE_HOME`。`sdk-minimal` profile 不挂载这些提供方。
 
 选择 skills 与交付资源相互独立：项目、自定义目录和用户文件系统 skills 优先于同名随包 skills。SDK patch 可以仅禁用 Office 提供方，同时保留 Python 查询：
 
@@ -48,7 +48,7 @@ Office 操作技能通过 profile 的 shell 命令调用配置的 Node 和 Kit C
 - `download_office() -> Path` 显式下载或复用 Office sidecar 及其独立 Node。
 - `download_primary_runtime() -> Path` 显式下载或复用创作环境。
 - `resolve_office_launch_args() -> tuple[str, str]` 定位已安装的 Node 和 Kit CLI，不执行下载；资源缺失时抛出含下载指令的 `FileNotFoundError`。
-- `main()` 实现已安装的 `dsh` 控制台命令，并拒绝缺失或空白的 `DSH_HOME`。在 Windows 上，它让打包进程继承标准流，等待其结束并转发退出状态；在 POSIX 上，它替换 Python 进程。
+- `main()` 实现已安装的 `dsh` 控制台命令，并拒绝缺失或空白的 `COSERVE_HOME`。在 Windows 上，它让打包进程继承标准流，等待其结束并转发退出状态；在 POSIX 上，它替换 Python 进程。
 
 不支持的平台以及缺失的可执行程序或伴随文件会抛出 `FileNotFoundError`，并指出构建与安装路径。未知运行时模式会抛出 `ValueError`。
 

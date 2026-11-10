@@ -49,7 +49,7 @@
       config:
         profile: sdk
         patches: !!js JSON.parse(process.env.DSH_TEST_CHILD_PATCHES ?? '[]')
-        dshHome: !!js process.env.DSH_TEST_CHILD_HOME
+        coserveHome: !!js process.env.DSH_TEST_CHILD_HOME
         provider: mock
         model: mock-routed
         env:

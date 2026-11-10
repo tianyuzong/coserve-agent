@@ -380,7 +380,7 @@ export interface WebOwner {
  */
 export async function bootWebOwner(options: WebOwnerOptions = {}): Promise<WebOwner> {
   const cwd = options.existingCwd ?? await mkdtemp(join(tmpdir(), 'liveshare-web-'))
-  const home = join(cwd, '.dsh')
+  const home = join(cwd, '.coserve')
   const sessionsRoot = join(home, 'sessions')
   const profileDir = join(home, 'profiles', 'web')
   // A restart reuses the tree its predecessor wrote, including the profile it composed.
@@ -423,8 +423,8 @@ export async function bootWebOwner(options: WebOwnerOptions = {}): Promise<WebOw
     tsconfigPath,
     sourceImport: 'tsx/esm',
     env: {
-      DSH_HOME: home,
-      DSH_AGENTS_HOME: join(cwd, '.agents'),
+      COSERVE_HOME: home,
+      COSERVE_AGENTS_HOME: join(cwd, '.coserve-agents'),
       DSH_TELEMETRY_DISABLED: '1',
       DEEPSEEK_API_KEY: '',
       // Diagnostic only: the fixture appends one line per adapter call to this temp file.

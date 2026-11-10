@@ -55,9 +55,9 @@ describe('SDK dsh launch resolution', () => {
       dshBin: './bin/dsh',
       profile: 'custom-sdk',
       patches: ['./first.yml', '../second.yml'],
-      dshHome: './home',
+      coserveHome: './home',
       processCwd: './worker',
-      env: { PATH: '/bin', DSH_HOME: '/stale' },
+      env: { PATH: '/bin', COSERVE_HOME: '/stale' },
       initializeTimeoutMs: 123,
       requestTimeoutMs: 456,
       shutdownTimeoutMs: 789,
@@ -80,7 +80,7 @@ describe('SDK dsh launch resolution', () => {
       disposeEofGraceMs: 12,
       disposeGraceMs: 34,
     })
-    expect(launch.environment()).toEqual({ PATH: '/bin', DSH_HOME: join(caller, 'home') })
+    expect(launch.environment()).toEqual({ PATH: '/bin', COSERVE_HOME: join(caller, 'home') })
   })
 
   it('falls back to the same package source entry through an absolute tsx loader', () => {

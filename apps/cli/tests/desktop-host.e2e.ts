@@ -21,7 +21,7 @@ it.each([false, true])('settles startup after parent IPC disconnect (boot failur
     else symlinkSync(realpathSync(join(hostDirectory, 'node_modules', name)), destination, 'junction')
   }
   for (const [name, source] of [
-    ['dsh-home-paths', `export const resolveDshHome = () => ${JSON.stringify(root)}`],
+    ['dsh-home-paths', `export const resolveCoserveHome = () => ${JSON.stringify(root)}`],
   ] as const) {
     writeFileSync(join(modules, name, 'package.json'), '{"type":"module","exports":"./index.js"}')
     writeFileSync(join(modules, name, 'index.js'), source)

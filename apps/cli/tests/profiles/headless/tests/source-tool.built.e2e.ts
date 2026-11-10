@@ -55,8 +55,8 @@ describe.skipIf(!existsSync(join(repoRoot, 'apps/cli/lib/bin.js')))('dsh SOURCE 
         cwd: repoRoot,
         env: {
           ...clearedProxyEnv(),
-          DSH_HOME: join(root, 'home'),
-          DSH_AGENTS_HOME: join(root, 'agents'),
+          COSERVE_HOME: join(root, 'home'),
+          COSERVE_AGENTS_HOME: join(root, 'agents'),
           DSH_TELEMETRY_DISABLED: '1',
           DSH_CLI_MOCK_FAILURE: '0',
         },

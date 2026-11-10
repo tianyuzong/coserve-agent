@@ -84,7 +84,7 @@ describe('mergeLoginShellEnvironment', () => {
     const merged = mergeLoginShellEnvironment(base, {
       PATH: '/login/bin:/usr/bin', XDG_CACHE_HOME: '/cache', PWD: '/home/user', OLDPWD: '/', SHLVL: '2', _: '/usr/bin/env',
       DISABLE_AUTO_UPDATE: 'true', ZSH_TMUX_AUTOSTARTED: 'true', ZSH_TMUX_AUTOSTART: 'false',
-      DSH_DESKTOP_DSH_DIR: '/rc', DSH_HOME: '/rc-home', ELECTRON_RUN_AS_NODE: '1',
+      DSH_DESKTOP_DSH_DIR: '/rc', COSERVE_HOME: '/rc-home', ELECTRON_RUN_AS_NODE: '1',
     })
     expect(merged).toEqual({ PATH: '/login/bin:/usr/bin', HOME: '/home/user', DSH_DESKTOP_DSH_DIR: '/launcher', PWD: '/', XDG_CACHE_HOME: '/cache' })
     expect(base.PATH).toBe('/usr/bin')

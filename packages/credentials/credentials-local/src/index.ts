@@ -1,12 +1,12 @@
 /**
- * File-backed credentials provider over `$DSH_HOME/.credentials.yaml`, layered
+ * File-backed credentials provider over `$COSERVE_HOME/.credentials.yaml`, layered
  * over the environment in this precedence order:
  *
  * ```text
- * $DSH_HOME/.credentials.yaml        (provider-managed, written by set/unset)
+ * $COSERVE_HOME/.credentials.yaml        (provider-managed, written by set/unset)
  * > inherited process environment    (fallback; this provider never writes it)
  * > <invocation cwd>/.env            (fallback; this provider never writes it)
- * > $DSH_HOME/.env                   (fallback; this provider never writes it)
+ * > $COSERVE_HOME/.env                   (fallback; this provider never writes it)
  * ```
  *
  * The managed store wins because a credential the user explicitly saved in
@@ -42,7 +42,7 @@ import { mkdir, readFile, stat } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { Document, isMap, isScalar, parseDocument, type YAMLError } from 'yaml'
 import { withFileLock, writeFileAtomic } from '@deepseek-ai/dsh-atomic-write'
-import { canonicalizeWatchPath, resolveDshHome } from '@deepseek-ai/dsh-home-paths'
+import { canonicalizeWatchPath, resolveCoserveHome } from '@deepseek-ai/dsh-home-paths'
 import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
 import { CredentialProvider, credentialRef, parseCredentialKey } from '@deepseek-ai/dsh-credentials'
 import type {
@@ -64,8 +64,8 @@ export const CREDENTIALS_FILENAME = '.credentials.yaml'
 export interface Config {
   /** Credentials document path; defaults to `.credentials.yaml` under the harness home. */
   path?: string
-  /** Harness home used when `path` is omitted; defaults to `$DSH_HOME` or `~/.dsh`. */
-  dshHome?: string
+  /** Harness home used when `path` is omitted; defaults to `$COSERVE_HOME` or `~/.coserve`. */
+  coserveHome?: string
   /** Watch the document and hot-publish external edits; defaults to true. */
   watch?: boolean
   /** Watcher write-settle window in milliseconds; defaults to 100. */
@@ -87,7 +87,7 @@ interface ResolvedSpec {
  */
 export function resolveSpec(config: Config): ResolvedSpec {
   return {
-    filename: resolve(config.path ?? join(resolveDshHome(config.dshHome), CREDENTIALS_FILENAME)),
+    filename: resolve(config.path ?? join(resolveCoserveHome(config.coserveHome), CREDENTIALS_FILENAME)),
     watch: config.watch ?? true,
     debounceMs: config.debounceMs ?? 100,
   }
@@ -513,11 +513,11 @@ function sameJsonValue(left: unknown, right: unknown): boolean {
     && sameJsonValue((left as Record<string, unknown>)[key], (right as Record<string, unknown>)[key]))
 }
 
-/** File-backed credentials provider (`$DSH_HOME/.credentials.yaml`). */
+/** File-backed credentials provider (`$COSERVE_HOME/.credentials.yaml`). */
 export class LocalCredentialProvider extends CredentialProvider {
   static Config: z<Config> = z.object({
     path: z.string(),
-    dshHome: z.string(),
+    coserveHome: z.string(),
     watch: z.boolean().default(true),
     debounceMs: z.number().min(0).default(100),
   })

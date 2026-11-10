@@ -42,7 +42,7 @@ Use it as the default local store: the product's base composition loads it, and 
 | Field | Default | Meaning |
 |---|---|---|
 | `path` | `<harness home>/.credentials.yaml` | Where the credential file lives |
-| `dshHome` | `$DSH_HOME` or `~/.dsh` | Harness home used when `path` is omitted |
+| `coserveHome` | `$COSERVE_HOME` or `~/.coserve` | Harness home used when `path` is omitted |
 | `watch` | `true` | Reload the file automatically when it changes on disk |
 | `debounceMs` | `100` | Wait this long after a change before reloading, in milliseconds |
 
@@ -75,7 +75,7 @@ Keys are resolved in one fixed order — the first place that has a value wins:
 | The stored file | yes (`set`/`unset`) | everything |
 | The environment you launched in (`DEEPSEEK_API_KEY=… dsh`) | not here | both `.env` files |
 | Your project's `.env` (`<invocation cwd>/.env`) | not here | your home `.env` |
-| Your home `.env` (`$DSH_HOME/.env`) | not here | nothing |
+| Your home `.env` (`$COSERVE_HOME/.env`) | not here | nothing |
 
 The stored file wins because a credential explicitly saved through the product must take effect consistently for every provider ([decision](../../../.agents/notes/implemented/architecture/2026-10-09-stored-credential-precedence.md)). The launching environment — `DEEPSEEK_API_KEY=… dsh`, a CI secret, or a container `-e` — is the fallback when no stored value exists; a project `.env` then outranks the harness-home `.env`. A save always writes the winning layer, so `describe` reports `writable: true` for every reference, and its `source` names the place that currently supplies the value. The environment layer is the launcher's snapshot taken at launch ([environment snapshot](../../util/launch-environment/README.md)), so a variable exported after startup is not seen.
 

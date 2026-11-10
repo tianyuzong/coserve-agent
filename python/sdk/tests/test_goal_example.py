@@ -96,7 +96,7 @@ for line in sys.stdin:
         monkeypatch.setitem(example["main"].__globals__, "display", observe)
         monkeypatch.setitem(example["main"].__globals__, "ThreadPoolExecutor", InterruptedExecutor)
     timeout = "1" if pending in {"command", "activity"} else "10"
-    monkeypatch.setattr(sys, "argv", [str(_EXAMPLE), "--dsh-home", str(tmp_path / "home"),
+    monkeypatch.setattr(sys, "argv", [str(_EXAMPLE), "--coserve-home", str(tmp_path / "home"),
                                      "--workspace", str(tmp_path), "--timeout-seconds", timeout, "Finish this task"])
     with ThreadPoolExecutor(max_workers=1) as workers:
         execution = workers.submit(example["main"])
@@ -130,7 +130,7 @@ def test_goal_example_rejects_unbounded_or_nonpositive_timeout(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], timeout: str,
 ) -> None:
     example = runpy.run_path(str(_EXAMPLE))
-    monkeypatch.setattr(sys, "argv", [str(_EXAMPLE), "--dsh-home", str(tmp_path / "home"),
+    monkeypatch.setattr(sys, "argv", [str(_EXAMPLE), "--coserve-home", str(tmp_path / "home"),
                                      f"--timeout-seconds={timeout}", "Finish this task"])
     with pytest.raises(SystemExit) as error:
         example["main"]()

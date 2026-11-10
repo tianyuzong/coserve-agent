@@ -26,7 +26,7 @@ const forbiddenApply = `
 import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 export function apply() {
-  writeFileSync(join(process.env.DSH_HOME, 'apply-ran'), 'unexpected')
+  writeFileSync(join(process.env.COSERVE_HOME, 'apply-ran'), 'unexpected')
   throw new Error('PLUGIN_APPLY_EXECUTED')
 }
 `
@@ -96,7 +96,7 @@ async function dump(
     builtBin, '--profile', profileName, format, ...args,
   ], {
     cwd: fixture.root,
-    env: { ...env, DSH_HOME: fixture.home, DSH_TELEMETRY_DISABLED: '1' },
+    env: { ...env, COSERVE_HOME: fixture.home, DSH_TELEMETRY_DISABLED: '1' },
     extendEnv: false,
     input: '',
     timeout: processTimeoutMs,

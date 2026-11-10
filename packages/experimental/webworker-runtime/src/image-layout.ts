@@ -24,7 +24,7 @@ export const IMAGE_MANIFEST_PATH = 'config/vfs-manifest.json'
  */
 export const IMAGE_LAZY_DIRECTORY = 'lazy'
 
-/** Home directory under the root; the process shim's `DSH_HOME`/`HOME` default. */
+/** Home directory under the root; the process shim's `COSERVE_HOME`/`HOME` default. */
 export const IMAGE_HOME_DIRECTORY = 'home'
 
 /**

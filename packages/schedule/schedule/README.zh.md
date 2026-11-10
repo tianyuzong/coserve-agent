@@ -79,7 +79,7 @@ RRULE 时间规则使用 `{ kind: "rrule", rrule: "DTSTART:…\nRRULE:…" }`。
 <a id="storage-format"></a>
 ### 存储格式与升级
 
-`schedule` 领域声明 `version: 2, compatibleVersions: [1]`，使用配置的后端和整单元布局。JSON 使用 `<DSH_HOME>/storages/schedule.json`。SQLite 将下述完整任务以 JSON 文本存入 `u_schedule_tasks.value`，并将其 id 存入主键列 `key`。物理 schema 版本 **1**（`PRAGMA user_version`）与原有表保持不变；只有 `units.version` 中的 `schedule` 行在首次成功写入时改为 **2**。无需 SQL DDL 迁移。
+`schedule` 领域声明 `version: 2, compatibleVersions: [1]`，使用配置的后端和整单元布局。JSON 使用 `<COSERVE_HOME>/storages/schedule.json`。SQLite 将下述完整任务以 JSON 文本存入 `u_schedule_tasks.value`，并将其 id 存入主键列 `key`。物理 schema 版本 **1**（`PRAGMA user_version`）与原有表保持不变；只有 `units.version` 中的 `schedule` 行在首次成功写入时改为 **2**。无需 SQL DDL 迁移。
 
 Schedule 在 Host 打开时将全部任务载入内存并校验。任务查找、按活动状态/到期时间/目标筛选、排序、分页与历史查询均使用该内存。SQLite 不查询 JSON 内部，也不维护独立的时间、状态或目标列；其任务操作只有首次全表读取及按键写入/删除。分页限制响应，不限制载入的已存行数。任务解码器约束下述 JSON 字段；SQLite 将 `value` 视为不透明文本。
 

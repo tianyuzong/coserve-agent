@@ -79,7 +79,7 @@ The `session` target reuses an existing, unarchived, non-delegated Session; unlo
 <a id="storage-format"></a>
 ### Storage format and upgrades
 
-The `schedule` domain declares `version: 2, compatibleVersions: [1]` and uses the configured backend with a whole-unit layout. JSON uses `<DSH_HOME>/storages/schedule.json`. SQLite stores the complete task below as JSON text in `u_schedule_tasks.value`, with its id in the primary-key column `key`. It keeps physical schema version **1** (`PRAGMA user_version`) and the same tables; only the `schedule` row in `units.version` changes to **2** on the first successful write. No SQL DDL migration is needed.
+The `schedule` domain declares `version: 2, compatibleVersions: [1]` and uses the configured backend with a whole-unit layout. JSON uses `<COSERVE_HOME>/storages/schedule.json`. SQLite stores the complete task below as JSON text in `u_schedule_tasks.value`, with its id in the primary-key column `key`. It keeps physical schema version **1** (`PRAGMA user_version`) and the same tables; only the `schedule` row in `units.version` changes to **2** on the first successful write. No SQL DDL migration is needed.
 
 Schedule loads and validates all tasks into memory at Host open. Task lookup, filtering by activity, due time, or target, sorting, pagination, and history queries use that memory. SQLite does not query inside the JSON or maintain separate timing, status, or target columns; its task operations are an initial full-table read and key-based writes/deletes. Pagination limits the response, not the stored rows loaded. The task decoder enforces the JSON fields below; SQLite treats `value` as opaque text.
 

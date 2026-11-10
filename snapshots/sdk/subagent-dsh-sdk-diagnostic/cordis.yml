@@ -14,7 +14,7 @@
 - id: session-persistence-jsonl
   name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
-    root: !!js dshHomePath('sessions')
+    root: !!js coserveHomePath('sessions')
     compression: !!js "process.env.DSH_SNAPSHOT === undefined ? 'zstd' : 'none'"
 
 - id: session-log-deepseek
@@ -30,7 +30,7 @@
         profile: sdk
         patches:
           - !!js process.env.DSH_TEST_CHILD_PATCH
-        dshHome: !!js dshHomePath('children/first')
+        coserveHome: !!js coserveHomePath('children/first')
         provider: mock
         model: mock-echo
         env:
@@ -49,7 +49,7 @@
         profile: sdk
         patches:
           - !!js process.env.DSH_TEST_CHILD_PATCH
-        dshHome: !!js dshHomePath('children/second')
+        coserveHome: !!js coserveHomePath('children/second')
         provider: mock
         model: mock-echo
         env:

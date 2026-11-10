@@ -50,8 +50,8 @@ it('keeps account model-listing diagnostics on stderr during API-key session cre
     const address = server.address()
     if (address === null || typeof address === 'string') throw new Error('account catalog server has no port')
     const origin = `http://127.0.0.1:${address.port}`
-    await mkdir(join(cwd, '.dsh'))
-    await writeFile(join(cwd, '.dsh', '.credentials.yaml'), JSON.stringify({
+    await mkdir(join(cwd, '.coserve'))
+    await writeFile(join(cwd, '.coserve', '.credentials.yaml'), JSON.stringify({
       version: 1,
       records: {
         'deepseek-account-platform/default': { kind: 'grant', payload: { version: 1, token, issuer: origin } },

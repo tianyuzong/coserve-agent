@@ -56,6 +56,7 @@
   },
   "dependencies": {
     "@deepseek-ai/dsh-client-ui-castudio": "workspace:*",
+    "@deepseek-ai/dsh-castudio-context": "workspace:*",
     "@deepseek-ai/dsh-agent-instructions": "workspace:*",
     "@deepseek-ai/dsh-agent-preset": "workspace:*",
     "@deepseek-ai/dsh-agent-preset-registry": "workspace:*",
@@ -171,6 +172,7 @@
     "@deepseek-ai/dsh-tool-ask-user": "workspace:*",
     "@deepseek-ai/dsh-tool-bash": "workspace:*",
     "@deepseek-ai/dsh-tool-bash-persistent": "workspace:*",
+    "@deepseek-ai/dsh-tool-castudio": "workspace:*",
     "@deepseek-ai/dsh-tool-cordis": "workspace:*",
     "@deepseek-ai/dsh-tool-executor-ptc": "workspace:*",
     "@deepseek-ai/dsh-tool-fs": "workspace:*",

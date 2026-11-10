@@ -16,5 +16,5 @@ This affects anyone who repeats the command, such as `dsh rescue --from-default-
 ## Migration
 
 1. To boot an existing profile without resetting it, drop the option: run `dsh rescue` instead of `dsh rescue --from-default-profile web`.
-2. To keep local changes across a reset, copy `$DSH_HOME/profiles/<name>/cordis.patch.yml` before running the command, then reinstall the profile's plugins with `dsh plugin --profile <name> add <package>` and restore the patch.
-3. Confirm the migration: after `dsh rescue --from-default-profile web --help`, `$DSH_HOME/profiles/rescue/package.json` lists no dependencies.
+2. To keep local changes across a reset, copy `$COSERVE_HOME/profiles/<name>/cordis.patch.yml` before running the command, then reinstall the profile's plugins with `dsh plugin --profile <name> add <package>` and restore the patch.
+3. Confirm the migration: after `dsh rescue --from-default-profile web --help`, `$COSERVE_HOME/profiles/rescue/package.json` lists no dependencies.

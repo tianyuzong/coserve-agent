@@ -137,7 +137,7 @@ export function resolveDshLaunch(
     ...dshLaunch.patches,
     ...(options.patches ?? []).map(path => resolve(callerCwd, path)),
   ]
-  const dshHome = options.dshHome === undefined ? undefined : resolve(callerCwd, options.dshHome)
+  const coserveHome = options.coserveHome === undefined ? undefined : resolve(callerCwd, options.coserveHome)
   return {
     command: process.execPath,
     args: [...dshLaunch.nodeArgs, '--profile', profile, ...patches.flatMap(path => ['--patch', path])],
@@ -145,7 +145,7 @@ export function resolveDshLaunch(
     environment: () => ({
       ...(options.env ?? process.env),
       ...dshLaunch.environment,
-      ...dshHome === undefined ? {} : { DSH_HOME: dshHome },
+      ...coserveHome === undefined ? {} : { COSERVE_HOME: coserveHome },
     }),
     description: `dsh profile ${JSON.stringify(profile)}`,
     initializeTimeoutMs: options.initializeTimeoutMs ?? DEFAULT_INITIALIZE_TIMEOUT_MS,

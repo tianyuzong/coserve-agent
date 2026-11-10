@@ -67,7 +67,7 @@ export function isDesktopUpdateChannel(value: unknown): value is DesktopUpdatePr
 
 /**
  * Resolve the document shared by shell preferences and update channels.
- * @param userData - Electron userData, independent of Host and DSH_HOME.
+ * @param userData - Electron userData, independent of Host and COSERVE_HOME.
  * @returns Settings file path without filesystem changes.
  */
 function desktopSettingsPath(userData: string): string {
@@ -78,7 +78,7 @@ function desktopSettingsPath(userData: string): string {
 export class DesktopSettingsFile {
   readonly path: string
 
-  /** @param userData - Electron userData, independent of Host and DSH_HOME. */
+  /** @param userData - Electron userData, independent of Host and COSERVE_HOME. */
   constructor(userData: string) { this.path = desktopSettingsPath(userData) }
 
   /** @returns Fresh file and field states; performs no creation or repair. */

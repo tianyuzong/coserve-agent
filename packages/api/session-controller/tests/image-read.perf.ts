@@ -163,7 +163,7 @@ async function measure(workload: keyof typeof WORKLOADS) {
   try {
     await ctx.plugin(SessionStore)
     await ctx.plugin(ImageReadSessionQuery)
-    await ctx.plugin(LocalAttachmentStore, { dshHome: root })
+    await ctx.plugin(LocalAttachmentStore, { coserveHome: root })
     const refs: ImageAttachmentRef[] = []
     for (let ordinal = 0; ordinal < WORKLOADS[workload].images; ordinal++) {
       refs.push(await ctx.attachments.saveImage({ data: image(ordinal), mediaType: 'image/png' }))

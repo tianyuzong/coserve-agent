@@ -2016,7 +2016,7 @@ describe('ChatView', () => {
     expect(writeText).toHaveBeenCalledWith('interrupt now')
     expect(within(pendingBubble as HTMLElement).queryByRole('button', { name: '在新对话中分支' })).toBeNull()
     expect(turnProcessControl(view.container)).toBeNull()
-    expect(runningContent(view.container)?.textContent).toMatch(/^深度求索中，用时 \d+秒 ···$/)
+    expect(runningContent(view.container)?.textContent).toMatch(/^coserving 中，用时 \d+秒 ···$/)
     // The status stays on the running Turn's tail; the steering waiting for the next Step follows it.
     expect(view.getByRole('status').compareDocumentPosition(view.getByText('interrupt now'))
       & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0)
@@ -2845,7 +2845,7 @@ describe('ChatView', () => {
     const view = render(<h.ChatView {...h.props} />)
     expect(renderedFlowKinds(view.container)).toEqual(['user', 'turn-process', 'context'])
     expect(turnProcessControl(view.container)).toBeNull()
-    expect(runningContent(view.container)?.textContent).toMatch(/^深度求索中，用时 \d+秒 ···$/)
+    expect(runningContent(view.container)?.textContent).toMatch(/^coserving 中，用时 \d+秒 ···$/)
     expect(view.container.querySelector('[data-chat-flow-kind="system-prompt"]')).toBeNull()
 
     act(() => {
@@ -2992,7 +2992,7 @@ describe('ChatView', () => {
     })
     const view = render(<h.ChatView {...h.props} />)
     expect(turnProcessControl(view.container)).toBeNull()
-    expect(runningContent(view.container)?.textContent).toMatch(/^深度求索中，用时 \d+秒 ···$/)
+    expect(runningContent(view.container)?.textContent).toMatch(/^coserving 中，用时 \d+秒 ···$/)
     const processRow = view.getByText('inspect').closest('[data-chat-flow-kind="assistant-step"]') as HTMLElement
     expect(processRow.getAttribute('hidden')).toBeNull()
 
@@ -3793,9 +3793,9 @@ describe('ChatView', () => {
     const view = render(<h.ChatView {...h.props} />)
     expect(view.getByTestId('tool-seat-r1')).toBeTruthy()
     expect(h.toolOwners[0]?.block).toMatchObject({ callId: 'r1', argsRaw: '{"command":"cmd-r1"}' })
-    expect(view.getByRole('status').textContent).toBe('深度求索中')
+    expect(view.getByRole('status').textContent).toBe('coserving 中')
     expect(turnProcessControl(view.container)).toBeNull()
-    expect(runningContent(view.container)?.textContent).toMatch(/^深度求索中，用时 \d+秒 ···$/)
+    expect(runningContent(view.container)?.textContent).toMatch(/^coserving 中，用时 \d+秒 ···$/)
   }))
 
   it('keeps the Tool renderer mounted when a running call settles into log order', () => {
@@ -3855,9 +3855,9 @@ describe('ChatView', () => {
     const view = render(<h.ChatView {...h.props} />)
     const status = view.getByRole('status')
     const content = runningContent(view.container)!
-    expect(content.textContent).toMatch(/^深度求索中，用时 \d+分\d+秒 ···$/)
+    expect(content.textContent).toMatch(/^coserving 中，用时 \d+分\d+秒 ···$/)
     expect(turnProcessControl(view.container)).toBeNull()
-    expect(status.textContent).toBe('深度求索中')
+    expect(status.textContent).toBe('coserving 中')
     expect(status.getAttribute('aria-live')).toBe('polite')
     expect(status.getAttribute('aria-atomic')).toBe('true')
     expect(content.closest('[aria-live]')).toBeNull()
@@ -3870,23 +3870,23 @@ describe('ChatView', () => {
         role: 'user', source: { kind: 'user' },
       }] } })
     })
-    expect(content.textContent).toMatch(/^深度求索中，用时 \d+分\d+秒 ···$/)
+    expect(content.textContent).toMatch(/^coserving 中，用时 \d+分\d+秒 ···$/)
     const beforeTick = content.textContent
     act(() => { vi.advanceTimersByTime(2_000) })
-    expect(content.textContent).toMatch(/^深度求索中，用时 \d+分\d+秒 ···$/)
+    expect(content.textContent).toMatch(/^coserving 中，用时 \d+分\d+秒 ···$/)
     expect(content.textContent).not.toBe(beforeTick)
     expect(view.getByRole('status')).toBe(status)
-    expect(status.textContent).toBe('深度求索中')
+    expect(status.textContent).toBe('coserving 中')
     act(() => {
       h.setSession({ testInbox: { 'next-turn': [], 'next-step': [] } })
       h.setChat({ nodes: [trigger, { ...steering(2, 'also', 1), time: 128_000 }] })
     })
     expect(runningContent(view.container)).toBe(content)
-    expect(content.textContent).toMatch(/^深度求索中，用时 \d+分\d+秒 ···$/)
+    expect(content.textContent).toMatch(/^coserving 中，用时 \d+分\d+秒 ···$/)
     expect(view.getByText('also').closest('[data-pending-steering]')).toBeNull()
     act(() => { vi.advanceTimersByTime(1_000) })
-    expect(content.textContent).toMatch(/^深度求索中，用时 \d+分\d+秒 ···$/)
-    expect(status.textContent).toBe('深度求索中')
+    expect(content.textContent).toMatch(/^coserving 中，用时 \d+分\d+秒 ···$/)
+    expect(status.textContent).toBe('coserving 中')
     view.unmount()
     expect(vi.getTimerCount()).toBe(0)
   }))
@@ -3898,15 +3898,15 @@ describe('ChatView', () => {
     )
     const view = render(<h.ChatView {...h.props} />)
     const content = runningContent(view.container)!
-    expect(content.textContent).toBe('深度求索中，用时 9秒 ···')
+    expect(content.textContent).toBe('coserving 中，用时 9秒 ···')
     act(() => { h.setConnection('connecting') })
     act(() => { vi.advanceTimersByTime(5_000) })
-    expect(content.textContent).toBe('深度求索中，用时 9秒 ···')
+    expect(content.textContent).toBe('coserving 中，用时 9秒 ···')
     act(() => { h.setConnection('disconnected') })
     act(() => { vi.advanceTimersByTime(5_000) })
-    expect(content.textContent).toBe('深度求索中，用时 9秒 ···')
+    expect(content.textContent).toBe('coserving 中，用时 9秒 ···')
     act(() => { h.setConnection('connected') })
-    expect(content.textContent).toBe('深度求索中，用时 19秒 ···')
+    expect(content.textContent).toBe('coserving 中，用时 19秒 ···')
   }))
 
   it('the running clock reads hours once the turn passes an hour', withClock(3_600_000, () => {
@@ -3918,14 +3918,14 @@ describe('ChatView', () => {
     )
     const view = render(<h.ChatView {...h.props} />)
     const content = runningContent(view.container)!
-    expect(content.textContent).toMatch(/^深度求索中，用时 \d+分\d+秒 ···$/)
+    expect(content.textContent).toMatch(/^coserving 中，用时 \d+分\d+秒 ···$/)
     act(() => { vi.advanceTimersByTime(1_000) })
-    expect(content.textContent).toMatch(/^深度求索中，用时 \d+小时\d+分\d+秒 ···$/)
+    expect(content.textContent).toMatch(/^coserving 中，用时 \d+小时\d+分\d+秒 ···$/)
     const hourlyText = content.textContent
     act(() => { vi.advanceTimersByTime(303_000) })
-    expect(content.textContent).toMatch(/^深度求索中，用时 \d+小时\d+分\d+秒 ···$/)
+    expect(content.textContent).toMatch(/^coserving 中，用时 \d+小时\d+分\d+秒 ···$/)
     expect(content.textContent).not.toBe(hourlyText)
-    expect(view.getByRole('status').textContent).toBe('深度求索中')
+    expect(view.getByRole('status').textContent).toBe('coserving 中')
     view.unmount()
     expect(vi.getTimerCount()).toBe(0)
   }))
@@ -4708,14 +4708,10 @@ describe('ChatView', () => {
     const column = view.container.querySelector('[data-chat-flow]')!
     const status = column.querySelector('[data-chat-running]')
     expect([...column.children].filter(child => !child.hasAttribute('data-text-interaction-surface')).at(-1)).toBe(status)
-    expect(within(status as HTMLElement).getByRole('status').textContent).toBe('深度求索中')
-    expect(status?.lastElementChild?.textContent).toBe('深度求索中')
-    const icon = status?.querySelector('svg')?.parentElement
-    expect(icon?.getAttribute('aria-hidden')).toBe('true')
-    expect(icon?.firstElementChild?.tagName).toBe('SPAN')
-    expect(icon?.querySelectorAll('path')).toHaveLength(1)
-    expect(icon?.getAttribute('style')).toBeNull()
-    expect(status?.querySelector('animate')).toBeNull()
+    expect(within(status as HTMLElement).getByRole('status').textContent).toBe('coserving 中')
+    expect(status?.lastElementChild?.textContent).toBe('coserving 中')
+    // The running status carries no decorative mark: only the shimmering label.
+    expect(status?.querySelector('svg')).toBeNull()
     // The running bit clears before the Turn closes: the status keeps its slot unseen and unannounced.
     act(() => { h.setSession({ running: false }) })
     const held = column.querySelector<HTMLElement>('[data-chat-running]')

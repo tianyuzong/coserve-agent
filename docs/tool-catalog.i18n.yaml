@@ -9,8 +9,8 @@
   en: 6cc2cd9ced70bb09
   zh: 1c0e6cb4ba2ed637
 /tool-schema-catalog/tool-package-map:
-  en: 7b5b99bcc5cd46f4
-  zh: c1697f88326440ff
+  en: c28382e2dca050c6
+  zh: 9e7d6810781e22f7
 /tool-schema-catalog/deepseek-ai-dsh-plugin-manager:
   en: e0143916bb634762
   zh: e0143916bb634762
@@ -297,8 +297,14 @@
   en: dea62d26fb18ff68
   zh: dea62d26fb18ff68
 /tool-schema-catalog/deepseek-ai-dsh-tool-todo/todo-write:
-  en: f252137b940b38d1
-  zh: 25bd9c6b1ce783d8
+  en: 02f84280fc5dedc4
+  zh: 920575259958d6f2
+/tool-schema-catalog/deepseek-ai-dsh-tool-castudio:
+  en: a44a4b91a0b7ea99
+  zh: a44a4b91a0b7ea99
+/tool-schema-catalog/deepseek-ai-dsh-tool-castudio/cad-workbench:
+  en: 5c85c82a174f783f
+  zh: 24126d664f25bdac
 /tool-schema-catalog/deepseek-ai-dsh-tool-working-directory:
   en: 1bdc4627ca4fff29
   zh: 1bdc4627ca4fff29

@@ -16,7 +16,7 @@ Two runtime carriers coexist under ``runtime/``, both injected by the repo's
 
 Both carriers execute the same dsh command grammar. The Python SDK selects the
 ``sdk`` profile and requires an explicit Harness home; the installed ``dsh``
-console command requires ``DSH_HOME`` for the same reason.
+console command requires ``COSERVE_HOME`` for the same reason.
 """
 
 from __future__ import annotations
@@ -194,11 +194,11 @@ def resolve_office_launch_args() -> tuple[str, str]:
 
 
 def main() -> None:
-    """Launch the CLI with explicit DSH_HOME; wait on Windows, replace the process on POSIX."""
-    if not os.environ.get("DSH_HOME", "").strip():
+    """Launch the CLI with explicit COSERVE_HOME; wait on Windows, replace the process on POSIX."""
+    if not os.environ.get("COSERVE_HOME", "").strip():
         print(
-            "dsh: the Python runtime command requires an explicit DSH_HOME; "
-            "it never uses ~/.dsh implicitly",
+            "dsh: the Python runtime command requires an explicit COSERVE_HOME; "
+            "it never uses ~/.coserve implicitly",
             file=sys.stderr,
         )
         raise SystemExit(2)

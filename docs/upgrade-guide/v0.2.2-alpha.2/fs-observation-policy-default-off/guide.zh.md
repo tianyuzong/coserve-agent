@@ -17,7 +17,7 @@ description: "fs-observation-policy 行随发行版禁用，write、edit 与 app
 
 ## 迁移
 
-1. 要保留先读后写行为，在 profile 的 `cordis.patch.yml`（`$DSH_HOME/profiles/<profile>/cordis.patch.yml`）中加入：
+1. 要保留先读后写行为，在 profile 的 `cordis.patch.yml`（`$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`）中加入：
 
    ```yaml
    - id: fs-observation-policy

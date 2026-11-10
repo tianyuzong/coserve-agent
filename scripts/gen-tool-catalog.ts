@@ -54,6 +54,7 @@ import * as ToolPwsh from '@deepseek-ai/dsh-tool-pwsh'
 import * as ToolBashPersistent from '@deepseek-ai/dsh-tool-bash-persistent'
 import * as ToolPwshPersistent from '@deepseek-ai/dsh-tool-pwsh-persistent'
 import CordisHostRunner from '@deepseek-ai/dsh-cordis-host-runner'
+import * as ToolCastudio from '@deepseek-ai/dsh-tool-castudio'
 import * as ToolCordis from '@deepseek-ai/dsh-tool-cordis'
 import * as ToolPresent from '@deepseek-ai/dsh-tool-present'
 import * as ToolFs from '@deepseek-ai/dsh-tool-fs'
@@ -531,7 +532,7 @@ const TOOL_PACKAGES: ToolPackage[] = [
       await ctx.plugin(AgentRegistry)
       await ctx.plugin(SkillRegistry)
       await ctx.plugin(SkillFileSystem, {
-        dshHome: resolve(root, '.tmp/tool-catalog/.dsh'),
+        coserveHome: resolve(root, '.tmp/tool-catalog/.coserve'),
         agentsHome: resolve(root, '.tmp/tool-catalog/.agents'),
       })
       await ctx.plugin(ToolSkill)
@@ -662,6 +663,20 @@ const TOOL_PACKAGES: ToolPackage[] = [
     },
     note:
       'todo_write is session-owned state; UIs render the latest todo/write event as a checklist. `allowParallelInProgress` is required with no default, so the catalog states its choice: `true`, whose description invites several `in_progress` items. A deployment choosing `false` receives the same tool with a description asking for exactly one active task.',
+  },
+  {
+    pkg: '@deepseek-ai/dsh-tool-castudio',
+    dir: 'tool-castudio',
+    source: 'packages/context/tool-castudio/src/index.ts',
+    requires: ['ctx.tools'],
+    writes: ['tool/call', 'tool/result'],
+    async mount(ctx) {
+      // Schema harvest never contacts the CAStudio service; the origin resolves
+      // from config/env/default without a connection.
+      await ctx.plugin(ToolCastudio)
+    },
+    note:
+      'cad_workbench inspects and operates the live CAStudio viewport through the loopback service; it changes view state only and writes no project files beyond the service-owned snapshot PNG.',
   },
   {
     pkg: '@deepseek-ai/dsh-tool-working-directory',

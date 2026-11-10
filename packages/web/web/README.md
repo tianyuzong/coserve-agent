@@ -98,7 +98,7 @@ ctx.remote.$on('web/providers-changed', () => { /* re-read the lists */ })
 <a id="adding-a-provider"></a>
 #### Add another provider
 
-A search or fetch backend outside the shipped composition is a plugin package that calls `ctx.web.registerSearchProvider()` or `ctx.web.registerFetchProvider()` with a unique `id`, and an optional `title`. To enable one in a profile, install the package with `dsh plugin --profile <name> add <package>` ([install rules](../../../docs/user/develop/basic/publish.md)), add its row to the profile's user patch layer `$DSH_HOME/profiles/<name>/cordis.patch.yml`, and restart DSH. That file is a top-level YAML array of patch entries; append the `insert` entry below, or replace a lone `[]` with it. The example mounts a hypothetical `@example/dsh-web-search-acme`; use the provider's real package name and add the `config` its README documents.
+A search or fetch backend outside the shipped composition is a plugin package that calls `ctx.web.registerSearchProvider()` or `ctx.web.registerFetchProvider()` with a unique `id`, and an optional `title`. To enable one in a profile, install the package with `dsh plugin --profile <name> add <package>` ([install rules](../../../docs/user/develop/basic/publish.md)), add its row to the profile's user patch layer `$COSERVE_HOME/profiles/<name>/cordis.patch.yml`, and restart DSH. That file is a top-level YAML array of patch entries; append the `insert` entry below, or replace a lone `[]` with it. The example mounts a hypothetical `@example/dsh-web-search-acme`; use the provider's real package name and add the `config` its README documents.
 
 ```yaml
 - insert:

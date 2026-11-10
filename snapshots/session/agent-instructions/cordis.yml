@@ -1,5 +1,5 @@
-# Workspace-context snapshot patch: the harness exports DSH_HOME=<cwd>/.dsh and
-# DSH_AGENTS_HOME=<cwd>/.agents, so project-root and both user-global root
+# Workspace-context snapshot patch: the harness exports COSERVE_HOME=<cwd>/.coserve and
+# COSERVE_AGENTS_HOME=<cwd>/.coserve-agents, so project-root and both user-global root
 # discoveries stay inside the scenario's temporary cwd.
 - id: agent-default-model
   name: '@deepseek-ai/dsh-agent-default-model'
@@ -10,7 +10,7 @@
 - id: session-persistence-jsonl
   name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
-    root: !!js dshHomePath('sessions')
+    root: !!js coserveHomePath('sessions')
     compression: !!js 'process.env.DSH_SNAPSHOT === undefined ? ''zstd'' : ''none'''
 
 - id: agent-instructions

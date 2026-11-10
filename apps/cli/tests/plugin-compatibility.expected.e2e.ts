@@ -28,7 +28,7 @@ it('refuses incompatible installation and startup until an exact risk exemption 
   writeFileSync(join(source, 'index.mjs'), 'process.stdout.write("PLUGIN_IMPORTED\\n"); export function apply() { process.stdout.write("PLUGIN_STARTED\\n") }\n')
   const run = async (args: string[]) => {
     const result = await execa(process.execPath, [bin, ...args], {
-      cwd: home, env: { ...process.env, DSH_HOME: home }, extendEnv: false, reject: false, timeout: 60_000,
+      cwd: home, env: { ...process.env, COSERVE_HOME: home }, extendEnv: false, reject: false, timeout: 60_000,
     })
     expect(result.timedOut).toBe(false)
     expect(result.signal).toBeUndefined()

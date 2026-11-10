@@ -1,8 +1,8 @@
 # Agent Note: CAD 工作区使用原生 harness
 
-[English](2026-11-07-cad-workspace-native-harness.md) | 中文
-
 Status: implemented
+
+[English](2026-11-07-cad-workspace-native-harness.md) | 中文
 
 ## Problem
 

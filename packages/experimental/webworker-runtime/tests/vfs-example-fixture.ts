@@ -50,7 +50,7 @@ export const VFS_EXAMPLE_REASONING = [
 /** Authored long command and a second line for wrapping and status-dot acceptance. */
 export const VFS_EXAMPLE_WRAPPED_COMMAND = `printf 'preview command fixture\\n' # ${'wrapped-argument-'.repeat(28)}\nprintf 'wrap complete\\n'\n`
 
-/** Durable task ids for the Host Schedule rows seeded into the preview's `DSH_HOME`. */
+/** Durable task ids for the Host Schedule rows seeded into the preview's `COSERVE_HOME`. */
 export const VFS_EXAMPLE_SCHEDULE_IDS = {
   daily: 'preview-daily-digest',
   once: 'preview-release-window',
@@ -621,7 +621,7 @@ function renderLog(
 }
 
 /**
- * Host Schedule task rows the preview's `DSH_HOME` carries, keyed by durable
+ * Host Schedule task rows the preview's `COSERVE_HOME` carries, keyed by durable
  * task id.
  *
  * The schedule domain opens these per-record documents at Host startup and

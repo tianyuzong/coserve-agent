@@ -60,7 +60,7 @@ import {
 } from '@deepseek-ai/dsh-session-snapshot'
 import type { Profile, ProfileContext } from '@deepseek-ai/dsh-app-boot'
 import type { PresetDefinition } from '@deepseek-ai/dsh-agent-preset-registry'
-import { dshHomePath } from '@deepseek-ai/dsh-home-paths'
+import { coserveHomePath } from '@deepseek-ai/dsh-home-paths'
 import { LlmAdapter } from '@deepseek-ai/dsh-llm'
 import type {
   LlmModelInfo, LlmProviderInfo, LlmResolvedModelInfo, RetryPolicyConfig, StreamChunk,
@@ -290,7 +290,7 @@ export interface WebScaffold {
   workspaceCwd: string
   /** Temp persistence root (seeded sessions land here through the real API). */
   persistenceRoot: string
-  /** Isolated harness home the settings/credentials rows write ($DSH_HOME double). */
+  /** Isolated harness home the settings/credentials rows write ($COSERVE_HOME double). */
   harnessHome: string
   /** Send a browser-equivalent Host request with this scaffold's authenticated cookie. */
   hostFetch(path: string, init?: RequestInit): Promise<Response>
@@ -522,23 +522,23 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     workspacePrefix += '-'.repeat(paddingLength)
   }
   const workspaceCwd = await realpath(await mkdtemp(join(workspaceParent, workspacePrefix)))
-  // Isolated harness home: the settings/credentials rows resolve $DSH_HOME
+  // Isolated harness home: the settings/credentials rows resolve $COSERVE_HOME
   // paths at load, and an in-process boot must NEVER touch the developer's
-  // real ~/.dsh document or credential file.
+  // real ~/.coserve document or credential file.
   const harnessHome = options.harnessHome ?? join(workspaceCwd, '.dsh-home')
   // Skill discovery is model-visible input, and its roots now resolve inside a
   // PRESET — a subtree this lane's include patches cannot reach, because the
   // roster mounts it directly per session rather than as a row of the booted
   // tree. The row's documented fallback is the environment, so pin that: the
   // whole scaffold lifetime, not just the boot, since presets mount when a
-  // session is created. Without this a developer's real ~/.dsh/skills silently
-  // enters replay requests and goldens while CI sees none. `DSH_HOME` follows
+  // session is created. Without this a developer's real ~/.coserve/skills silently
+  // enters replay requests and goldens while CI sees none. `COSERVE_HOME` follows
   // the resolved harness home so a scaffold sharing another's home — the
   // cross-port persistence scenario — pins the same roots the settings and
   // credentials rows were configured with.
   const skillRootEnvironment = {
-    DSH_HOME: harnessHome,
-    DSH_AGENTS_HOME: join(workspaceCwd, '.agents-home'),
+    COSERVE_HOME: harnessHome,
+    COSERVE_AGENTS_HOME: join(workspaceCwd, '.agents-home'),
     DSH_BUNDLED_SKILL_DIR: join(workspaceCwd, '.bundled-skills'),
   }
   const originalSkillRootEnvironment = Object.fromEntries(
@@ -599,20 +599,20 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     // the seeded-session scenarios navigate by content search, and these e2e
     // runs are the assembled coverage for the opt-in search path.
     { id: 'session-query-sqlite', config: { path: ':memory:', openAt: 'first-search' } },
-    // storage-json's yml root is anchored to the real $DSH_HOME; pin the row
+    // storage-json's yml root is anchored to the real $COSERVE_HOME; pin the row
     // to an absolute temp root (removed with the workspace at close) so tests
     // never write the user's harness home.
     { id: 'storage-json', config: { root: join(workspaceCwd, '.dsh-storages') } },
     // First-use initialization must create directories only inside this scaffold's temporary world.
     { id: 'workspace-controller', config: { documentsDirectory: join(workspaceCwd, 'Documents') } },
     // Skill discovery is model-visible input. Pin every host-level root inside
-    // the owned temp world so ~/.dsh, ~/.agents, and a bundled-root env setting
+    // the owned temp world so ~/.coserve, ~/.coserve-agents, and a bundled-root env setting
     // cannot change replay requests or conversation goldens. Project roots stay
     // enabled against the same empty temp workspace, preserving the real seam.
     {
       id: 'skill-filesystem',
       config: {
-        dshHome: join(workspaceCwd, '.dsh-home'),
+        coserveHome: join(workspaceCwd, '.dsh-home'),
         agentsHome: join(workspaceCwd, '.agents-home'),
         bundledSkillDir: join(workspaceCwd, '.bundled-skills'),
         watch: false,
@@ -666,7 +666,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
           ],
         },
       }],
-    { id: 'credentials', config: { dshHome: harnessHome } },
+    { id: 'credentials', config: { coserveHome: harnessHome } },
     // The shipped directory-picker row is the -auto chooser, which resolves
     // the interaction from the RUNNING host (display, SSH launch, bind). The
     // lane's goldens are interaction-specific (workspace-management drives
@@ -827,7 +827,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
       ctx.provide('profileContext', profileContext)
     }
     // This direct Loader harness supplies the same root-path capability as app-boot.
-    ctx.provide('dshHomePath', dshHomePath)
+    ctx.provide('coserveHomePath', coserveHomePath)
     // A host with no command line still provides one: the web bundle's startup
     // row releases the rows waiting on it, and with no arguments each starts on
     // the values this scaffold composed above. An exit request can only come

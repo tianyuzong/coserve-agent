@@ -39,7 +39,7 @@ import { DeepSeekHarness } from '@deepseek-ai/dsh-sdk-client'
 const terminal = createInterface({ input: stdin, output: stdout })
 try {
   await using harness = new DeepSeekHarness({
-    dshHome: '/absolute/path/to/isolated-dsh-home', approvalRequests: true,
+    coserveHome: '/absolute/path/to/isolated-dsh-home', approvalRequests: true,
   })
   harness.client.start()
   harness.client.onRequest(async (method, params) => {
@@ -53,7 +53,7 @@ try {
 }
 ```
 
-`await harness.resumeSession(savedId)` restores a persisted session from the configured `dshHome` and returns a `HarnessSession` ready for `run()`. Save the original session id and reuse its home and workspace. Restoration preserves conversation history and its directory, repairs an interrupted final turn, and sends no new input. Missing, unreadable, incompatible, or occupied sessions reject without creating a replacement. `session(id)` remains a lazy handle for an in-process session; it does not request persisted restoration. Shell, browser, and other external processes are not restored by this API.
+`await harness.resumeSession(savedId)` restores a persisted session from the configured `coserveHome` and returns a `HarnessSession` ready for `run()`. Save the original session id and reuse its home and workspace. Restoration preserves conversation history and its directory, repairs an interrupted final turn, and sends no new input. Missing, unreadable, incompatible, or occupied sessions reject without creating a replacement. `session(id)` remains a lazy handle for an in-process session; it does not request persisted restoration. Shell, browser, and other external processes are not restored by this API.
 
 `HarnessSession.getWorkingDirectory()` reads the effective directory; `setWorkingDirectory(path)` changes it and returns the validated absolute path. Either method creates an unknown Session without starting a model turn. Relative paths use the Session's current directory. Origin metadata, permissions, and existing processes remain unchanged. `HarnessClient` exposes the same methods with a leading `sessionId` argument.
 
@@ -65,7 +65,7 @@ import { ReasoningEffortId } from '@deepseek-ai/dsh-llm'
 
 await using harness = new DeepSeekHarness({
   profile: 'sdk',
-  dshHome: '/absolute/path/to/dsh-home',
+  coserveHome: '/absolute/path/to/dsh-home',
   patches: ['./automation.cordis.yml'],
   provider: 'deepseek-official',
   model: 'deepseek-v4-flash',
@@ -87,7 +87,7 @@ Select a model that supports image input. Submit a command and image in the exis
 ```ts
 import { DeepSeekHarness } from '@deepseek-ai/dsh-sdk-client'
 
-await using harness = new DeepSeekHarness({ profile: 'sdk', dshHome: '/absolute/path/to/dsh-home' })
+await using harness = new DeepSeekHarness({ profile: 'sdk', coserveHome: '/absolute/path/to/dsh-home' })
 const session = harness.session()
 const result = await session.run('/compact')
 console.log(result.finalResponse)

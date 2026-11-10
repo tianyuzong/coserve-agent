@@ -35,7 +35,7 @@ Arguments:
 
 Options:
   -V, --version                  output the version number
-  --profile <name>               the profile under $DSH_HOME/profiles to boot
+  --profile <name>               the profile under $COSERVE_HOME/profiles to boot
   --from-default-profile <name>  replace a custom profile with a fresh copy of a
                                  shipped profile template
   --patch <path>                 extra patch-list overlay applied after the

@@ -27,10 +27,10 @@ Install both experimental packages into the Web profile first. Profiles do not i
 ```sh
 dsh plugin --profile web add @deepseek-ai/dsh-webhook @deepseek-ai/dsh-webhook-github
 export DSH_GITHUB_REVIEW_WORKSPACE=/path/to/deepseek-harness
-dsh web --patch "${DSH_HOME:-$HOME/.dsh}/profiles/web/node_modules/@deepseek-ai/dsh-webhook-github/examples/github-review/cordis.yml"
+dsh web --patch "${COSERVE_HOME:-$HOME/.coserve}/profiles/web/node_modules/@deepseek-ai/dsh-webhook-github/examples/github-review/cordis.yml"
 ```
 
-The adapter distributes the example, which loads from the profile's installation directory so its rule module can resolve profile-installed peers. Do not run the rule from an arbitrary directory outside the profile. To customize it, copy both example files to `$DSH_HOME/profiles/web/github-review/`, edit the configuration, and point `--patch` at that copy of `cordis.yml`; use `~/.dsh` when `DSH_HOME` is unset.
+The adapter distributes the example, which loads from the profile's installation directory so its rule module can resolve profile-installed peers. Do not run the rule from an arbitrary directory outside the profile. To customize it, copy both example files to `$COSERVE_HOME/profiles/web/github-review/`, edit the configuration, and point `--patch` at that copy of `cordis.yml`; use `~/.coserve` when `COSERVE_HOME` is unset.
 
 The repository example lives under `packages/experimental/webhook-github/examples/github-review/`. The CLI does not install webhook packages or list them as Official plugins; installing the packages and supplying the overlay are separate steps.
 

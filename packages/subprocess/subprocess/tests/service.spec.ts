@@ -78,12 +78,19 @@ describe('SubprocessRuntime seam', () => {
     await expect(ctx.plugin(SecondService)).rejects.toThrow(/service "subprocess" has been registered/)
   })
 
-  it('scrubbedParentEnv drops credential-shaped and DSH_ names (case-insensitively) but keeps PATH', () => {
+  it('scrubbedParentEnv drops credential-shaped, DSH_, and home-override names (case-insensitively) but keeps PATH', () => {
+    const overridden = ['COSERVE_HOME', 'COSERVE_AGENTS_HOME', 'coserve_home', 'coserve_agents_home'] as const
+    const saved = new Map(overridden.map(name => [name, process.env[name]] as const))
     process.env.DSH_SCRUB_PROBE = 'stale'
     process.env.dsh_scrub_probe_lower = 'stale'
     process.env.SCRUB_PROBE_TOKEN = 'secret'
     process.env.SCRUB_PROBE_PASSWORD = 'secret'
     process.env.SCRUB_PROBE_PLAIN = 'visible'
+    process.env.COSERVE_HOME = 'stale-home'
+    process.env.COSERVE_AGENTS_HOME = 'stale-agents'
+    process.env.coserve_home = 'stale-home-lower'
+    process.env.coserve_agents_home = 'stale-agents-lower'
+    process.env.COSERVE_SCRUB_PROBE = 'visible'
     try {
       const env = scrubbedParentEnv()
       expect(env.DSH_SCRUB_PROBE).toBeUndefined()
@@ -91,6 +98,8 @@ describe('SubprocessRuntime seam', () => {
       expect(env.SCRUB_PROBE_TOKEN).toBeUndefined()
       expect(env.SCRUB_PROBE_PASSWORD).toBeUndefined()
       expect(env.SCRUB_PROBE_PLAIN).toBe('visible')
+      for (const name of overridden) expect(env[name]).toBeUndefined()
+      expect(env.COSERVE_SCRUB_PROBE).toBe('visible')
       expect(env.PATH).toBeDefined()
     } finally {
       delete process.env.DSH_SCRUB_PROBE
@@ -98,6 +107,12 @@ describe('SubprocessRuntime seam', () => {
       delete process.env.SCRUB_PROBE_TOKEN
       delete process.env.SCRUB_PROBE_PASSWORD
       delete process.env.SCRUB_PROBE_PLAIN
+      delete process.env.COSERVE_SCRUB_PROBE
+      for (const name of overridden) {
+        const value = saved.get(name)
+        if (value === undefined) Reflect.deleteProperty(process.env, name)
+        else process.env[name] = value
+      }
     }
   })
 })

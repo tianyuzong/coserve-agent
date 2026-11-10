@@ -49,13 +49,13 @@ async function freePort(): Promise<number> {
   return port
 }
 
-function cleanEnvironment(root: string, dshHome: string): NodeJS.ProcessEnv {
+function cleanEnvironment(root: string, coserveHome: string): NodeJS.ProcessEnv {
   const env = Object.fromEntries(Object.entries(process.env).filter(([name]) =>
     !/(?:KEY|SECRET|TOKEN|PASSWORD)/iu.test(name)))
   return {
     ...env,
-    DSH_AGENTS_HOME: join(root, '.agents'),
-    DSH_HOME: dshHome,
+    COSERVE_AGENTS_HOME: join(root, '.coserve-agents'),
+    COSERVE_HOME: coserveHome,
     DSH_TELEMETRY_DISABLED: '1',
     NODE_NO_WARNINGS: '1',
     SSH_CONNECTION: '',
@@ -65,7 +65,7 @@ function cleanEnvironment(root: string, dshHome: string): NodeJS.ProcessEnv {
 }
 
 /** Start the public source CLI and wait for its authenticated readiness URL. */
-async function startWeb(root: string, dshHome: string, port: number): Promise<RunningWeb> {
+async function startWeb(root: string, coserveHome: string, port: number): Promise<RunningWeb> {
   const child = spawn(process.execPath, [
     '--import', TSX_LOADER,
     DSH_SOURCE_BIN,
@@ -74,7 +74,7 @@ async function startWeb(root: string, dshHome: string, port: number): Promise<Ru
     '--port', String(port),
   ], {
     cwd: root,
-    env: cleanEnvironment(root, dshHome),
+    env: cleanEnvironment(root, coserveHome),
     stdio: ['ignore', 'pipe', 'pipe'],
   })
   let output = ''
@@ -154,12 +154,12 @@ function describeSettings(port: number, host: string, cookie?: string): Promise<
 describe('dsh web authentication through the real CLI', () => {
   it('rejects a forged loopback Host and preserves the browser cookie across restart', { timeout: 180_000 }, async () => {
     const root = await mkdtemp(join(tmpdir(), 'dsh-web-auth-real-cli-'))
-    const dshHome = join(root, '.dsh')
+    const coserveHome = join(root, '.coserve')
     const port = await freePort()
     let first: RunningWeb | undefined
     let second: RunningWeb | undefined
     try {
-      first = await startWeb(root, dshHome, port)
+      first = await startWeb(root, coserveHome, port)
       const firstUrl = new URL(first.launchUrl)
       expect(firstUrl.origin).toBe(`http://127.0.0.1:${String(port)}`)
       expect(firstUrl.pathname).toBe('/')
@@ -191,12 +191,12 @@ describe('dsh web authentication through the real CLI', () => {
 
       await stopWeb(first)
       first = undefined
-      second = await startWeb(root, dshHome, port)
+      second = await startWeb(root, coserveHome, port)
       const secondUrl = new URL(second.launchUrl)
       expect(secondUrl.searchParams.get('token')).not.toBe(firstUrl.searchParams.get('token'))
       expect((await describeSettings(port, secondUrl.host, cookie)).status).toBe(200)
 
-      const credentialMode = (await stat(join(dshHome, '.credentials.yaml'))).mode & 0o777
+      const credentialMode = (await stat(join(coserveHome, '.credentials.yaml'))).mode & 0o777
       expect(credentialMode).toBe(0o600)
     } catch (error) {
       const evidence = [first?.output(), second?.output()].filter(value => value !== undefined).join('\n')

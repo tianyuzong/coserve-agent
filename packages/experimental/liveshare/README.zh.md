@@ -37,7 +37,7 @@ Owner、查看页和 Liveshare 服务端必须使用匹配的协议版本。构�
 
 dsh 安装会把本包作为运行时依赖一起安装，但没有任何随发行版交付的 profile 选中它的组合包，因此它的插件一条都不会运行，插件管理器既不会在**内置插件配置**里列出它，也不会在**实验性插件**（含**更多**页）里列出。组合包 ID 仍可按 ID 打开，因此按 ID 打开组合包的页面仍能到达它的详情。
 
-要启用它，把它的一条条目插入当前 profile 的 patch 文件 `$DSH_HOME/profiles/<profile>/cordis.patch.yml`。该文件是一个 YAML 序列的 Loader patch；这一条就是组合包自己的 [patch](cordis.patch.yml) 插入的条目，其中允许使用 `!!js` 表达式：
+要启用它，把它的一条条目插入当前 profile 的 patch 文件 `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`。该文件是一个 YAML 序列的 Loader patch；这一条就是组合包自己的 [patch](cordis.patch.yml) 插入的条目，其中允许使用 `!!js` 表达式：
 
 ```yaml
 - insert:
@@ -51,9 +51,9 @@ dsh 安装会把本包作为运行时依赖一起安装，但没有任何随发�
         ownerStateFile: /path/to/owner-shares.json
 ```
 
-把每个 `<...>` 占位符换成部署自己的值：身份 provider、tenant 与 subject 是该部署的 Liveshare 服务端配置使用的值，示例中的都是占位符而非真实身份。环境层同样可用：在 `$DSH_HOME/.env` 里设置 `LIVESHARE_*`，并保留组合包自己的 `!!js process.env.…` 表达式。Liveshare 服务端地址不属于这里的配置：首次使用时由所有者在分享弹窗里填写，见下文的所有者配置。
+把每个 `<...>` 占位符换成部署自己的值：身份 provider、tenant 与 subject 是该部署的 Liveshare 服务端配置使用的值，示例中的都是占位符而非真实身份。环境层同样可用：在 `$COSERVE_HOME/.env` 里设置 `LIVESHARE_*`，并保留组合包自己的 `!!js process.env.…` 表达式。Liveshare 服务端地址不属于这里的配置：首次使用时由所有者在分享弹窗里填写，见下文的所有者配置。
 
-profile 也可以改为选中组合包：在 `$DSH_HOME/profiles/<profile>/package.json` 的 `dsh.profile.bundles` 里加入 `"@deepseek-ai/dsh-experimental-liveshare"`；卡片可见后，卡片上的开关执行的就是这次写入。
+profile 也可以改为选中组合包：在 `$COSERVE_HOME/profiles/<profile>/package.json` 的 `dsh.profile.bundles` 里加入 `"@deepseek-ai/dsh-experimental-liveshare"`；卡片可见后，卡片上的开关执行的就是这次写入。
 
 两条路线都只在重新组合时生效。profile 的 HMR 行开启时，改动在 profile 被重新读取后应用；没有 HMR 时，等下一次 `dsh` 启动才应用。只要组合包声明的行有一条在运行，它的卡片就会出现在**实验性插件**下，也出现在**更多**页。删除这些条目、把它们置为 disabled，或把组合包从 `dsh.profile.bundles` 移除，都会停止这些行，卡片也随之从两个列表消失。
 
@@ -64,7 +64,7 @@ profile 也可以改为选中组合包：在 `$DSH_HOME/profiles/<profile>/packa
 | `LIVESHARE_OWNER_PROVIDER_ID` / `LIVESHARE_OWNER_TENANT_ID` / `LIVESHARE_OWNER_SUBJECT_ID` | 未设置 | 用于旧主体匹配的所有者身份；不替代 Liveshare 服务端签发的凭据 |
 | `LIVESHARE_OWNER_DISPLAY_NAME` | 未设置 | 配置身份的显示标签 |
 | `LIVESHARE_ALLOWED_SUBJECTS` | 空 | 分享访问规则之外的部署级主体允许列表 |
-| `LIVESHARE_OWNER_STATE_FILE` | `$DSH_HOME/liveshare/owner-shares.json` | 保存分享元数据、已保存的 Liveshare 服务端地址、实例身份和管理 token |
+| `LIVESHARE_OWNER_STATE_FILE` | `$COSERVE_HOME/liveshare/owner-shares.json` | 保存分享元数据、已保存的 Liveshare 服务端地址、实例身份和管理 token |
 | `LIVESHARE_OWNER_CREDENTIAL_FILE` | 状态文件旁的 `owner-credential.json` | 保存绑定至签发它的 Liveshare 服务端的凭据 |
 
 Liveshare 服务端地址在首次使用时设置：在分享弹窗的地址输入框里填写并保存。保存的地址持久化在 owner state 文件中，之后创建的分享都发布到该地址；已经等待注册的发布在注册信息、持久记录和返回链接中保留起始服务端地址，已有分享保留记录中的 Liveshare 服务端地址。经分享管理 Remote 清除保存的地址后，这个宿主就没有地址可用——此时创建分享会明确要求先保存地址，而不是回退到某个部署默认值。读者看到的分享者名称来自 Relay 验证凭据上的显示名，本地配置不能覆盖它；凭据只带主体时显示主体标签。提供方应用密钥属于 Liveshare 服务端，不属于这里的配置。

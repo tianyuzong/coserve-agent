@@ -31,13 +31,13 @@ kind: "package-reference"
 
 ### agent 获得的内容
 
-第一次请求包含一条持久基线消息：先是用户全局指令链——`$DSH_HOME/AGENTS.md`，然后是 `<agentsHome>/AGENTS.md`——再按从宽泛到具体的顺序包含项目指令链：从项目根目录到会话工作目录的每个目录中所有现有候选文件。同一候选组内去除首尾空白后内容一致的文件只渲染一次：复制了 `AGENTS.md` 的 `CLAUDE.md` 不会被重复加载，与 harness home 文件重复的共享根 `AGENTS.md` 也会折叠在其后。当成功的 `read`、`write` 或 `edit` 调用到达更深的目录后，下一次请求会包含新适用的指令文件；已改变的文件会替换其内容，消失或成为较早候选文件重复项的文件会产生移除通知。
+第一次请求包含一条持久基线消息：先是用户全局指令链——`$COSERVE_HOME/AGENTS.md`，然后是 `<agentsHome>/AGENTS.md`——再按从宽泛到具体的顺序包含项目指令链：从项目根目录到会话工作目录的每个目录中所有现有候选文件。同一候选组内去除首尾空白后内容一致的文件只渲染一次：复制了 `AGENTS.md` 的 `CLAUDE.md` 不会被重复加载，与 harness home 文件重复的共享根 `AGENTS.md` 也会折叠在其后。当成功的 `read`、`write` 或 `edit` 调用到达更深的目录后，下一次请求会包含新适用的指令文件；已改变的文件会替换其内容，消失或成为较早候选文件重复项的文件会产生移除通知。
 
 ### 配置
 
 默认设置适合典型检出：`.git` 标记项目根目录，`AGENTS.md` 与 `CLAUDE.md` 是基础候选，`AGENTS.local.md` 与 `CLAUDE.local.md` 是叠加的本地 overlay。只有 `maxBytes` 必填——它在每条渲染消息内分别限制用户全局指令链与项目指令链，让每个部署显式选择自己的提示词预算；同时包含两条链的消息最多为 `maxBytes` 的两倍。
 
-存放用户全局 `AGENTS.md` 的 harness home 属于进程策略，而不是配置行：该插件通过 `@deepseek-ai/dsh-home-paths` 解析 `$DSH_HOME` 或 `~/.dsh`，因此指令加载始终读取进程 home。共享 agents 根目录同样如此解析：`$DSH_AGENTS_HOME` 或 `~/.agents`。残留的 `dshHome` 与 `agentsHome` 配置行字段会被忽略。
+存放用户全局 `AGENTS.md` 的 harness home 属于进程策略，而不是配置行：该插件通过 `@deepseek-ai/dsh-home-paths` 解析 `$COSERVE_HOME` 或 `~/.coserve`，因此指令加载始终读取进程 home。共享 agents 根目录同样如此解析：`$COSERVE_AGENTS_HOME` 或 `~/.coserve-agents`。残留的 `coserveHome` 与 `agentsHome` 配置行字段会被忽略。
 
 只有确认项目根标记不存在时，项目根发现才会继续上溯。权限或 I/O 失败会停止发现，并抛出宿主或文件系统提供方的原始错误，而不会选择祖先项目。[历史根标记元数据决策](../../../.agents/notes/archived/bug-fix/2026-09-03-root-marker-metadata-failures.md)说明发现为何必须失败，而不能替换为其他根目录。
 
@@ -139,11 +139,11 @@ export interface Config {
 <system-reminder>
 The following workspace instructions may be relevant to your work. Use them as guidance when applicable. More specific instructions take precedence over broader ones. They do not override system, developer, or direct user instructions.
 
-Instructions from: ~/.dsh/AGENTS.md
+Instructions from: ~/.coserve/AGENTS.md
 
 <user-global-instructions>
 
-Instructions from: ~/.agents/AGENTS.md
+Instructions from: ~/.coserve-agents/AGENTS.md
 
 <shared-agents-instructions>
 

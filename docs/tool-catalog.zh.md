@@ -49,6 +49,7 @@
 | `@deepseek-ai/dsh-tool-jobs` | `job_kill`、`job_list`、`job_output` | `ctx.tools`、`ctx.jobs`、`ctx.systemPrompt` | `tool/call`、`tool/result`、`user/message via agent.inject() for background completion notices` | - | 与任务种类无关的后台任务控制器：后台 bash 命令与 PTY 发送 都通过相同的 3 个工具读取、列出和终止。加载该插件会挂接控制器，从而启用生产方的 `ctx.jobs.start()`。 |
 | `@deepseek-ai/dsh-tool-agent-team` | `team_task_create`, `team_task_get`, `team_task_list`, `team_task_update` | `ctx.tools`, `ctx.systemPrompt`, `ctx.agentTeams`, `ctx.subagents`, `an exact live Team member Agent` | `tool/call`, `team/task`, `tool/result` | - | 四个任务板工具共享 subagent 树的根 Session。在根 Session 开启 Team 模式，会在标准 subagent 委派和控制工具之外增加任务板指导。标准 subagent 控制工具提供必需身份，不受 Team 模式影响。 |
 | `@deepseek-ai/dsh-tool-todo` | `todo_write` | `ctx.tools`、`owning Agent session` | `tool/call`、`todo/write`、`tool/result` | - | todo_write 是会话所有的状态；UI 将最新的 todo/write 事件渲染为检查清单。`allowParallelInProgress` 是没有默认值的必填项，因此本目录明确选择 `true`，对应描述允许同时存在多个 `in_progress` 项。选择 `false` 的部署会获得同一工具，但描述会要求只能有 1 个活动任务。 |
+| `@deepseek-ai/dsh-tool-castudio` | `cad_workbench` | `ctx.tools` | `tool/call`、`tool/result` | - | cad_workbench 通过回环服务查看并操作实时 CAStudio 视口；它只改变视图状态，除服务自有的快照 PNG 外不写任何项目文件。 |
 | `@deepseek-ai/dsh-tool-working-directory` | `working_directory` | `ctx.tools`, `ctx.workingDirectory` | `tool/call`, `working-directory/change`, `user context for directory changes`, `tool/result` | - | 读取或改变调用方 Session 的目录。已有 shell 和进程保留自己的目录；原始元数据和权限根目录保持不变。 |
 | `@deepseek-ai/dsh-experimental-tool-worktree` | `create_worktree` | `ctx.tools`, `ctx.worktrees`, `a calling Agent` | `tool/call`, `Git branch and checkout`, `working-directory/change`, `tool/result` | - | 在 Web 和 Desktop 上通过变更请求与工作树组合包启用；其他 profile 可以选择独立组合包。在现有写权限下从固定的本地提交创建新分支与检出目录，再改变 Session 工作目录。离开时保留分支与检出目录。 |
 | `@deepseek-ai/dsh-tool-workflow` | `workflow` | `ctx.tools`、`ctx.workflowEngine`、`ctx.systemPrompt`、`a calling Agent (exec.agent parents the script children)` | `tool/call`、`tool/result` | - | - |
@@ -2488,6 +2489,113 @@ subagent_oar 工具在为外部提供方配置的别名之间选择。本目录�
 来源：[`packages/todo/tool-todo/src/index.ts`](../packages/todo/tool-todo/src/index.ts)
 
 todo_write 是会话所有的状态；UI 将最新的 todo/write 事件渲染为检查清单。`allowParallelInProgress` 是没有默认值的必填项，因此本目录明确选择 `true`，对应描述允许同时存在多个 `in_progress` 项。选择 `false` 的部署会获得同一工具，但描述会要求只能有 1 个活动任务。
+
+<a id="deepseek-aidsh-tool-castudio"></a>
+
+## `@deepseek-ai/dsh-tool-castudio`
+
+### `cad_workbench`
+
+查看并操作用户在 CAStudio 中打开的实时 CAD 工作台。操作包括：state（读取视口状态）、snapshot（保存视口 PNG）、fit（从 iso/top/front/right 框选模型）、select 与 select_face（按 id 或精确名称选择零件，或选择 CAD 面）、visible（显示或隐藏零件）、options（edges、grid、ortho、section、explode、选择模式）以及 workspace（切换 model/parametric/structural/thermal 标签）。它只查看并操作视图；几何、颜色和材质编辑通过 castudio 技能中描述的参数化代码 API 进行。多个工作台打开时，传入 "project" 并填写 CAStudio 上下文中的工作台 id。
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "description": "What to do with the workbench.",
+      "enum": [
+        "state",
+        "snapshot",
+        "fit",
+        "select",
+        "select_face",
+        "visible",
+        "options",
+        "workspace"
+      ]
+    },
+    "project": {
+      "type": "string",
+      "description": "Workbench project id. Required when several workbenches are open; defaults to the only connected one."
+    },
+    "view": {
+      "type": "string",
+      "description": "fit only: camera direction to frame the model from.",
+      "enum": [
+        "iso",
+        "top",
+        "front",
+        "right"
+      ]
+    },
+    "part": {
+      "type": "string",
+      "description": "select, select_face, and visible: a part id or an exact part name from the reported state."
+    },
+    "face": {
+      "type": "integer",
+      "description": "select_face only: non-negative CAD face index on the part."
+    },
+    "visible": {
+      "type": "boolean",
+      "description": "visible action only: true to show the part, false to hide it."
+    },
+    "options": {
+      "type": "object",
+      "description": "options action only: any subset of display options to change.",
+      "additionalProperties": false,
+      "properties": {
+        "edges": {
+          "type": "boolean",
+          "description": "Show mesh edges."
+        },
+        "grid": {
+          "type": "boolean",
+          "description": "Show the ground grid."
+        },
+        "ortho": {
+          "type": "boolean",
+          "description": "Orthographic instead of perspective projection."
+        },
+        "section": {
+          "type": "number",
+          "description": "Section plane percentage, 0-100 (100 = off)."
+        },
+        "explode": {
+          "type": "number",
+          "description": "Exploded-view amount, 0-180 (0 = off)."
+        },
+        "mode": {
+          "type": "string",
+          "description": "Selection mode: whole component or single CAD face.",
+          "enum": [
+            "component",
+            "face"
+          ]
+        }
+      }
+    },
+    "workspace": {
+      "type": "string",
+      "description": "workspace action only: the workbench tab to switch to.",
+      "enum": [
+        "model",
+        "parametric",
+        "structural",
+        "thermal"
+      ]
+    }
+  },
+  "required": [
+    "action"
+  ]
+}
+```
+来源：[`packages/context/tool-castudio/src/index.ts`](../packages/context/tool-castudio/src/index.ts)
+
+cad_workbench 通过回环服务查看并操作实时 CAStudio 视口；它只改变视图状态，除服务自有的快照 PNG 外不写任何项目文件。
 
 <a id="deepseek-aidsh-tool-working-directory"></a>
 

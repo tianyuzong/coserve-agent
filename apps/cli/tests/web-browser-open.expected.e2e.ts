@@ -28,7 +28,7 @@ interface BrowserOpenRecord {
   status: number
   bootManifest: boolean
   apiKeyPresent: boolean
-  dshHomePresent: boolean
+  coserveHomePresent: boolean
 }
 
 function normalizeLocalUrl(url: string): string {
@@ -51,8 +51,8 @@ describe.skipIf(!builtArtifactsExist)('dsh web browser-open assembled snapshot',
       env: {
         ...process.env,
         DEEPSEEK_API_KEY: 'keyless-browser-open-no-call',
-        DSH_AGENTS_HOME: join(root, '.agents'),
-        DSH_HOME: join(root, '.dsh'),
+        COSERVE_AGENTS_HOME: join(root, '.coserve-agents'),
+        COSERVE_HOME: join(root, '.coserve'),
         DSH_TELEMETRY_DISABLED: '1',
         NODE_NO_WARNINGS: '1',
         SSH_CONNECTION: '',
@@ -79,13 +79,13 @@ describe.skipIf(!builtArtifactsExist)('dsh web browser-open assembled snapshot',
       status: opened.status,
       bootManifest: opened.bootManifest,
       apiKeyPresent: opened.apiKeyPresent,
-      dshHomePresent: opened.dshHomePresent,
+      coserveHomePresent: opened.coserveHomePresent,
       stderr: result.stderr,
     }).toMatchInlineSnapshot(`
       {
         "apiKeyPresent": false,
         "bootManifest": true,
-        "dshHomePresent": false,
+        "coserveHomePresent": false,
         "exitCode": 0,
         "openedUrl": "http://127.0.0.1:{{port}}/?token={{token}}",
         "opening": true,
@@ -110,9 +110,9 @@ describe.skipIf(!builtArtifactsExist)('dsh web browser-open assembled snapshot',
         ...process.env,
         BROWSER_OPEN_TEST_FAILURE: 'fixture desktop unavailable',
         DEEPSEEK_API_KEY: 'keyless-browser-open-no-call',
-        DSH_AGENTS_HOME: join(root, '.agents'),
+        COSERVE_AGENTS_HOME: join(root, '.coserve-agents'),
         DSH_BROWSER_OPEN_TEST_EXIT_ON_FAILURE: '1',
-        DSH_HOME: join(root, '.dsh'),
+        COSERVE_HOME: join(root, '.coserve'),
         DSH_TELEMETRY_DISABLED: '1',
         NODE_NO_WARNINGS: '1',
         SSH_CONNECTION: '',
@@ -157,9 +157,9 @@ describe.skipIf(!builtArtifactsExist)('dsh web browser-open assembled snapshot',
       env: {
         ...process.env,
         DEEPSEEK_API_KEY: 'keyless-browser-open-no-call',
-        DSH_AGENTS_HOME: join(root, '.agents'),
+        COSERVE_AGENTS_HOME: join(root, '.coserve-agents'),
         DSH_BROWSER_OPEN_TEST_EXIT_ON_READY: '1',
-        DSH_HOME: join(root, '.dsh'),
+        COSERVE_HOME: join(root, '.coserve'),
         DSH_TELEMETRY_DISABLED: '1',
         NODE_NO_WARNINGS: '1',
         SSH_CONNECTION: '10.0.0.2 55000 10.0.0.9 22',
@@ -204,8 +204,8 @@ describe.skipIf(!builtArtifactsExist)('dsh web browser-open assembled snapshot',
       env: {
         ...process.env,
         DEEPSEEK_API_KEY: 'keyless-browser-open-no-call',
-        DSH_AGENTS_HOME: join(root, '.agents'),
-        DSH_HOME: join(root, '.dsh'),
+        COSERVE_AGENTS_HOME: join(root, '.coserve-agents'),
+        COSERVE_HOME: join(root, '.coserve'),
         DSH_TELEMETRY_DISABLED: '1',
         NODE_NO_WARNINGS: '1',
         SSH_CONNECTION: '',

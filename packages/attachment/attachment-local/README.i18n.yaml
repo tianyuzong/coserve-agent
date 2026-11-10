@@ -3,14 +3,14 @@
 # After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/attachment/attachment-local/README.md
 /:
-  en: 5d8d225549347391
-  zh: 0fc0e5ee73acf917
+  en: cdf4e029297a0655
+  zh: f5c10c403c42a662
 /deepseek-ai-dsh-attachment-local:
   en: d43be6d0218e5f22
   zh: 444ec4f8125c08b9
 /deepseek-ai-dsh-attachment-local/summary:
-  en: 2350024cee2e9954
-  zh: 73a4900b1e40013b
+  en: 9b58cdfff0cef3c1
+  zh: 675a1ff587500f1d
 /deepseek-ai-dsh-attachment-local/table-of-contents:
   en: d152484eb41ac6b4
   zh: 09388d293f9be9cb
@@ -18,11 +18,11 @@
   en: 912a19be4b59ff8a
   zh: 9c14694cf2ebbaf2
 /deepseek-ai-dsh-attachment-local/use-this-package/minimal-configuration:
-  en: 9597c3d9779cb93d
-  zh: 900baa94138cc7de
+  en: 104420776b14e3c6
+  zh: 88f07cd584f98f7e
 /deepseek-ai-dsh-attachment-local/use-this-package/where-your-images-are-stored-and-how-long-they-last:
-  en: 4ee90b8f74baa38c
-  zh: 9c577709ec55eb82
+  en: 432825c16a26ee39
+  zh: 37d3ad6c35c32c5d
 /deepseek-ai-dsh-attachment-local/use-this-package/what-happens-when-you-attach-an-image:
   en: 75ba799b1e4edba4
   zh: 06c5f76200e8da8a
@@ -36,14 +36,14 @@
   en: dcd9857653645420
   zh: a27259a09f17465d
 /deepseek-ai-dsh-attachment-local/understand-the-implementation/write-and-read-paths:
-  en: 4cbbe8a1466ed46f
-  zh: 49d2d118501867d3
+  en: 82dc5b987ca806e5
+  zh: 5236027efb1272d5
 /deepseek-ai-dsh-attachment-local/understand-the-implementation/source-map:
   en: 05af85aa85934d01
   zh: 1c89e80d496dc0a3
 /deepseek-ai-dsh-attachment-local/further-exploration:
-  en: f8b09b2542211379
-  zh: 57a8fa44aa76b737
+  en: 2e42607380360c10
+  zh: 78896dbe7d528bb2
 /deepseek-ai-dsh-attachment-local/model-experience:
   en: 2e18b3dfbc5af126
   zh: aaee1745632c561a
@@ -57,5 +57,5 @@
   en: d56846da29ad869c
   zh: 41e655e01351fd1d
 /deepseek-ai-dsh-attachment-local/known-limitations-and-deferred-work/dev-note/future-retention-and-remote-storage:
-  en: d4bbda6aadc3c879
-  zh: 97a22323e77affb3
+  en: aa9d8901ac9cbb6a
+  zh: f745b807c07049d2

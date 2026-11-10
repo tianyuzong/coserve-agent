@@ -11,4 +11,4 @@
     - id: command-attachment-request-capture
       name: '../manual-compact/capture-requests.mjs'
       config:
-        path: !!js dshHomePath('command-attachment-requests.jsonl')
+        path: !!js coserveHomePath('command-attachment-requests.jsonl')

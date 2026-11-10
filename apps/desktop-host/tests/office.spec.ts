@@ -15,7 +15,7 @@ import * as desktopOffice from '../src/office.ts'
 
 it('loads Desktop Office CLI paths and removes them on disposal', async () => {
   const root = await mkdtemp(join(tmpdir(), 'desktop-office-'))
-  vi.stubEnv('DSH_HOME', root)
+  vi.stubEnv('COSERVE_HOME', root)
   const ctx = new Context()
 
   try {

@@ -56,7 +56,7 @@ async function setup(mode: 'native' | 'ptc' = 'native') {
   await ctx.plugin(ToolRuntime)
   await ctx.plugin(mode === 'ptc' ? PtcToolExecutor : NativeToolExecutor)
   await ctx.plugin(FileSystem, { cwd: root })
-  await ctx.plugin(LocalAttachments, { dshHome: join(root, 'home') })
+  await ctx.plugin(LocalAttachments, { coserveHome: join(root, 'home') })
   await ctx.plugin(ToolFs)
   await ctx.plugin(LocalSpillStore, { root: join(root, 'spill'), cleanupPeriodDays: 0 })
   await ctx.plugin(SessionProjections)

@@ -151,7 +151,7 @@ def display(notification: Notification, session_id: str) -> None:
 def main() -> None:
     """Keep the runtime and question handler alive until the plan activity finishes."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dsh-home", required=True, type=Path)
+    parser.add_argument("--coserve-home", required=True, type=Path)
     parser.add_argument("--workspace", type=Path, default=Path.cwd())
     parser.add_argument("--model", default=os.environ.get("DSH_MODEL", "deepseek-v4-flash"))
     parser.add_argument("task", help="Task to plan; implementation waits for your approval")
@@ -159,7 +159,7 @@ def main() -> None:
     if not args.task.strip():
         parser.error("task must be non-blank")
     with _PlanReviews() as reviews, DeepSeekHarness(
-        dsh_home=str(args.dsh_home.resolve()), cwd=str(args.workspace.resolve()),
+        coserve_home=str(args.coserve_home.resolve()), cwd=str(args.workspace.resolve()),
         profile="sdk", model=args.model, on_user_question=reviews.answer,
         env={"DSH_PERMISSION_MODE": "workspace-write"},
     ) as harness:

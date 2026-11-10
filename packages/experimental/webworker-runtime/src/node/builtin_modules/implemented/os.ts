@@ -4,7 +4,7 @@
  * real rather than throwing because several `[Service.init]` bodies read them
  * during construction.
  */
-import { DSH_HOME, DSH_TMP } from '../../../storage/paths.ts'
+import { COSERVE_HOME, DSH_TMP } from '../../../storage/paths.ts'
 import type { CpuInfo, NetworkInterfaceInfo } from 'node:os'
 
 /** Line ending of the virtual platform. */
@@ -20,10 +20,10 @@ export function tmpdir(): string {
 
 /**
  * Home directory.
- * @returns `$DSH_HOME` inside the VFS.
+ * @returns `$COSERVE_HOME` inside the VFS.
  */
 export function homedir(): string {
-  return DSH_HOME
+  return COSERVE_HOME
 }
 
 /**

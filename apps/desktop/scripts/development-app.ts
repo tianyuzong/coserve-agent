@@ -61,7 +61,7 @@ export function prepareDevelopmentApp(options: DevelopmentAppOptions): string {
  */
 export function developmentLauncher(options: DevelopmentAppOptions, bundle: string): string {
   const environment = {
-    DSH_HOME: options.home,
+    COSERVE_HOME: options.home,
     DSH_DESKTOP_DEV_APP: '1',
     DSH_DESKTOP_HOST_INSPECT_PORT: String(options.hostPort),
     DSH_DESKTOP_OPEN_DEVTOOLS: options.openDevtools,

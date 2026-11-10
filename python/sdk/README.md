@@ -30,13 +30,13 @@ The authoring environment is independently optional through `deepseek_harness_ru
 
 The Python SDK has no separate application entrypoint. It launches the bundled `dsh` CLI with `--profile sdk`; the selected profile owns the JSON-RPC server, agent composition, credentials, persistence, tools, and shutdown behavior.
 
-Every launch requires an explicit Harness home. Pass `dsh_home` or provide a non-empty `DSH_HOME` in the child environment. The SDK deliberately never discovers `~/.dsh`.
+Every launch requires an explicit Harness home. Pass `coserve_home` or provide a non-empty `COSERVE_HOME` in the child environment. The SDK deliberately never discovers `~/.coserve`.
 
 ```py
 from deepseek_harness import DeepSeekHarness
 
 with DeepSeekHarness(
-    dsh_home="/absolute/path/to/isolated-dsh-home",
+    coserve_home="/absolute/path/to/isolated-dsh-home",
     cwd="/absolute/path/to/workspace",
     provider="deepseek-official",
     model="deepseek-v4-flash",
@@ -50,10 +50,10 @@ print(result.final_response)
 
 `DeepSeekHarness` starts lazily and reuses its runtime until `close()` or context-manager exit. The initial profile handshake has an independent 30-second default bound through `initialize_timeout_seconds`; ordinary activity remains unbounded after its protocol response, whose wait can be limited with `request_timeout_seconds`. A timeout names the selected profile and includes retained runtime diagnostics. `cwd` is the agent workspace; `runtime_cwd` independently selects the subprocess working directory. Both become absolute before launch. `provider`, `model`, optional `reasoning_effort`, and optional positive `max_tokens` are sent during JSON-RPC initialization. `base_url` and `api_key` explicitly override `DEEPSEEK_BASE_URL` and `DEEPSEEK_API_KEY` in the child environment.
 
-`harness.resume_session(saved_session_id)` restores persisted history and returns a `Session` ready for `run()`. Save the original session id and reuse its `dsh_home` and workspace. Restoration preserves the stored directory, repairs an interrupted final turn, and sends no new input. Missing, unreadable, incompatible, or occupied sessions raise without creating a replacement. `start_session(id)` only opens a lazy handle; it does not request persisted restoration. This API does not restore shell, browser, or other external processes.
+`harness.resume_session(saved_session_id)` restores persisted history and returns a `Session` ready for `run()`. Save the original session id and reuse its `coserve_home` and workspace. Restoration preserves the stored directory, repairs an interrupted final turn, and sends no new input. Missing, unreadable, incompatible, or occupied sessions raise without creating a replacement. `start_session(id)` only opens a lazy handle; it does not request persisted restoration. This API does not restore shell, browser, or other external processes.
 
 ```py
-with DeepSeekHarness(dsh_home="/absolute/path/to/saved-home") as harness:
+with DeepSeekHarness(coserve_home="/absolute/path/to/saved-home") as harness:
     session = harness.resume_session(saved_session_id)
     result = session.run("Continue the task.")
 ```
@@ -89,7 +89,7 @@ This low-level example receives one approval and rejects it. Use a dedicated req
 ```py
 from deepseek_harness import ApprovalRequestParams, HarnessClient, HarnessConfig
 
-with HarnessClient(HarnessConfig(dsh_home="/absolute/path/to/dsh-home")) as client:
+with HarnessClient(HarnessConfig(coserve_home="/absolute/path/to/dsh-home")) as client:
     client.initialize(cwd="/absolute/path/to/workspace", provider="deepseek-official",
                       model="deepseek-v4-flash", approval_requests=True)
     client.session_prompt("main", [{"type": "text", "text": "Run the operation requiring approval."}])
@@ -107,18 +107,18 @@ with HarnessClient(HarnessConfig(dsh_home="/absolute/path/to/dsh-home")) as clie
 Persistent customization belongs to a `dsh` profile. Initialize the shipped SDK profile and install an external bundle with the runtime wheel's `dsh` command:
 
 ```sh
-export DSH_HOME=/absolute/path/to/isolated-dsh-home
+export COSERVE_HOME=/absolute/path/to/isolated-dsh-home
 dsh --profile sdk --dump-default-config >/dev/null
 dsh plugin --profile sdk add file:/absolute/path/to/my-plugin-bundle
 ```
 
-The `file:` form installs the local bundle into the profile package tree, where its peer imports reach the bundled installation fallback. The profile manifest records installed dependencies and ordered bundle layers; its `$DSH_HOME/profiles/sdk/cordis.patch.yml` is the persistent user patch. `dsh plugin` needs `pnpm` only when managing external packages. Running the SDK does not require system Node.js.
+The `file:` form installs the local bundle into the profile package tree, where its peer imports reach the bundled installation fallback. The profile manifest records installed dependencies and ordered bundle layers; its `$COSERVE_HOME/profiles/sdk/cordis.patch.yml` is the persistent user patch. `dsh plugin` needs `pnpm` only when managing external packages. Running the SDK does not require system Node.js.
 
 For an invocation-specific change, pass one or more patch files. They become absolute and are forwarded in order after the profile and home patch layers:
 
 ```py
 with DeepSeekHarness(
-    dsh_home="/absolute/path/to/isolated-dsh-home",
+    coserve_home="/absolute/path/to/isolated-dsh-home",
     profile="sdk",
     patches=("/absolute/path/to/first.patch.yml", "/absolute/path/to/last.patch.yml"),
 ) as harness:
@@ -145,7 +145,7 @@ For ordinary prompts, `Session.run()` owns an activity interval from its prompt'
 
 `HarnessClient` retains discovered subagent ancestry for the runtime process lifetime. During `Session.run()`, `RunResult.notifications` and `on_notification` receive the root session and known descendants in wire order. `RunResult.events` contains root-session events only, so descendant output cannot replace the root response. The low-level `session_prompt()` returns the queued message id immediately; callers that bypass `Session.run()` own the later activity boundary.
 
-The selected home stores profiles, plugins, and every profile-owned durable resource. The full `sdk` profile uses its credentials, settings, and session stores; `sdk-minimal` uses JSONL session storage and stores images under `$DSH_HOME/attachments/v1`, with request-image cache under `$DSH_HOME/cache/attachments`. Use a fresh home when those resources must be isolated, and a fresh session id for independent work. Reusing both a harness and session id continues the durable conversation and session-owned resources.
+The selected home stores profiles, plugins, and every profile-owned durable resource. The full `sdk` profile uses its credentials, settings, and session stores; `sdk-minimal` uses JSONL session storage and stores images under `$COSERVE_HOME/attachments/v1`, with request-image cache under `$COSERVE_HOME/cache/attachments`. Use a fresh home when those resources must be isolated, and a fresh session id for independent work. Reusing both a harness and session id continues the durable conversation and session-owned resources.
 
 See the [Python tutorial](../../docs/user/guide/python-sdk.md), [runnable example](examples/README.md), and [runtime wheel reference](../sdk-runtime/README.md).
 

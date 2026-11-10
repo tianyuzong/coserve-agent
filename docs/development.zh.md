@@ -160,7 +160,7 @@ pi-ai 检查会在内存中重新生成预期元数据。数据过期时，检�
 
 在 CI 之外（`CI` 不为 `true`），默认 worker 数遵循[本地 worker 预算](../scripts/parallelism.ts)：门禁调度器、`build`、`typecheck`、Oxlint 与 publint 为 12，Vitest fork 与本地覆盖率为 48。`doc-sync`、`test:docs`、`hygiene` 与 `check:all` 最多同时运行 8 个门禁，CI 中同样如此。`os.availableParallelism()` 报告的是宿主 CPU 数而不是容器的 CPU 配额，因此不设上限的默认值会在共享主机上超额订阅。CI 仍使用 runner 的 CPU 数。`DSH_GATE_CONCURRENCY`、`DSH_OXLINT_THREADS`、`DSH_COVERAGE_MAX_WORKERS` 与 Vitest 的 `--maxWorkers` 可覆盖这些默认值。
 
-`run-gates` 让 CLI 帮助生成器每次只运行一个子进程；直接执行 `pnpm run verify-cli-help` 时使用独立运行的 worker 预算。`DSH_CLI_HELP_CONCURRENCY` 可用正整数覆盖该子进程上限，并在启动前校验。每次调用仍使用独立的 `DSH_HOME` 与 `DSH_AGENTS_HOME`，超时限制仍为 30 秒。
+`run-gates` 让 CLI 帮助生成器每次只运行一个子进程；直接执行 `pnpm run verify-cli-help` 时使用独立运行的 worker 预算。`DSH_CLI_HELP_CONCURRENCY` 可用正整数覆盖该子进程上限，并在启动前校验。每次调用仍使用独立的 `COSERVE_HOME` 与 `COSERVE_AGENTS_HOME`，超时限制仍为 30 秒。
 
 ### CI 门禁
 

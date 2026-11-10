@@ -29,7 +29,7 @@ describe('runLoaderSmoke', () => {
       args: string[]
       execArgv: string[]
       cwd: string
-      dshHome: string
+      coserveHome: string
       agentsHome: string
       marker: string
       input: string
@@ -41,8 +41,8 @@ describe('runLoaderSmoke', () => {
       marker: 'present',
       input: '',
     })
-    expect(canonicalTempPath(output.dshHome)).toBe(canonicalTempPath(join(output.cwd, '.dsh')))
-    expect(canonicalTempPath(output.agentsHome)).toBe(canonicalTempPath(join(output.cwd, '.agents')))
+    expect(canonicalTempPath(output.coserveHome)).toBe(canonicalTempPath(join(output.cwd, '.coserve')))
+    expect(canonicalTempPath(output.agentsHome)).toBe(canonicalTempPath(join(output.cwd, '.coserve-agents')))
     expect(result.stderr).toContain('fixture stderr')
     expect(existsSync(output.cwd)).toBe(false)
   }, LOADER_SMOKE_TEST_TIMEOUT_MS)

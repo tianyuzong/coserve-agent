@@ -116,7 +116,7 @@ Current DeepSeek Harness Web GUI URL: "<advertised URL>".
 
 - **只覆盖两段**——版本之间变化的其他系统提示词文本，在不支持 in-history 提示词更新的路由上仍会改写第一条 system 消息。
 - **早期值保留**——早期格式会话在整个生命周期内都在系统提示词里保留旧 checkout 路径与 URL；只有之后的运行时上下文行是当前值。
-- **混用版本**——不含本包的版本会改写以本包启动的会话的第一条 system 消息，因此共用同一 `DSH_HOME` 的每个 checkout 都需要先包含本包，才能交替运行。
+- **混用版本**——不含本包的版本会改写以本包启动的会话的第一条 system 消息，因此共用同一 `COSERVE_HOME` 的每个 checkout 都需要先包含本包，才能交替运行。
 - **可选值**——两行运行时上下文是可选的，因此设置 `includeRuntimeContext: false` 但未设置 `complete: true` 的自定义 persona 会保留指向其请求从不携带之值的段落。随附的 `minimal` persona 两者都设置。
 - **没有段落的会话**——在 `surfaceContext: false` 隐藏两段时创建的会话，日志中两段都没有，因此恢复后的第一个请求会加入新段落，并在不支持 in-history 提示词更新的路由上改写第一条 system 消息。
 - **只认一版早期措辞**——投影按本包之前紧邻的版本渲染的段落识别；保存更早措辞的会话会得到当前说明。

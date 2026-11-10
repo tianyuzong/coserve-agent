@@ -32,8 +32,8 @@ const IMAGE_REF: ImageAttachmentRef = {
   width: 1,
   height: 1,
 }
-const HOST_IMAGE_PATH = '/host/.dsh/attachments/objects/aa/object'
-const MODEL_IMAGE_PATH = '/model/.dsh/attachments/objects/aa/object'
+const HOST_IMAGE_PATH = '/host/.coserve/attachments/objects/aa/object'
+const MODEL_IMAGE_PATH = '/model/.coserve/attachments/objects/aa/object'
 
 class MappedFileSystem extends Service {
   constructor(ctx: Context) {

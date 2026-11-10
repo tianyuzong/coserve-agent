@@ -14,7 +14,7 @@ export class DesktopUpdateSettings {
   readonly path: string
 
   /**
-   * @param userData - Electron userData, independent of Host and DSH_HOME.
+   * @param userData - Electron userData, independent of Host and COSERVE_HOME.
    * @param packagedChannel - Default selected by the installer build input.
    */
   constructor(userData: string, private readonly packagedChannel: DesktopUpdateChannel) {

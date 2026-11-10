@@ -87,7 +87,7 @@ async function load(mode?: string): Promise<{ ctx: Context; root: string; model:
         reconnect: { initialDelayMs: 20, maxDelayMs: 40, maxAttempts: 2 },
       }
       : name === '@deepseek-ai/dsh-attachment-local'
-        ? { dshHome: root }
+        ? { coserveHome: root }
         : name === '@deepseek-ai/dsh-agent-loop' ? { agents: [] } : {},
   }))))
   const ctx = new Context()

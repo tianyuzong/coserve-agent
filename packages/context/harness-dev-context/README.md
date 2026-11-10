@@ -116,7 +116,7 @@ These limits describe what the stability guarantee covers. They are current pack
 
 - **Two paragraphs only** — other system-prompt text that changes between releases still rewrites the first system message on routes without in-history prompt updates.
 - **Earlier values stay** — an earlier-format Session keeps its old checkout path and URL in the system prompt for its whole lifetime; only the later runtime-context lines are current.
-- **Mixed releases** — a release without this package rewrites the first system message of a Session started with it, so every checkout that serves a shared `DSH_HOME` needs this package before they alternate.
+- **Mixed releases** — a release without this package rewrites the first system message of a Session started with it, so every checkout that serves a shared `COSERVE_HOME` needs this package before they alternate.
 - **Optional values** — the two runtime-context lines are optional, so a custom persona that sets `includeRuntimeContext: false` without `complete: true` keeps the sections that point at values its requests never carry. The shipped `minimal` persona sets both.
 - **Sessions without the sections** — a Session created while `surfaceContext: false` hid both paragraphs has neither in its log, so the first resumed request adds the new sections and rewrites the first system message on routes without in-history prompt updates.
 - **One earlier wording** — the projection recognizes the paragraphs as the release immediately before this package rendered them; a Session holding an older wording gets the current guidance.

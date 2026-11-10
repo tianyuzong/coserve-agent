@@ -31,7 +31,7 @@ class RestartableServer {
       cwd: this.world,
       env: {
         ...process.env, NODE_OPTIONS: '',
-        DSH_HOME: join(this.world, 'home'), DSH_AGENTS_HOME: join(this.world, 'agents'),
+        COSERVE_HOME: join(this.world, 'home'), COSERVE_AGENTS_HOME: join(this.world, 'agents'),
         DSH_TELEMETRY_DISABLED: '1', DEEPSEEK_API_KEY: 'keyless-server-restart-fixture',
         DEEPSEEK_BASE_URL: this.modelUrl,
         DSH_WEB_RESTART_HOLD_STARTUP: holdStartup ? '1' : '0',

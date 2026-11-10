@@ -87,8 +87,8 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY || !runtime).each(['native', 'ptc'
       env: {
         DSH_PRIMARY_RUNTIME: runtime,
         DSH_PERMISSION_MODE: 'danger-full-access',
-        DSH_HOME: join(controlRoot, 'home'),
-        DSH_AGENTS_HOME: join(controlRoot, 'agents'),
+        COSERVE_HOME: join(controlRoot, 'home'),
+        COSERVE_AGENTS_HOME: join(controlRoot, 'agents'),
         DSH_TELEMETRY_DISABLED: '1',
         HTTP_PROXY: process.env.DSH_OFFICE_TEST_PROXY,
         HTTPS_PROXY: process.env.DSH_OFFICE_TEST_PROXY,
@@ -102,7 +102,7 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY || !runtime).each(['native', 'ptc'
           { insert: [{ id: 'skill-office', name: '@deepseek-ai/dsh-skill-office', config: { assetRoot, node: process.execPath, ...fixture ? { cli: fixture.cli } : {} } }] },
           { insert: [{ id: 'workspace-dependencies', name: '@deepseek-ai/dsh-tool-workspace-dependencies', config: { source: runtime! } }] },
           ...officeModelPatches(),
-          { id: 'attachment-local', config: { dshHome: imageRoot } },
+          { id: 'attachment-local', config: { coserveHome: imageRoot } },
           { id: 'session-persistence-jsonl', config: { root: sessionRoot, compression: 'none' } },
         ]))
       },

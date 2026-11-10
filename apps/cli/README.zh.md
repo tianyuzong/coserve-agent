@@ -8,7 +8,7 @@
 
 | 命令 | 用途 |
 |---|---|
-| `dsh <name>` / `dsh --profile <name>` | 启动位于 `$DSH_HOME/profiles/<name>` 的指定 profile。 |
+| `dsh <name>` / `dsh --profile <name>` | 启动位于 `$COSERVE_HOME/profiles/<name>` 的指定 profile。 |
 | `dsh --profile <name> --from-default-profile <template>` | 用随附模板的全新副本替换自定义 profile，然后启动它。 |
 | `dsh --profile acp` | 通过 ACP stdio 为自动化客户端提供服务，直至断开连接。 |
 | `dsh --profile headless "job"` | 运行一个全新的持久化会话，打印最终答案并退出。 |
@@ -40,7 +40,7 @@ profile 目录包含一个 `package.json`，其中记录树外插件依赖，以
 
 配置树以空根为起点，依次叠加以下配置层：
 - `dsh.profile.bundles` 中各组合包的 patch
-- profile 自身的 `cordis.patch.yml`，然后是 home 级的 `$DSH_HOME/cordis.patch.yml`
+- profile 自身的 `cordis.patch.yml`，然后是 home 级的 `$COSERVE_HOME/cordis.patch.yml`
 - `--patch` 指定的覆盖层
 
 `dsh.profile.bundles` 中列出的组合包先从 dsh 安装目录解析（`@deepseek-ai/dsh-base`、`@deepseek-ai/dsh-web-app`、`@deepseek-ai/dsh-headless`、`@deepseek-ai/dsh-sdk-app`、`@deepseek-ai/dsh-sdk-minimal`、`@deepseek-ai/dsh-acp-app`），再从 profile 自身的 `node_modules` 解析；pnpm 会将树外插件安装到该目录。

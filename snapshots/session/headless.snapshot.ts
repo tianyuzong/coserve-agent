@@ -79,7 +79,7 @@ function snapshotMode(value: string | undefined): SnapshotMode {
 }
 
 const mode = snapshotMode(process.env.DSH_SNAPSHOT)
-const RUNTIME_WORKSPACE_ENTRIES = ['.agents', '.dsh', '.snapshot-patches'] as const
+const RUNTIME_WORKSPACE_ENTRIES = ['.agents', '.coserve', '.snapshot-patches'] as const
 
 interface JsonObject {
   [key: string]: unknown
@@ -201,7 +201,7 @@ function contextOf(logs: readonly string[]): NormalizeContext {
 }
 
 async function persistedSessions(cwd: string): Promise<SessionLog[]> {
-  const root = join(cwd, '.dsh', 'sessions')
+  const root = join(cwd, '.coserve', 'sessions')
   const files = latestPersistedSessionPaths(await readdir(root, { recursive: true }))
   const logs = await Promise.all(files.map(async (file): Promise<SessionLog> => {
     const content = await readFile(join(root, file), 'utf8')
@@ -522,7 +522,7 @@ const workspaceSetups: Record<string, (cwd: string) => Promise<void>> = {
     await copyFile(join(repoRoot, `packages/experimental/cua-macos/${guidanceDirectory}/guidance.${extension}`), join(target, `guidance.${extension}`))
   },
   async 'windows-acl-skill'(cwd) {
-    const target = join(cwd, '.dsh', 'skills', 'diagnose-windows-sandbox-acl', 'SKILL.md')
+    const target = join(cwd, '.coserve', 'skills', 'diagnose-windows-sandbox-acl', 'SKILL.md')
     await mkdir(dirname(target), { recursive: true })
     await copyFile(join(repoRoot, 'packages/sandbox/sandbox-windows-acl/assets/diagnose-windows-sandbox-acl/SKILL.md'), target)
   },
@@ -546,12 +546,12 @@ const workspaceSetups: Record<string, (cwd: string) => Promise<void>> = {
     await writeFile(join(cwd, '.git', 'info', 'attributes'), WORKTREE_CHECKOUT_ATTRIBUTES)
     snapshotGit(cwd, ['config', 'filter.dsh-snapshot-checkout.smudge', WORKTREE_CHECKOUT_FILTER])
     await copyFile(join(cwd, '.git', 'config'), join(cwd, '.git', 'config.before-worktree'))
-    await writeFile(join(cwd, '.git', 'info', 'exclude'), '/.dsh/\n/.snapshot-patches/\n')
+    await writeFile(join(cwd, '.git', 'info', 'exclude'), '/.coserve/\n/.snapshot-patches/\n')
     await writeFile(join(cwd, 'tracked.txt'), 'DIRTY SOURCE\n')
     await writeFile(join(cwd, 'local.txt'), 'UNTRACKED SOURCE\n')
   },
   async 'editing-cordis-skill'(cwd) {
-    const target = join(cwd, '.dsh', 'skills', 'editing-cordis-compositions', 'SKILL.md')
+    const target = join(cwd, '.coserve', 'skills', 'editing-cordis-compositions', 'SKILL.md')
     await mkdir(dirname(target), { recursive: true })
     await copyFile(editingCordisSkill, target)
   },
@@ -926,14 +926,14 @@ function snapshotGit(cwd: string, args: string[]): string {
 
 /** Verify Git-owned state independently of the Session and exclude only its volatile administration files from the file oracle. */
 async function verifyWorktree(log: string, cwd: string): Promise<void> {
-  const checkout = join(cwd, '.agents', 'worktrees', 'isolated')
+  const checkout = join(cwd, '.coserve-agents', 'worktrees', 'isolated')
   expect(await readFile(join(cwd, '.git', 'config'))).toEqual(await readFile(join(cwd, '.git', 'config.before-worktree')))
   expect(await readFile(join(cwd, '.git', 'info', 'attributes'), 'utf8')).toBe(WORKTREE_CHECKOUT_ATTRIBUTES)
   expect(snapshotGit(cwd, ['config', 'filter.dsh-snapshot-checkout.smudge'])).toBe(WORKTREE_CHECKOUT_FILTER)
   expect(await readFile(join(checkout, 'tracked.txt'), 'utf8')).toBe('COMMITTED CONTENT\n')
   expect(await readFile(join(checkout, 'result.txt'), 'utf8')).toBe('WORKTREE RESULT\n')
   expect(existsSync(join(checkout, 'local.txt'))).toBe(false)
-  expect(await readFile(join(cwd, '.agents', 'worktrees', '.gitignore'), 'utf8')).toBe('*\n')
+  expect(await readFile(join(cwd, '.coserve-agents', 'worktrees', '.gitignore'), 'utf8')).toBe('*\n')
   expect(snapshotGit(cwd, ['branch', '--show-current'])).toBe('main')
   expect(snapshotGit(checkout, ['branch', '--show-current'])).toBe('isolated')
   expect(snapshotGit(checkout, ['rev-parse', 'HEAD'])).toBe(snapshotGit(cwd, ['rev-parse', 'HEAD']))
@@ -963,7 +963,7 @@ async function verifyProviderCwdResume(
   const otherHostCwd = await mkdtemp(join(tmpdir(), 'dsh-provider-resume-'))
   const env = {
     ...REPLAY_CREDENTIAL_ENV,
-    DSH_HOME: join(cwd, '.dsh'),
+    COSERVE_HOME: join(cwd, '.coserve'),
     DSH_SNAPSHOT: 'replay',
     DSH_SNAPSHOT_FILE: fixture,
     DSH_SNAPSHOT_PROVIDER: model.provider,
@@ -1245,7 +1245,7 @@ describe('headless recorded-session snapshots', () => {
         [{ type: 'session', version: SESSION_FORMAT_VERSION, id: 'child-a', createdAt: 10, parentSession: 'parent' }],
       ].map(rows => rows.map(row => JSON.stringify(row)).join('\n') + '\n')
       for (const content of logs) {
-        const directory = join(cwd, '.dsh', 'sessions', String(headerOf(content).id))
+        const directory = join(cwd, '.coserve', 'sessions', String(headerOf(content).id))
         await mkdir(directory, { recursive: true })
         await writeFile(join(directory, `session.v${SESSION_FORMAT_VERSION}.jsonl`), content)
       }
@@ -1459,7 +1459,7 @@ describe('headless recorded-session snapshots', () => {
               materializeProfilePatch(source, cwd, 'headless', join(cwd, patchRoot), index)
             })
             if (scenario.name === 'plugin-manager-mcp') {
-              const profileDir = join(cwd, '.dsh/profiles/headless')
+              const profileDir = join(cwd, '.coserve/profiles/headless')
               await mkdir(profileDir, { recursive: true })
               await copyFile(join(scenario.dir, 'profile.patch.yml'), join(profileDir, 'cordis.patch.yml'))
             }
@@ -1486,7 +1486,7 @@ describe('headless recorded-session snapshots', () => {
               expect(log).toContain('mcp__demo__ping')
               expect(log).toContain('pong')
               expect(mcpDemo.calls).toEqual(['ping'])
-              const saved = await readFile(join(cwd, '.dsh/profiles/headless/cordis.patch.yml'), 'utf8')
+              const saved = await readFile(join(cwd, '.coserve/profiles/headless/cordis.patch.yml'), 'utf8')
               expect(saved).toContain('id: demo')
               expect(saved).toContain('disabled: false')
             }

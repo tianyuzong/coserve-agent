@@ -49,7 +49,7 @@ describe('platform home patch', () => {
   it('keeps the composed JSONL row config and sets the plaintext compression the Worker requires', () => {
     expect(platformHomePatch(repoRoot, 'web')).toEqual([{
       id: 'session-persistence-jsonl',
-      config: { root: { __jsExpr: "dshHomePath('sessions')" }, compression: 'none' },
+      config: { root: { __jsExpr: "coserveHomePath('sessions')" }, compression: 'none' },
     }])
   })
 })
@@ -85,14 +85,14 @@ describe('image layout', () => {
 
   it('writes the home patch the image app-boot reads, keeping expression values', (test) => {
     const { root, installation } = subject(test)
-    const homePatch = [{ id: 'session-persistence-jsonl', config: { root: { __jsExpr: "dshHomePath('sessions')" }, compression: 'none' } }]
+    const homePatch = [{ id: 'session-persistence-jsonl', config: { root: { __jsExpr: "coserveHomePath('sessions')" }, compression: 'none' } }]
     const result = packVfsImage({
       profile: 'web', roster: ['subject'], installation: { name: '@scope/app', manifest: installation },
       workspaces: new Map([['subject', join(root, 'subject')]]), resolveFrom: root, entries: [], homePatch,
     })
     expect(HOME_PATCH_PATH).toBe('home/cordis.patch.yml')
     const text = new TextDecoder().decode(result.files[HOME_PATCH_PATH])
-    expect(text).toContain("!!js dshHomePath('sessions')")
+    expect(text).toContain("!!js coserveHomePath('sessions')")
     expect(yaml.load(text, { schema: entryListSchema })).toEqual(homePatch)
   })
 

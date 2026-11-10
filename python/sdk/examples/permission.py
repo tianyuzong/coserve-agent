@@ -20,7 +20,7 @@ def display(result: RunResult) -> None:
 def main() -> None:
     """Send an explicit permission command, then run another prompt in the same Session."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dsh-home", required=True, type=Path)
+    parser.add_argument("--coserve-home", required=True, type=Path)
     parser.add_argument("--workspace", type=Path, default=Path.cwd())
     parser.add_argument("--preset", required=True)
     parser.add_argument("--provider", default="deepseek-official")
@@ -30,7 +30,7 @@ def main() -> None:
         parser.error("--preset must be non-blank")
 
     with DeepSeekHarness(
-        dsh_home=str(args.dsh_home.resolve()), cwd=str(args.workspace.resolve()),
+        coserve_home=str(args.coserve_home.resolve()), cwd=str(args.workspace.resolve()),
         profile="sdk", provider=args.provider, model=args.model,
         env={"DSH_PERMISSION_MODE": "workspace-write"},
     ) as harness:

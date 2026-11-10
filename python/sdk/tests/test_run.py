@@ -162,7 +162,7 @@ for line in sys.stdin:
 @pytest.fixture
 def sdk(peer: Path, tmp_path: Path):
     with DeepSeekHarness(
-        cwd=str(tmp_path), dsh_home=str(tmp_path / "home"), request_timeout_seconds=5,
+        cwd=str(tmp_path), coserve_home=str(tmp_path / "home"), request_timeout_seconds=5,
         _launch_args=(sys.executable, str(peer)),
         env={"REQUEST_LOG": str(tmp_path / "requests.jsonl")},
     ) as harness:
@@ -216,7 +216,7 @@ def test_top_level_command_results_identify_distinct_sessions_and_allow_continui
 def test_run_adds_session_identity_without_changing_command_results(peer: Path, tmp_path: Path, result: dict) -> None:
     execution = {"commandId": "custom-command", "result": result}
     with DeepSeekHarness(
-        cwd=str(tmp_path), dsh_home=str(tmp_path / "home"), request_timeout_seconds=5,
+        cwd=str(tmp_path), coserve_home=str(tmp_path / "home"), request_timeout_seconds=5,
         _launch_args=(sys.executable, str(peer)),
         env={"REQUEST_LOG": str(tmp_path / "requests.jsonl"), "QUERY_RESPONSE": json.dumps({
             "kind": "command", "execution": execution,
@@ -319,7 +319,7 @@ def test_command_result_rejects_incomplete_lifecycle(sdk: DeepSeekHarness, text:
 
 def test_failure_completion_can_precede_handler_settlement(peer: Path, tmp_path: Path) -> None:
     with DeepSeekHarness(
-        cwd=str(tmp_path), dsh_home=str(tmp_path / "home"), request_timeout_seconds=5,
+        cwd=str(tmp_path), coserve_home=str(tmp_path / "home"), request_timeout_seconds=5,
         _launch_args=(sys.executable, str(peer)),
         env={"REQUEST_LOG": str(tmp_path / "requests.jsonl"), "QUERY_LIFECYCLE": "late-done",
              "QUERY_RESPONSE": json.dumps({"kind": "command", "execution": {
@@ -369,7 +369,7 @@ def test_command_timeout_keeps_runtime_responsive(sdk: DeepSeekHarness) -> None:
 ])
 def test_run_rejects_invalid_routing_responses_as_protocol_errors(peer: Path, tmp_path: Path, response: object) -> None:
     with DeepSeekHarness(
-        cwd=str(tmp_path), dsh_home=str(tmp_path / "home"), request_timeout_seconds=5,
+        cwd=str(tmp_path), coserve_home=str(tmp_path / "home"), request_timeout_seconds=5,
         _launch_args=(sys.executable, str(peer)),
         env={"REQUEST_LOG": str(tmp_path / "requests.jsonl"), "QUERY_RESPONSE": json.dumps(response)},
     ) as sdk:
@@ -405,7 +405,7 @@ def test_run_rejects_malformed_completion_and_releases_its_subscription(
     peer: Path, tmp_path: Path, completion: dict,
 ) -> None:
     with DeepSeekHarness(
-        cwd=str(tmp_path), dsh_home=str(tmp_path / "home"),
+        cwd=str(tmp_path), coserve_home=str(tmp_path / "home"),
         _launch_args=(sys.executable, str(peer)),
         env={"REQUEST_LOG": str(tmp_path / "requests.jsonl"),
              "QUERY_COMPLETION": json.dumps(completion),
@@ -434,7 +434,7 @@ def test_run_rejects_malformed_completion_and_releases_its_subscription(
 ])
 def test_run_rejects_malformed_native_results(peer: Path, tmp_path: Path, execution: dict) -> None:
     with DeepSeekHarness(
-        cwd=str(tmp_path), dsh_home=str(tmp_path / "home"),
+        cwd=str(tmp_path), coserve_home=str(tmp_path / "home"),
         _launch_args=(sys.executable, str(peer)),
         env={"REQUEST_LOG": str(tmp_path / "requests.jsonl"), "QUERY_RESPONSE": json.dumps({
             "kind": "command", "execution": execution,

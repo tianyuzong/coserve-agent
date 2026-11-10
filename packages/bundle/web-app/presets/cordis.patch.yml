@@ -21,6 +21,10 @@
               maxBytes: 65536
           - id: time-context
             name: '@deepseek-ai/dsh-time-context'
+          - id: castudio-context
+            name: '@deepseek-ai/dsh-castudio-context'
+          - id: tool-castudio
+            name: '@deepseek-ai/dsh-tool-castudio'
           - id: tool-bash
             name: '@deepseek-ai/dsh-tool-bash'
             disabled: !!js process.platform === 'win32'

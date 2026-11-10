@@ -30,7 +30,7 @@ class DeepSeekHarnessConfig:
     dsh_bin: str | None = None
     profile: str = "sdk"
     patches: tuple[str, ...] = ()
-    dsh_home: str | None = None
+    coserve_home: str | None = None
     env: dict[str, str] = field(default_factory=dict)
     initialize_timeout_seconds: float = 30.0
     request_timeout_seconds: float | None = None
@@ -131,7 +131,7 @@ class DeepSeekHarness:
                 dsh_bin=self.config.dsh_bin,
                 profile=self.config.profile,
                 patches=self.config.patches,
-                dsh_home=self.config.dsh_home,
+                coserve_home=self.config.coserve_home,
                 cwd=runtime_cwd,
                 env=env,
                 initialize_timeout_seconds=self.config.initialize_timeout_seconds,

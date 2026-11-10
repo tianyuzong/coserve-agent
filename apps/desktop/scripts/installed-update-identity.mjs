@@ -21,7 +21,7 @@ export function configureInstalledUpdateIdentity(app, run, metadata, environment
   for (const directory of [paths.userData, paths.harnessHome, paths.journals]) mkdirSync(directory, { recursive: true })
   app.setPath('userData', paths.userData)
   app.setPath('sessionData', paths.userData)
-  environment.DSH_HOME = paths.harnessHome
+  environment.COSERVE_HOME = paths.harnessHome
   environment.DSH_DESKTOP_UPDATE_JOURNAL_DIR = paths.journals
   return paths
 }

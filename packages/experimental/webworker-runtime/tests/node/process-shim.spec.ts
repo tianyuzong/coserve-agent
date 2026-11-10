@@ -30,9 +30,9 @@ describe('process shim', () => {
   })
 
   it('publishes cwd, env, and the Node release its internal modules follow', () => {
-    const shim = installProcessGlobal({ cwd: '/dsh', env: { DSH_HOME: '/dsh/home' } })
+    const shim = installProcessGlobal({ cwd: '/dsh', env: { COSERVE_HOME: '/dsh/home' } })
     expect(shim.cwd()).toBe('/dsh')
-    expect(shim.env.DSH_HOME).toBe('/dsh/home')
+    expect(shim.env.COSERVE_HOME).toBe('/dsh/home')
     expect(shim.title).toBe('dsh-webworker')
     // The vendored Loader reaches Node internals from Node 22 on; execArgv carries no --expose-internals.
     expect(shim.versions.node).toBe('24.18.0')

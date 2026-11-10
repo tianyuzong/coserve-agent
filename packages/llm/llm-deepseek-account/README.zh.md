@@ -37,7 +37,7 @@ kind: "package-reference"
 
 提供的模型会在 Web 模型选择器中，于名称旁显示列表条目在 `client_metadata["deepseek-harness"].badge` 下声明的角标。`client_metadata` 存放任何版本都可以忽略的客户端专属数据；与 `client_requirements` 不同，其中的内容不会隐藏模型。`badge.text` 是字符串，或以小写语言 id（如 `en`、`zh`、`ja`）为键且包含 `en` 的对象；选择器显示当前语言的文字，没有时显示英文。每段文字去掉首尾空白后须为单行，长度为 1 到 12 个字符；一个 emoji 或带组合符号的字母算作一个字符。`badge.tone` 取 `neutral`、`info`、`success` 或 `warning`；缺省或其他取值按 `neutral` 显示。这条路径上任何一层缺省或为 `null` 时不显示角标，因为本版本没有可回退的内置角标。某一层不是对象或角标无法读取时，角标被丢弃，所属模型照常提供。角标只用于展示：模型请求、Session 事件和面向模型的工具都不携带它。
 
-`modelOverrides` 调整单个模型而不替换整个目录。键是模型 id；值的字段与 [Messages `models` 条目](../llm-deepseek/README.zh.md#minimal-configuration)相同，未设置的字段沿用下层的值。覆盖作用在列表和内置目录之上；不能新增模型，也不能让被拒绝的模型变得可用。列表声明的能力不约束覆盖：覆盖的 `maxTokens` 高于列表的 `max_output_tokens` 时按覆盖值发送，超出服务端限制的请求由服务端拒绝。覆盖指向的模型既不在列表里、内置目录也不认识，或者被列出的模型拒绝时，会成为模型页上该提供方的诊断信息；模型页不为此路由提供编辑器。被拒绝且内置目录不认识的模型，其覆盖要等当前版本能用该模型时才校验。此路由没有 `models` 字段；配置里仍写了它时，加载即失败并提示改用 `modelOverrides`。修改 `$DSH_HOME/profiles/<profile>/cordis.patch.yml`，下一次请求即生效。
+`modelOverrides` 调整单个模型而不替换整个目录。键是模型 id；值的字段与 [Messages `models` 条目](../llm-deepseek/README.zh.md#minimal-configuration)相同，未设置的字段沿用下层的值。覆盖作用在列表和内置目录之上；不能新增模型，也不能让被拒绝的模型变得可用。列表声明的能力不约束覆盖：覆盖的 `maxTokens` 高于列表的 `max_output_tokens` 时按覆盖值发送，超出服务端限制的请求由服务端拒绝。覆盖指向的模型既不在列表里、内置目录也不认识，或者被列出的模型拒绝时，会成为模型页上该提供方的诊断信息；模型页不为此路由提供编辑器。被拒绝且内置目录不认识的模型，其覆盖要等当前版本能用该模型时才校验。此路由没有 `models` 字段；配置里仍写了它时，加载即失败并提示改用 `modelOverrides`。修改 `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`，下一次请求即生效。
 
 ```yaml
 - id: llm-deepseek-account

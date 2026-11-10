@@ -30,7 +30,7 @@ describe('external tasks with a nested fork', () => {
     const idle = join(root, 'idle')
     const patch = join(root, 'nested.patch.yml')
     const env = {
-      DSH_HOME: join(root, 'home'), DSH_TELEMETRY_DISABLED: '1',
+      COSERVE_HOME: join(root, 'home'), DSH_TELEMETRY_DISABLED: '1',
       DSH_TEST_CHILD_READY: ready, DSH_TEST_CHILD_RELEASE: release, DSH_TEST_ROOT_IDLE: idle,
       DSH_TEST_SUMMARY_ERROR: outcome === 'error' ? '1' : '0',
     }
@@ -59,7 +59,7 @@ describe('external tasks with a nested fork', () => {
           description: 'nested SDK profile', initializeTimeoutMs: 30_000,
         }, options)
         run = await startSdkRun(request, {
-          profile, patches: [patch], dshHome: env.DSH_HOME, cwd: root, provider: 'mock', model: 'mock', env,
+          profile, patches: [patch], coserveHome: env.COSERVE_HOME, cwd: root, provider: 'mock', model: 'mock', env,
           shutdownTimeoutMs: 1_000, disposeEofGraceMs: 6_000, disposeGraceMs: 3_000,
         })
       } else {

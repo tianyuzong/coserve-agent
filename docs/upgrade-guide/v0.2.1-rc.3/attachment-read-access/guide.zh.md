@@ -19,5 +19,5 @@ Host 把该引用交给已有的 `AttachmentStore.readImage(ref)`，将 ID、实
 
 1. 把 wire 调用从 `{ sessionId, attachmentId: ref.attachmentId }` 改为 `{ sessionId, attachment: ref }`，使用消息图片块中的完整引用。把 Client 调用从 `session.readAttachment(ref.attachmentId)` 改为 `session.readAttachment(ref)`。
 2. 把返回的 `name` 和 `originalDimensions` 视为调用方的显示信息。只有 ID、媒体类型、字节数、宽度和高度会与存储对象校验。
-3. 如果部署依赖 Session 关联来隔离图片，请在升级前改用独立 Host 实例及各自的 `DSH_HOME` 目录。随附组合不会在一个 Host 内按 Session 选择独立存储。Gateway 权限约束接口调用，不约束图片的 Session 关联。
+3. 如果部署依赖 Session 关联来隔离图片，请在升级前改用独立 Host 实例及各自的 `COSERVE_HOME` 目录。随附组合不会在一个 Host 内按 Session 选择独立存储。Gateway 权限约束接口调用，不约束图片的 Session 关联。
 4. 确认获准调用的请求可以凭完整引用读取其 Session 中没有记录的图片，即使该 Session 不存在也可以读取。Gateway 拒绝的请求、缺失图片和固有元数据不符的引用必须失败。已有 Session 日志和存储图片无需迁移。

@@ -17,7 +17,7 @@ description: "运行时不变式注册表包和每个包的 `./invariant` 子路
 
 ## 迁移
 
-1. 从 `cordis.yml`、`$DSH_HOME/profiles/<name>/cordis.patch.yml` 和 `--patch` overlay 中删除 `name` 为 `@deepseek-ai/dsh-invariants` 或以 `/invariant` 结尾的行。
+1. 从 `cordis.yml`、`$COSERVE_HOME/profiles/<name>/cordis.patch.yml` 和 `--patch` overlay 中删除 `name` 为 `@deepseek-ai/dsh-invariants` 或以 `/invariant` 结尾的行。
 2. 删除指向 id `invariants`、`session-invariant`、`agent-invariant`、`scope-invariant` 或 `agent-loop-invariant` 的 patch 条目。
 3. 从 `package.json` 依赖中移除 `@deepseek-ai/dsh-invariants`，并删除对它和 `<package>/invariant` 子路径的导入。依赖上述四个发出方重新抛出 `INVARIANT` 失败的插件，必须通过自己的通道报告该失败。
 4. 确认：`dsh` 启动该 profile 时没有模块未找到错误或 `patch: entry ... not found` 警告，`tsc` 不再报告缺失的模块或导出。

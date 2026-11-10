@@ -30,7 +30,7 @@ def _client(tmp_path: Path, mode: str, monkeypatch: pytest.MonkeyPatch, *patches
     _select_mode(mode, monkeypatch)
     return HarnessClient(
         HarnessConfig(
-            dsh_home=str(tmp_path / "home"),
+            coserve_home=str(tmp_path / "home"),
             patches=tuple(str(patch) for patch in patches),
             cwd=str(tmp_path),
             env={
@@ -74,7 +74,7 @@ def test_python_sdk_applies_an_ordered_profile_patch(
     harness = DeepSeekHarness(
         model="deepseek-v4-pro",
         cwd=str(tmp_path),
-        dsh_home=str(tmp_path / "home"),
+        coserve_home=str(tmp_path / "home"),
         patches=(str(patch),),
         env={"DSH_PERMISSION_MODE": "danger-full-access"},
         api_key="sk-dummy-for-boot",

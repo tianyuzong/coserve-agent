@@ -103,7 +103,7 @@ export async function bootProductionProfile(options: ProductionProfileOptions): 
       // The launcher's own profile facts, so profile-backed services activate as in production.
       const profileContext: ProfileContext = {
         name: options.profile, dir: profile.dir, patchPath: profile.patchPath, installAnchor,
-        cwd: process.cwd(), home: process.env['DSH_HOME'] ?? join(homedir(), '.dsh'),
+        cwd: process.cwd(), home: process.env['COSERVE_HOME'] ?? join(homedir(), '.coserve'),
         startedBundles: profile.layers.map(layer => layer.packageName),
         overlays: overlays.flat(), telemetryDisabledEnv: process.env['DSH_TELEMETRY_DISABLED'],
       }

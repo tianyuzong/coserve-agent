@@ -37,7 +37,7 @@ Owner, viewer, and the Liveshare server must use matching protocol versions. The
 
 A dsh installation ships this package as a runtime dependency, but no shipped profile selects its bundle, so none of its plugins run and the plugin manager lists it in neither **Built-in plugin settings** nor **Experimental plugins**, including the **More** page. The bundle ID stays addressable, so a page that opens a bundle by ID still reaches this bundle's details.
 
-Enable it by inserting its one entry into the active profile's patch file, `$DSH_HOME/profiles/<profile>/cordis.patch.yml`. That file is one YAML sequence of Loader patches; this is the entry the bundle's own [patch](cordis.patch.yml) inserts, and `!!js` expressions are allowed there:
+Enable it by inserting its one entry into the active profile's patch file, `$COSERVE_HOME/profiles/<profile>/cordis.patch.yml`. That file is one YAML sequence of Loader patches; this is the entry the bundle's own [patch](cordis.patch.yml) inserts, and `!!js` expressions are allowed there:
 
 ```yaml
 - insert:
@@ -51,9 +51,9 @@ Enable it by inserting its one entry into the active profile's patch file, `$DSH
         ownerStateFile: /path/to/owner-shares.json
 ```
 
-Replace every `<...>` placeholder with the deployment's own value: the identity provider, tenant, and subject are the ones its Liveshare server deployment was configured with, and the example holdings are placeholders rather than real identities. The environment layer works too: set `LIVESHARE_*` in `$DSH_HOME/.env` and keep the bundle's own `!!js process.env.…` expressions. The Liveshare server address is not part of this configuration: the owner enters it in the Share dialog on first use, as Owner configuration below describes.
+Replace every `<...>` placeholder with the deployment's own value: the identity provider, tenant, and subject are the ones its Liveshare server deployment was configured with, and the example holdings are placeholders rather than real identities. The environment layer works too: set `LIVESHARE_*` in `$COSERVE_HOME/.env` and keep the bundle's own `!!js process.env.…` expressions. The Liveshare server address is not part of this configuration: the owner enters it in the Share dialog on first use, as Owner configuration below describes.
 
-The profile can select the bundle instead of patching it: add `"@deepseek-ai/dsh-experimental-liveshare"` to `dsh.profile.bundles` in `$DSH_HOME/profiles/<profile>/package.json`, which is the write the card's switch performs once the card is listed.
+The profile can select the bundle instead of patching it: add `"@deepseek-ai/dsh-experimental-liveshare"` to `dsh.profile.bundles` in `$COSERVE_HOME/profiles/<profile>/package.json`, which is the write the card's switch performs once the card is listed.
 
 Either route takes effect only on a recomposition. With the profile's HMR row enabled, the change applies when the profile is re-read; without it, the next `dsh` start applies it. Once at least one row the bundle declares runs, its card appears under **Experimental plugins** and on the **More** page. Removing the entries, disabling them, or removing the bundle from `dsh.profile.bundles` stops those rows and the card leaves both lists again.
 
@@ -64,7 +64,7 @@ Either route takes effect only on a recomposition. With the profile's HMR row en
 | `LIVESHARE_OWNER_PROVIDER_ID` / `LIVESHARE_OWNER_TENANT_ID` / `LIVESHARE_OWNER_SUBJECT_ID` | unset | Owner identity used for legacy subject matching; it does not replace a server-issued credential |
 | `LIVESHARE_OWNER_DISPLAY_NAME` | unset | Display label for the configured identity |
 | `LIVESHARE_ALLOWED_SUBJECTS` | empty | Deployment-wide subject allowlist in addition to the share's access rules |
-| `LIVESHARE_OWNER_STATE_FILE` | `$DSH_HOME/liveshare/owner-shares.json` | Stored share metadata, the saved Liveshare server address, instance identity, and management tokens |
+| `LIVESHARE_OWNER_STATE_FILE` | `$COSERVE_HOME/liveshare/owner-shares.json` | Stored share metadata, the saved Liveshare server address, instance identity, and management tokens |
 | `LIVESHARE_OWNER_CREDENTIAL_FILE` | `owner-credential.json` beside the state file | Stored credential bound to the Liveshare server that issued it |
 
 The Liveshare server address is set on first use: enter it in the Share dialog's address field and save it. The saved address persists in the owner state file, and later shares publish to it; a publication already waiting for registration keeps its starting server address in its registration, stored record, and returned link, and existing shares retain their recorded Liveshare server address. Clearing the saved address through the share-management Remote leaves this host without one — creating a share then reports that an address has to be saved — rather than falling back to a deployment value. The name a reader sees beside a share comes from the display name on the Relay-verified credential, and local configuration cannot override it; a credential that carries only a subject shows that subject's label. Provider application secrets belong to the Liveshare server, not this configuration.

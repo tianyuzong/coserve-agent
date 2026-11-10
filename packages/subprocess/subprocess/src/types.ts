@@ -12,11 +12,14 @@ import type { Duplex, Readable, Writable } from 'node:stream'
 /** Namespace prefix reserved for DeepSeek Harness-managed child environment facts. */
 export const DSH_ENV_PREFIX = 'DSH_' as const
 
-/** One environment key inside the managed {@link DSH_ENV_PREFIX} namespace. */
-export type DshEnvironmentKey = `${typeof DSH_ENV_PREFIX}${string}`
+/**
+ * One environment key inside the managed namespaces: `DSH_*` harness facts plus
+ * the `COSERVE_HOME` home override.
+ */
+export type DshEnvironmentKey = `${typeof DSH_ENV_PREFIX}${string}` | 'COSERVE_HOME'
 
 /** Trusted DeepSeek Harness variables for one child-process execution. */
-export type DshEnvironment = Readonly<Record<DshEnvironmentKey, string>>
+export type DshEnvironment = Readonly<Partial<Record<DshEnvironmentKey, string>>>
 
 /** One captured stream: the (possibly truncated) text plus recovery info. */
 export interface CollectedOutput {

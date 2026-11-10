@@ -73,11 +73,11 @@ export interface RestartOptions {
 export async function paidFixture(cleanups: Array<() => Promise<void>>, options: FixtureOptions = {}) {
   const root = await mkdtemp(join(tmpdir(), 'dsh-paid-translator-'))
   cleanups.push(async () => { await rm(root, { recursive: true, force: true }) })
-  const previousHome = process.env.DSH_HOME
-  process.env.DSH_HOME = root
+  const previousHome = process.env.COSERVE_HOME
+  process.env.COSERVE_HOME = root
   cleanups.push(async () => {
-    if (previousHome === undefined) Reflect.deleteProperty(process.env, 'DSH_HOME')
-    else process.env.DSH_HOME = previousHome
+    if (previousHome === undefined) Reflect.deleteProperty(process.env, 'COSERVE_HOME')
+    else process.env.COSERVE_HOME = previousHome
   })
   const requests: NativeRequest[] = [], errors: unknown[] = [], handlers = new Set<Promise<void>>()
   let auditId = SessionId('paid-translation')

@@ -15,7 +15,7 @@ Existing profiles are not migrated automatically. A selected `@deepseek-ai/dsh-e
 
 ## Migration
 
-1. Stop Web or quit Desktop. Back up `$DSH_HOME/profiles/<name>/package.json` and its sibling `cordis.patch.yml`. Use `~/.dsh` when `DSH_HOME` is unset; the standard profile names are `web` and `desktop`. For a custom profile, use its name.
+1. Stop Web or quit Desktop. Back up `$COSERVE_HOME/profiles/<name>/package.json` and its sibling `cordis.patch.yml`. Use `~/.coserve` when `COSERVE_HOME` is unset; the standard profile names are `web` and `desktop`. For a custom profile, use its name.
 2. Edit `dsh.profile.bundles` in that `package.json`. Remove every `@deepseek-ai/dsh-experimental-tool-worktree` entry. To keep worktree support through the unified switch, add `@deepseek-ai/dsh-experimental-forge-bundle` once; if it is already selected, keep that entry. To disable both features, remove both bundle names. Preserve all other entries and fields.
 3. Keep existing `cordis.patch.yml` overrides: the `worktree`, `tool-worktree`, and `optional-forge-panel` ids are unchanged. To use the Forge panel without exposing the model tool, add or update this entry in the existing patch list:
 

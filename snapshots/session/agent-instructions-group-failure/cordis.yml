@@ -1,4 +1,4 @@
-# The snapshot harness supplies scenario-local .dsh and .agents roots.
+# The snapshot harness supplies scenario-local .coserve and .coserve-agents roots.
 - id: agent-default-model
   name: '@deepseek-ai/dsh-agent-default-model'
   config:
@@ -8,7 +8,7 @@
 - id: session-persistence-jsonl
   name: '@deepseek-ai/dsh-session-persistence-jsonl'
   config:
-    root: !!js dshHomePath('sessions')
+    root: !!js coserveHomePath('sessions')
     compression: none
 
 - id: agent-instructions

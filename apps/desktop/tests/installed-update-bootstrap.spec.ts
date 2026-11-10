@@ -35,14 +35,14 @@ export const app = {
 `)
       await writeFile(join(bootstrap, 'lib/main.js'), `
 import { app } from 'electron'
-console.log(JSON.stringify({ paths: app.paths, home: process.env.DSH_HOME, journals: process.env.DSH_DESKTOP_UPDATE_JOURNAL_DIR }))
+console.log(JSON.stringify({ paths: app.paths, home: process.env.COSERVE_HOME, journals: process.env.DSH_DESKTOP_UPDATE_JOURNAL_DIR }))
 `)
       const results = []
       for (const version of versions) {
         await writeFile(join(bootstrap, 'package.json'), JSON.stringify({ type: 'module', version, dshDesktopAppId: run.appId }))
         const { stdout, stderr } = await promisify(execFile)(process.execPath, [join(bootstrap, 'qualification-bootstrap.mjs')], {
           windowsHide: true, env: { SystemRoot: process.env.SystemRoot, PATH: process.env.PATH,
-            DSH_HOME: 'must-not-be-used', DSH_DESKTOP_UPDATE_JOURNAL_DIR: 'must-not-be-used' },
+            COSERVE_HOME: 'must-not-be-used', DSH_DESKTOP_UPDATE_JOURNAL_DIR: 'must-not-be-used' },
         })
         expect(stderr).toBe('')
         results.push(JSON.parse(stdout))
@@ -57,12 +57,12 @@ console.log(JSON.stringify({ paths: app.paths, home: process.env.DSH_HOME, journ
 
   it('refuses foreign metadata before creating any data directory or changing the environment', async () => {
     await fixture(async (directory) => {
-      const env = { DSH_HOME: 'existing' }
+      const env = { COSERVE_HOME: 'existing' }
       const app = { getPath: () => directory, setPath: (): never => { throw new Error('unexpected path change') } }
       expect(() => configureInstalledUpdateIdentity(app, { id: 'a'.repeat(24), versions },
         { version: versions[0], dshDesktopAppId: 'com.deepseek.dsh' }, env)).toThrow('identity')
       expect(await readdir(directory)).toEqual([])
-      expect(env).toEqual({ DSH_HOME: 'existing' })
+      expect(env).toEqual({ COSERVE_HOME: 'existing' })
     })
   })
 

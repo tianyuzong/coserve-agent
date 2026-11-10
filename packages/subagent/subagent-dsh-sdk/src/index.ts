@@ -41,7 +41,7 @@ export interface Config {
   /** Ordered per-launch profile patch files, resolved and checked at plugin load. */
   patches: string[]
   /** Absolute isolated Harness home for every nested child process. */
-  dshHome: string
+  coserveHome: string
   /** Provider route the child runtime initializes with (default `deepseek-official`). */
   provider: string
   /** Model the child runtime initializes with (default `deepseek-v4-flash`). */
@@ -72,7 +72,7 @@ export const Config: z<Config> = z.object({
   dshBin: z.string(),
   profile: z.string().default('sdk'),
   patches: z.array(z.string()).default([]),
-  dshHome: z.string().required(),
+  coserveHome: z.string().required(),
   provider: z.string().default('deepseek-official'),
   model: z.string().default('deepseek-v4-flash'),
   maxTokens: z.number().step(1).min(1).max(Number.MAX_SAFE_INTEGER),
@@ -148,7 +148,7 @@ class SdkSubagentProvider implements SubagentProvider {
       ...this.config.dshBin === undefined ? {} : { dshBin: this.config.dshBin },
       profile: this.config.profile,
       patches: this.config.patches,
-      dshHome: this.config.dshHome,
+      coserveHome: this.config.coserveHome,
       cwd,
       originCwd: request.parent.session.header.cwd,
       ...route,
@@ -175,7 +175,7 @@ export function apply(ctx: Context, config: Config): void {
   if (resolved.maxTokens !== undefined && (!Number.isSafeInteger(resolved.maxTokens) || resolved.maxTokens <= 0)) {
     throw new TypeError('subagent-dsh-sdk maxTokens must be a positive safe integer')
   }
-  if (!isAbsolute(resolved.dshHome)) throw new TypeError('subagent-dsh-sdk dshHome must be an absolute path')
+  if (!isAbsolute(resolved.coserveHome)) throw new TypeError('subagent-dsh-sdk coserveHome must be an absolute path')
   const launchPaths: ResolvedConfig = {
     ...resolved,
     patches: resolved.patches.map((path, index) => resolveConfiguredFile(`patches[${String(index)}]`, path)),

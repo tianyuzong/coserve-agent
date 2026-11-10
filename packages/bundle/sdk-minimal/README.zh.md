@@ -25,10 +25,10 @@ kind: "package-bundle"
 <a id="use-this-package"></a>
 ## 使用本包
 
-直接启动该 profile，或从 Python SDK 选择它。提供显式 `DSH_HOME`、使用一次性 workspace，并通过 `DEEPSEEK_API_KEY` 提供模型凭据。
+直接启动该 profile，或从 Python SDK 选择它。提供显式 `COSERVE_HOME`、使用一次性 workspace，并通过 `DEEPSEEK_API_KEY` 提供模型凭据。
 
 ```sh
-export DSH_HOME=/absolute/path/to/example-dsh-home
+export COSERVE_HOME=/absolute/path/to/example-dsh-home
 dsh --profile sdk-minimal
 ```
 
@@ -50,7 +50,7 @@ dsh --profile sdk-minimal
 <details>
 <summary>实现细节——点击展开</summary>
 
-该 bundle 的单个 insert 就是完整应用配置树：SDK stdio 启动与 JSON-RPC 服务、一个由环境配置的 DeepSeek 适配器、显式 agent 核心、按配置启用的 MCP 资源工具、本地文件系统、图片附件、自动上下文压缩与子进程服务、Session 工作目录状态及其工具、按平台选择的持久 shell PTY，以及位于 `$DSH_HOME/sessions` 的未压缩 JSONL 持久化。它不继承其他 bundle，因此每个额外配置项都是显式 profile 变更。
+该 bundle 的单个 insert 就是完整应用配置树：SDK stdio 启动与 JSON-RPC 服务、一个由环境配置的 DeepSeek 适配器、显式 agent 核心、按配置启用的 MCP 资源工具、本地文件系统、图片附件、自动上下文压缩与子进程服务、Session 工作目录状态及其工具、按平台选择的持久 shell PTY，以及位于 `$COSERVE_HOME/sessions` 的未压缩 JSONL 持久化。它不继承其他 bundle，因此每个额外配置项都是显式 profile 变更。
 
 ### 源码地图
 
@@ -95,7 +95,7 @@ dsh --profile sdk-minimal
 <a id="known-limitations-and-deferred-work"></a>
 
 - **该组合刻意省略共享产品服务** — 需要 settings、托管凭据、策略预设、遥测、Web 工具或完整默认工具清单时，请选择 `dsh --profile sdk`。
-- **图片读取需要支持图片输入的模型** — 选择适配器声明支持图片输入的路由；纯文本路由会返回工具错误。图片存储在 `$DSH_HOME/attachments/v1` 下。
+- **图片读取需要支持图片输入的模型** — 选择适配器声明支持图片输入的路由；纯文本路由会返回工具错误。图片存储在 `$COSERVE_HOME/attachments/v1` 下。
 - **压缩由系统自动执行** — 通过 profile patch 配置 [compaction-basic](../../compaction/compaction-basic/README.zh.md)。SDK 提示词文本不会执行 `/compact` 或其他斜杠命令。
 - **用户 patch 可以扩展配置树并破坏 stdout** — profile 自定义属于受信任的应用组合；向 stdout 写入普通文本的插件会破坏 JSON-RPC 分帧。
 

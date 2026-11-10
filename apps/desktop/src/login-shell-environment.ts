@@ -13,7 +13,7 @@ const FALLBACK_SHELLS = ['/bin/zsh', '/bin/bash', '/bin/sh'] as const
 const PROBE_ENVIRONMENT = { DISABLE_AUTO_UPDATE: 'true', ZSH_TMUX_AUTOSTARTED: 'true', ZSH_TMUX_AUTOSTART: 'false' } as const
 /** Variables that describe the probe shell process rather than the user's configuration. */
 const SHELL_SESSION_KEYS = new Set(['PWD', 'OLDPWD', 'SHLVL', '_', ...Object.keys(PROBE_ENVIRONMENT)])
-/** Desktop resolves paths such as `DSH_HOME` before the read, so the Host keeps the same inherited values. */
+/** Desktop resolves paths such as `COSERVE_HOME` before the read, so the Host keeps the same inherited values. */
 const LAUNCHER_OWNED_PREFIXES = ['DSH_', 'ELECTRON_'] as const
 
 /** Validated login-shell read settings. */

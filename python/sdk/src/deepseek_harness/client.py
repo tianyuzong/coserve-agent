@@ -29,7 +29,7 @@ class HarnessConfig:
     dsh_bin: str | None = None
     profile: str = "sdk"
     patches: tuple[str, ...] = ()
-    dsh_home: str | None = None
+    coserve_home: str | None = None
     cwd: str | None = None
     env: dict[str, str] | None = None
     initialize_timeout_seconds: float = 30.0
@@ -598,14 +598,14 @@ class HarnessClient:
         else:
             base = (str(Path(self.config.dsh_bin).expanduser().resolve()),)
 
-        if self.config.dsh_home is not None:
-            if not self.config.dsh_home.strip():
-                raise ValueError("HarnessConfig requires a non-empty dsh_home")
-            env["DSH_HOME"] = str(Path(self.config.dsh_home).expanduser().resolve())
-        elif not env.get("DSH_HOME", "").strip():
+        if self.config.coserve_home is not None:
+            if not self.config.coserve_home.strip():
+                raise ValueError("HarnessConfig requires a non-empty coserve_home")
+            env["COSERVE_HOME"] = str(Path(self.config.coserve_home).expanduser().resolve())
+        elif not env.get("COSERVE_HOME", "").strip():
             raise ValueError(
-                "HarnessConfig requires an explicit dsh_home or non-empty DSH_HOME; "
-                "the Python SDK never uses ~/.dsh implicitly"
+                "HarnessConfig requires an explicit coserve_home or non-empty COSERVE_HOME; "
+                "the Python SDK never uses ~/.coserve implicitly"
             )
 
         patches = tuple(

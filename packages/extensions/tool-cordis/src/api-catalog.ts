@@ -5765,7 +5765,11 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'BashEnvContributor',
-    declaration: 'export interface BashEnvContributor {\n    name: string;\n    variables: Readonly<Record<DshEnvironmentKey, BashEnvVariable>>;\n    resolve(execution: ToolExecution): Readonly<Partial<Record<DshEnvironmentKey, string>>>;\n}',
+    declaration: 'export interface BashEnvContributor {\n    name: string;\n    variables: Readonly<Record<BashEnvContributorKey, BashEnvVariable>>;\n    resolve(execution: ToolExecution): Readonly<Partial<Record<BashEnvContributorKey, string>>>;\n}',
+  },
+  {
+    name: 'BashEnvContributorKey',
+    declaration: 'export type BashEnvContributorKey = `${typeof DSH_ENV_PREFIX}${string}`;',
   },
   {
     name: 'BashEnvVariable',
@@ -5773,7 +5777,7 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'BashEnvVariableInfo',
-    declaration: 'export interface BashEnvVariableInfo extends BashEnvVariable {\n    contributor: string;\n    key: DshEnvironmentKey;\n}',
+    declaration: 'export interface BashEnvVariableInfo extends BashEnvVariable {\n    contributor: string;\n    key: BashEnvContributorKey;\n}',
   },
   {
     name: 'BindingOrigin',
@@ -6321,11 +6325,11 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'DshEnvironment',
-    declaration: 'export type DshEnvironment = Readonly<Record<DshEnvironmentKey, string>>;',
+    declaration: 'export type DshEnvironment = Readonly<Partial<Record<DshEnvironmentKey, string>>>;',
   },
   {
     name: 'DshEnvironmentKey',
-    declaration: 'export type DshEnvironmentKey = `${typeof DSH_ENV_PREFIX}${string}`;',
+    declaration: 'export type DshEnvironmentKey = `${typeof DSH_ENV_PREFIX}${string}` | \'COSERVE_HOME\';',
   },
   {
     name: 'DynamicCordisPackage',

@@ -13,6 +13,6 @@ Web and Desktop no longer show the persistent-terminal bundle in Plugins lists o
 
 ## Migration
 
-1. To keep an existing selection, no action is required. To change it, open `$DSH_HOME/profiles/<name>/package.json`, where the default home is `~/.dsh` and `<name>` is the running profile, such as `web` or `desktop`.
+1. To keep an existing selection, no action is required. To change it, open `$COSERVE_HOME/profiles/<name>/package.json`, where the default home is `~/.coserve` and `<name>` is the running profile, such as `web` or `desktop`.
 2. Remove `@deepseek-ai/dsh-experimental-terminal-bundle` from `dsh.profile.bundles` to disable it, or add it to enable it. Keep the other entries and dependencies intact.
 3. Restart the same profile to apply the selection. For a CLI-managed profile, run `dsh --profile <name> --dump-config`: the `optional-persistent-terminals` group is present only when the bundle is selected. See the [profile reference](../../../../apps/cli/reference/README.md#profile-boot).

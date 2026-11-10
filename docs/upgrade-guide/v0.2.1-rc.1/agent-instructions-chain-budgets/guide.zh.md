@@ -9,7 +9,7 @@ description: "@deepseek-ai/dsh-agent-instructions 的 maxBytes 分别限制每�
 
 ## 变更
 
-`@deepseek-ai/dsh-agent-instructions` 的 `maxBytes` 原先限制完整的工作区指令基线和每条对账消息。现在它分别限制用户全局指令链（`$DSH_HOME/AGENTS.md` 与共享 agents 根目录）和项目指令链，因此同时包含两条链的消息最多可达配置值的两倍。导出的 `loadBaselineInstructions` 与 `renderAgentInstructions` 遵循同一上限。把 `maxBytes` 当作总提示词预算设定的部署会看到更大的上限。
+`@deepseek-ai/dsh-agent-instructions` 的 `maxBytes` 原先限制完整的工作区指令基线和每条对账消息。现在它分别限制用户全局指令链（`$COSERVE_HOME/AGENTS.md` 与共享 agents 根目录）和项目指令链，因此同时包含两条链的消息最多可达配置值的两倍。导出的 `loadBaselineInstructions` 与 `renderAgentInstructions` 遵循同一上限。把 `maxBytes` 当作总提示词预算设定的部署会看到更大的上限。
 
 ## 迁移
 

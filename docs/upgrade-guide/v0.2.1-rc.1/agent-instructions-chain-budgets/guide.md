@@ -9,7 +9,7 @@ English | [中文](guide.zh.md)
 
 ## Change
 
-`maxBytes` of `@deepseek-ai/dsh-agent-instructions` bounded the complete workspace-instruction baseline and each reconciliation message. It now bounds the user-global chain (`$DSH_HOME/AGENTS.md` and the shared agents root) and the project chain separately, so a message holding both chains can reach twice the configured size. The exported `loadBaselineInstructions` and `renderAgentInstructions` follow the same bound. Deployments that sized `maxBytes` as a total prompt budget observe the larger maximum.
+`maxBytes` of `@deepseek-ai/dsh-agent-instructions` bounded the complete workspace-instruction baseline and each reconciliation message. It now bounds the user-global chain (`$COSERVE_HOME/AGENTS.md` and the shared agents root) and the project chain separately, so a message holding both chains can reach twice the configured size. The exported `loadBaselineInstructions` and `renderAgentInstructions` follow the same bound. Deployments that sized `maxBytes` as a total prompt budget observe the larger maximum.
 
 ## Migration
 
